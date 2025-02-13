@@ -35,5 +35,7 @@
 
 ### 7. 예시 "update: suggestion폴더 생성", "fix: 일정 관리 동시성 문제 해결", 등등
 
-### 8. git-flow를 사용한다, Merge는 dev branch에 하고 branch는 기능별로 생성한다
+### 8. 이슈 등록에 대한 템플릿은 .github폴더를 확인한다
+
+### 9. git-flow를 사용한다, Merge는 dev branch에 하고 branch는 기능별로 생성한다
 [git-flow 참고](https://techblog.woowahan.com/2553/)
