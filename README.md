@@ -34,3 +34,6 @@
 ### 6. 여러가지 항목이 있다면 글머리 기호를 통해 가독성 높이기
 
 ### 7. 예시 "update: suggestion폴더 생성", "fix: 일정 관리 동시성 문제 해결", 등등
+
+### 8. git-flow를 사용한다, Merge는 dev branch에 하고 branch는 기능별로 생성한다
+[git-flow 참고](https://techblog.woowahan.com/2553/)
