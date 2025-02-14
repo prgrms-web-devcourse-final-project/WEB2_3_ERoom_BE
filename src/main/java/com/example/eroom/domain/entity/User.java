@@ -1,9 +1,6 @@
 package com.example.eroom.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,4 +20,7 @@ public class User {
     private String organization;
     private UserGrade userGrade;
     private String profile;
+
+    @Enumerated(EnumType.STRING)
+    private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
 }

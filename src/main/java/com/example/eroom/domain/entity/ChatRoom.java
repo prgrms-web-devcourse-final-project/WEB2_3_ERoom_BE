@@ -25,6 +25,9 @@ public class ChatRoom {
     @Enumerated(EnumType.STRING)
     private ChatRoomType type; // GROUP, PRIVATE
 
+    @Enumerated(EnumType.STRING)
+    private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
+
     private String name;
     private LocalDateTime createdAt = LocalDateTime.now();
 

@@ -30,6 +30,9 @@ public class Project {
     private String tag2;
     private String tag3;
 
+    @Enumerated(EnumType.STRING)
+    private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
+
     @Column(name = "start_date")
     private LocalDateTime startDate; // 프로젝트 시작 날짜
 
