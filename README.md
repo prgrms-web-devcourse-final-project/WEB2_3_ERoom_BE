@@ -48,3 +48,4 @@
 - Spring Data JPA
 - MariaDB Driver
 - Spring Data Redis(Access+Driver)
+- spring-boot-starter-websocket
