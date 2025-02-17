@@ -109,4 +109,17 @@ public class ProjectService {
 
         return projectRepository.save(project);
     }
+
+    public Project getProjectById(Long projectId) {
+//        return projectRepository.findById(projectId)
+//                .orElseThrow(() -> new IllegalArgumentException("Invalid project Id:" + projectId));
+        return projectRepository.findByIdWithMembers(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid project Id:" + projectId));
+    }
+
+    public boolean isUserMemberOfProject(Member user, Long projectId) {
+        Project project = getProjectById(projectId);
+        return project.getMembers().stream()
+                .anyMatch(member -> member.getMember().getId().equals(user.getId()));
+    }
 }
