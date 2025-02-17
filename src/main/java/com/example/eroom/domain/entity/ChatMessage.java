@@ -22,7 +22,7 @@ public class ChatMessage {
 
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
-    private User sender;
+    private Member sender;
 
     private String message;
     private Integer unreadCount = 0; // 읽지 않은 메시지 개수

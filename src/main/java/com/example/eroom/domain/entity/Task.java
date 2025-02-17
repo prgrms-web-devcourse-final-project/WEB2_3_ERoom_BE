@@ -33,5 +33,5 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "assigned_user_id")
-    private User assignedUser; // 담당자
+    private Member assignedMember; // 담당자
 }

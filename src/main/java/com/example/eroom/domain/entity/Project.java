@@ -20,7 +20,7 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User creator; // 프로젝트 생성자
+    private Member creator; // 프로젝트 생성자
 
     private String name;
     private String description;
@@ -47,7 +47,7 @@ public class Project {
     private List<ChatRoom> chatRooms = new ArrayList<>();
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
-    private List<ProjectUser> members = new ArrayList<>();
+    private List<ProjectMember> members = new ArrayList<>();
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
