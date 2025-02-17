@@ -4,7 +4,7 @@ import com.example.eroom.domain.chat.repository.ChatRoomMemberRepository;
 import com.example.eroom.domain.chat.repository.ChatRoomRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
-import com.example.eroom.domain.entity.*;
+import com.example.eroom.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

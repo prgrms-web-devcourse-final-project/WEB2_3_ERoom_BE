@@ -1,7 +1,7 @@
 package com.example.eroom.domain.chat.repository;
 
-import com.example.eroom.domain.entity.Project;
-import com.example.eroom.domain.entity.Member;
+import com.example.eroom.entity.Project;
+import com.example.eroom.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

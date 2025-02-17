@@ -1,7 +1,7 @@
 package com.example.eroom.domain.chat.mock;
 
 import com.example.eroom.domain.chat.repository.MemberRepository;
-import com.example.eroom.domain.entity.Member;
+import com.example.eroom.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

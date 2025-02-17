@@ -1,7 +1,7 @@
 package com.example.eroom.domain.chat.thymeleaf.controller;
 
 import com.example.eroom.domain.chat.thymeleaf.service.MemberService;
-import com.example.eroom.domain.entity.Member;
+import com.example.eroom.entity.Member;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

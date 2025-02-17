@@ -1,4 +1,4 @@
-package com.example.eroom.domain.entity;
+package com.example.eroom.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
