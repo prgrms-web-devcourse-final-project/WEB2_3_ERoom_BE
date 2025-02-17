@@ -1,6 +1,6 @@
 package com.example.eroom.domain.entity;
 
-public enum UserGrade {
+public enum MemberGrade {
 
     ABLE, DISABLE, ADMIN
 }

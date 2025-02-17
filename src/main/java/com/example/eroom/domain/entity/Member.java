@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User {
+public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,7 +18,7 @@ public class User {
     private String email;
     private String password;
     private String organization;
-    private UserGrade userGrade;
+    private MemberGrade memberGrade;
     private String profile;
 
     @Enumerated(EnumType.STRING)
