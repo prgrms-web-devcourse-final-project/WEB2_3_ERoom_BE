@@ -19,7 +19,7 @@ public class Project {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member creator; // 프로젝트 생성자
 
     private String name;
