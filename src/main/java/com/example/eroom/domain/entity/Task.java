@@ -17,7 +17,7 @@ public class Task {
     private Long id;
 
     private String title;
-    private String description;
+    private String description; // x
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime startDate;
@@ -32,6 +32,6 @@ public class Task {
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "assigned_user_id")
-    private User assignedUser; // 담당자
+    @JoinColumn(name = "assigned_member_id")
+    private Member assignedMember; // 담당자
 }

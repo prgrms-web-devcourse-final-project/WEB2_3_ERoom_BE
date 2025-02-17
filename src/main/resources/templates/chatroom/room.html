@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chat Room</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h1 th:text="${chatRoom.name}">Chat Room</h1>
+
+<div id="chat">
+    <div th:each="message : ${messages}">
+        <p>
+            <strong th:text="${message.sender.username}">Sender</strong>:
+            <span th:text="${message.message}">Message</span>
+            <em th:text="${#temporals.format(message.sentAt, 'yyyy-MM-dd HH:mm')}">Time</em>
+        </p>
+    </div>
+</div>
+
+<form id="messageForm">
+    <input type="text" id="messageInput" placeholder="Type your message">
+    <button type="submit">Send</button>
+</form>
+
+<script th:inline="javascript">
+    let stompClient = null;
+    const roomId = /*[[${chatRoom.id}]]*/ 'defaultRoom';
+    const currentMember = /*[[${currentMember.username}]]*/ 'Anonymous';
+
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function () {
+            stompClient.subscribe('/topic/chatroom/' + roomId, function (message) {
+                showMessage(JSON.parse(message.body));
+            });
+        });
+    }
+
+    // function showMessage(message) {
+    //     const chat = document.getElementById('chat');
+    //     const messageElement = document.createElement('p');
+    //     messageElement.innerHTML = `<strong>${message.sender.username}</strong>: ${message.message} <em>${message.sentAt}</em>`;
+    //     chat.appendChild(messageElement);
+    // }
+
+    function showMessage(message) {
+        const chat = document.getElementById('chat');
+        const messageElement = document.createElement('p');
+        messageElement.innerHTML = `<strong>${message.senderUsername}</strong>: ${message.message} <em>${message.sentAt}</em>`;
+        chat.appendChild(messageElement);
+    }
+
+    document.getElementById('messageForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value;
+        stompClient.send('/app/chat/send/ex', {}, JSON.stringify({
+            senderUsername: currentMember,
+            message: message,
+            chatRoomId: roomId
+        }));
+        messageInput.value = '';
+    });
+
+    connect();
+</script>
+</body>
+</html>
