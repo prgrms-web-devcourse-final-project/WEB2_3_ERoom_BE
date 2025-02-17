@@ -23,7 +23,7 @@ public class ProjectAccessInterceptor implements HandlerInterceptor {
             String[] uriParts = uri.split("/");
             if (uriParts.length > 2) {
                 Long projectId = Long.parseLong(uriParts[2]);
-                Member currentMember = (Member) request.getSession().getAttribute("user");
+                Member currentMember = (Member) request.getSession().getAttribute("member");
 
                 // 사용자가 해당 프로젝트의 멤버인지 확인
                 if (currentMember == null || !projectService.isUserMemberOfProject(currentMember, projectId)) {

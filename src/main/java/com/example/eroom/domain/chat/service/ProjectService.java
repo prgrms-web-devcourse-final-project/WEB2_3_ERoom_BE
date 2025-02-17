@@ -2,7 +2,7 @@ package com.example.eroom.domain.chat.service;
 
 import com.example.eroom.domain.chat.repository.ProjectMemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
-import com.example.eroom.domain.chat.repository.UserRepository;
+import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.entity.Project;
 import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.ProjectMember;
@@ -14,17 +14,17 @@ import java.util.List;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final ProjectMemberRepository projectMemberRepository;
 
-    public ProjectService(ProjectRepository projectRepository, UserRepository userRepository, ProjectMemberRepository projectMemberRepository) {
+    public ProjectService(ProjectRepository projectRepository, MemberRepository memberRepository, ProjectMemberRepository projectMemberRepository) {
         this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
+        this.memberRepository = memberRepository;
         this.projectMemberRepository = projectMemberRepository;
     }
 
     public List<Project> getProjectsByUser(Member member) {
-        return projectRepository.findAllByMembersUser(member);
+        return projectRepository.findAllByMembersMember(member);
     }
 
     public void createProject(Project project, Member creator, List<Long> invitedUserIds) {
@@ -38,7 +38,7 @@ public class ProjectService {
         projectMemberRepository.save(creatorMember);
 
         // 초대한 유저들 추가
-        List<Member> invitedMembers = userRepository.findAllById(invitedUserIds);
+        List<Member> invitedMembers = memberRepository.findAllById(invitedUserIds);
         for (Member invitedMember : invitedMembers) {
             ProjectMember member = new ProjectMember();
             member.setProject(project);
@@ -55,8 +55,8 @@ public class ProjectService {
     }
 
     // 현재 유저를 제외한 프로젝트 참가자 목록 가져오기
-    public List<Member> getProjectParticipantsExceptCurrentUser(Project project, Member currentMember) {
-        return projectMemberRepository.findUsersByProjectAndUserNot(project, currentMember);
+    public List<Member> getProjectParticipantsExceptCurrentMember(Project project, Member currentMember) {
+        return projectMemberRepository.findMembersByProjectAndMemberNot(project, currentMember);
     }
 
     public boolean isUserMemberOfProject(Member user, Long projectId) {
