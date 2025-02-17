@@ -1,6 +1,6 @@
-package com.example.eroom.domain.chat.service;
+package com.example.eroom.domain.chat.thymeleaf.service;
 
-import com.example.eroom.domain.chat.dto.response.ChatMessageDTO;
+import com.example.eroom.domain.chat.dto.ChatMessageDTO;
 import com.example.eroom.domain.chat.repository.ChatMessageRepository;
 import com.example.eroom.domain.chat.repository.ChatRoomRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ChatMessageService {
+public class ChatMessageServiceEx {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
@@ -37,15 +37,15 @@ public class ChatMessageService {
                 .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
 
         // User 조회
-        Member sender = memberRepository.findByUsername(dto.getSenderName());
+        Member sender = memberRepository.findByUsername(dto.getSenderUsername());
         if (sender == null) {
-            throw new RuntimeException("Sender not found: " + dto.getSenderName());
+            throw new RuntimeException("Sender not found: " + dto.getSenderUsername());
         }
 
         chatMessage.setChatRoom(chatRoom);
         chatMessage.setSender(sender);
         chatMessage.setMessage(dto.getMessage());
-        chatMessage.setUnreadCount(0);
+        chatMessage.setUnreadCount(dto.getUnreadCount());
         chatMessage.setSentAt(dto.getSentAt());
 
         return chatMessage;

@@ -1,9 +1,9 @@
-package com.example.eroom.domain.chat.controller;
+package com.example.eroom.domain.chat.thymeleaf.controller;
 
-import com.example.eroom.domain.chat.service.ChatMessageService;
-import com.example.eroom.domain.chat.service.ChatRoomService;
-import com.example.eroom.domain.chat.service.MemberService;
-import com.example.eroom.domain.chat.service.ProjectService;
+import com.example.eroom.domain.chat.thymeleaf.service.ChatMessageServiceEx;
+import com.example.eroom.domain.chat.thymeleaf.service.ChatRoomServiceEx;
+import com.example.eroom.domain.chat.thymeleaf.service.MemberService;
+import com.example.eroom.domain.chat.thymeleaf.service.ProjectServiceEx;
 import com.example.eroom.domain.entity.ChatMessage;
 import com.example.eroom.domain.entity.ChatRoom;
 import com.example.eroom.domain.entity.Member;
@@ -19,18 +19,18 @@ import java.util.List;
 @Controller
 @RequestMapping("/chatroom")
 @RequiredArgsConstructor
-public class ChatRoomController {
+public class ChatRoomControllerEx {
 
-    private final ChatRoomService chatRoomService;
+    private final ChatRoomServiceEx chatRoomServiceEx;
     private final MemberService memberService;
-    private final ProjectService projectService;
-    private final ChatMessageService chatMessageService;
+    private final ProjectServiceEx projectServiceEx;
+    private final ChatMessageServiceEx chatMessageServiceEx;
 
     // 채팅방 목록 보기 (프로젝트 상세 화면에서 사용)
     @GetMapping("/list/{projectId}")
     public String listChatRooms(@PathVariable Long projectId, Model model) {
 
-        Project project = projectService.getProjectById(projectId);
+        Project project = projectServiceEx.getProjectById(projectId);
         model.addAttribute("project", project);
         model.addAttribute("chatRooms", project.getChatRooms());
         return "chatroom/list";
@@ -39,7 +39,7 @@ public class ChatRoomController {
     // 채팅방 생성 폼 (단체 채팅방)
     @GetMapping("/create/{projectId}")
     public String showCreateForm(@PathVariable Long projectId, Model model) {
-        Project project = projectService.getProjectById(projectId);
+        Project project = projectServiceEx.getProjectById(projectId);
         model.addAttribute("project", project);
         model.addAttribute("chatRoom", new ChatRoom());
         return "chatroom/create";
@@ -49,7 +49,7 @@ public class ChatRoomController {
     @PostMapping("/create/{projectId}")
     public String createGroupChatRoom(@PathVariable Long projectId,
                                       @ModelAttribute ChatRoom chatRoom) {
-        chatRoomService.createGroupChatRoom(projectId, chatRoom);
+        chatRoomServiceEx.createGroupChatRoom(projectId, chatRoom);
         return "redirect:/project/" + projectId;
     }
 
@@ -57,8 +57,8 @@ public class ChatRoomController {
     @GetMapping("/create/private/{projectId}")
     public String showPrivateChatForm(@PathVariable Long projectId, Model model, HttpSession session) {
         Member currentMember = (Member) session.getAttribute("member");
-        Project project = projectService.getProjectById(projectId);
-        List<Member> participants = projectService.getProjectParticipantsExceptCurrentMember(project, currentMember);
+        Project project = projectServiceEx.getProjectById(projectId);
+        List<Member> participants = projectServiceEx.getProjectParticipantsExceptCurrentMember(project, currentMember);
 
         model.addAttribute("project", project);
         model.addAttribute("participants", participants);
@@ -70,7 +70,7 @@ public class ChatRoomController {
                                         @RequestParam Long targetUserId,
                                         HttpSession session) {
         Member currentMember = (Member) session.getAttribute("member");
-        chatRoomService.createPrivateChatRoom(projectId, currentMember, targetUserId);
+        chatRoomServiceEx.createPrivateChatRoom(projectId, currentMember, targetUserId);
         return "redirect:/project/" + projectId;
     }
 
@@ -80,10 +80,10 @@ public class ChatRoomController {
 
         System.out.println("roomId: " + roomId);
 
-        ChatRoom chatRoom = chatRoomService.getChatRoomById(roomId);
+        ChatRoom chatRoom = chatRoomServiceEx.getChatRoomById(roomId);
         Member currentMember = (Member) session.getAttribute("member");
 
-        List<ChatMessage> messages = chatMessageService.getMessagesByRoomId(roomId);
+        List<ChatMessage> messages = chatMessageServiceEx.getMessagesByRoomId(roomId);
 
         model.addAttribute("chatRoom", chatRoom);
         model.addAttribute("currentMember", currentMember);

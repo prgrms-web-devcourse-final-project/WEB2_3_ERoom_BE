@@ -56,7 +56,7 @@
         e.preventDefault();
         const messageInput = document.getElementById('messageInput');
         const message = messageInput.value;
-        stompClient.send('/app/chat/send', {}, JSON.stringify({
+        stompClient.send('/app/chat/send/ex', {}, JSON.stringify({
             senderUsername: currentMember,
             message: message,
             chatRoomId: roomId

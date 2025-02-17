@@ -17,7 +17,7 @@ public class Task {
     private Long id;
 
     private String title;
-    private String description;
+    private String description; // x
     private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime startDate;
