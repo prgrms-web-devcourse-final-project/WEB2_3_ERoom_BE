@@ -23,7 +23,7 @@ public class Project {
     private Member creator; // 프로젝트 생성자
 
     private String name;
-    private String description;
+    private String description; // x
     private LocalDateTime createdAt = LocalDateTime.now();
     // 카테고리
     private String tag1;
@@ -41,7 +41,7 @@ public class Project {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ProjectStatus status = ProjectStatus.START; // 프로젝트 상태 기본값 START
+    private ProjectStatus status = ProjectStatus.BEFORE_START; // 프로젝트 상태 기본값 START
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<ChatRoom> chatRooms = new ArrayList<>();

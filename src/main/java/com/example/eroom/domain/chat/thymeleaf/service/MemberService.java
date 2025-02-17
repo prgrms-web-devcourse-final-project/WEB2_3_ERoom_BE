@@ -1,4 +1,4 @@
-package com.example.eroom.domain.chat.service;
+package com.example.eroom.domain.chat.thymeleaf.service;
 
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.entity.Member;
