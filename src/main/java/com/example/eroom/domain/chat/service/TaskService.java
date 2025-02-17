@@ -2,7 +2,7 @@ package com.example.eroom.domain.chat.service;
 
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.chat.repository.TaskRepository;
-import com.example.eroom.domain.chat.repository.UserRepository;
+import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.entity.Project;
 import com.example.eroom.domain.entity.Task;
 import com.example.eroom.domain.entity.Member;
@@ -18,7 +18,7 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     public List<Task> getTasksByProject(Project project) {
         return taskRepository.findByProject(project);
@@ -38,7 +38,7 @@ public class TaskService {
         task.setEndDate(endDate);
 
         if (assignedUserId != null) {
-            Member assignedMember = userRepository.findById(assignedUserId)
+            Member assignedMember = memberRepository.findById(assignedUserId)
                     .orElseThrow(() -> new IllegalArgumentException("Invalid user Id: " + assignedUserId));
             task.setAssignedMember(assignedMember);
         }
