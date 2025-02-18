@@ -1,9 +1,9 @@
 package com.example.eroom.domain.chat.controller;
 
 import com.example.eroom.domain.chat.dto.request.ProjectCreateRequestDTO;
-import com.example.eroom.domain.chat.dto.response.ProjectDetailDTO;
-import com.example.eroom.domain.chat.dto.response.ProjectListResponseDTO;
-import com.example.eroom.domain.chat.dto.response.ProjectResponseDTO;
+import com.example.eroom.domain.chat.dto.request.ProjectUpdateRequestDTO;
+import com.example.eroom.domain.chat.dto.request.TaskCreateRequestDTO;
+import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.service.ChatRoomService;
 import com.example.eroom.domain.chat.service.ProjectService;
 import com.example.eroom.domain.entity.Member;
@@ -59,14 +59,15 @@ public class ProjectController {
         return ResponseEntity.ok(projectList);
     }
 
-    @GetMapping("/{projectId}")
-    public ResponseEntity<ProjectDetailDTO> getProjectDetail(@PathVariable Long projectId, HttpSession session) {
+    // 프로젝트의 채팅방을 불러오는 api
+    @GetMapping("/{projectId}/chatroom")
+    public ResponseEntity<ProjectDetailChatDTO> getProjectDetail(@PathVariable Long projectId, HttpSession session) {
         Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        ProjectDetailDTO projectDetail = projectService.getProjectDetail(projectId);
+        ProjectDetailChatDTO projectDetail = projectService.getProjectDetail(projectId);
         return ResponseEntity.ok(projectDetail);
     }
 
@@ -95,4 +96,56 @@ public class ProjectController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
+
+    // 기존 프로젝트 정보 조회 (수정용 폼)
+    @GetMapping("/{projectId}/edit")
+    public ResponseEntity<ProjectUpdateResponseDTO> getProjectForEdit(@PathVariable Long projectId, HttpSession session) {
+        Member currentMember = (Member) session.getAttribute("member");
+        if (currentMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        ProjectUpdateResponseDTO projectUpdateResponse = projectService.getProjectForEdit(projectId);
+        return ResponseEntity.ok(projectUpdateResponse);
+    }
+
+    // 프로젝트 업데이트
+    @PatchMapping("/{projectId}/update")
+    public ResponseEntity<Void> updateProject(@PathVariable Long projectId,
+                                              @RequestBody ProjectUpdateRequestDTO projectUpdateRequestDTO,
+                                              HttpSession session) {
+        Member currentMember = (Member) session.getAttribute("member");
+        if (currentMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        projectService.updateProject(projectId, projectUpdateRequestDTO);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 프로젝트 삭제 (softDelete)
+    @PatchMapping("/{projectId}/delete")
+    public ResponseEntity<Void> softDeleteProject(@PathVariable Long projectId, HttpSession session) {
+        Member currentMember = (Member) session.getAttribute("member");
+        if (currentMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        projectService.softDeleteProject(projectId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+    // 프로젝트 상세보기 (채팅방 X, Task 정보 포함)
+    @GetMapping("/{projectId}/detail")
+    public ResponseEntity<ProjectDetailDTO> getProjectDetailForView(@PathVariable Long projectId, HttpSession session) {
+        Member currentMember = (Member) session.getAttribute("member");
+        if (currentMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        ProjectDetailDTO projectDetail = projectService.getProjectDetailForView(projectId);
+        return ResponseEntity.ok(projectDetail);
+    }
+
 }

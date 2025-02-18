@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,7 +27,7 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TaskStatus status = TaskStatus.START; // 테스크 상태 기본값 START
+    private TaskStatus status = TaskStatus.BEFORE_START; // 테스크 상태 기본값 BEFORE_START
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
@@ -34,4 +36,8 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "assigned_member_id")
     private Member assignedMember; // 담당자
+
+    // 참여자 (여러 명 가능)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    private List<TaskMember> participants = new ArrayList<>();
 }
