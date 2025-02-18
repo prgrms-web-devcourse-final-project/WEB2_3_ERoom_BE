@@ -2,6 +2,7 @@ package com.example.eroom.domain.notification.service;
 
 import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.Notification;
+import com.example.eroom.domain.entity.NotificationType;
 import com.example.eroom.domain.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -16,19 +17,16 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate; // WebSocket 전송용
 
-    public void sendNotification(Member member, String message, String type) {
+    public void sendNotification(Member member, String message, NotificationType type) {
         Notification notification = Notification.builder()
                 .member(member)
                 .message(message)
-                .type(type)
+                .notificationType(type)
                 .isRead(false)
                 .createdAt(LocalDateTime.now())
                 .build();
 
         notificationRepository.save(notification);
-
-        // 실시간 알림 전송 (WebSocket)
-        messagingTemplate.convertAndSendToUser(member.getUsername(), "/queue/notifications", message);
     }
 
     public List<Notification> getUnreadNotifications(Member member) {

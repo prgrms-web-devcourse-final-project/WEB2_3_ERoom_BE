@@ -19,7 +19,10 @@ public class Notification {
     private Long id;
 
     private String message;
-    private String type; // 프로젝트 초대, 마감, 업무 배정, 새로운 메시지
+
+    @Enumerated(EnumType.STRING)
+    private NotificationType notificationType; // 프로젝트 초대, 마감, 업무 배정, 새로운 메시지
+
     private boolean isRead;
 
     @ManyToOne

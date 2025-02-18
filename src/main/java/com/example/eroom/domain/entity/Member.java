@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -20,6 +22,7 @@ public class Member {
     private String organization;
     private MemberGrade memberGrade;
     private String profile;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED

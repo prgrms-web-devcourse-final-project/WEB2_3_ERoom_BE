@@ -121,7 +121,7 @@ public class ProjectService {
             notificationService.sendNotification(
                     member.getMember(),
                     message,
-                    "PROJECT_INVITE"
+                    NotificationType.PROJECT_INVITE
                     //member.getFcmToken() // FCM 푸시 알림
             );
         }

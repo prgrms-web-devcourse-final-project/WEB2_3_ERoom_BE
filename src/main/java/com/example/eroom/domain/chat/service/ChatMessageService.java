@@ -4,10 +4,7 @@ import com.example.eroom.domain.chat.dto.response.ChatMessageDTO;
 import com.example.eroom.domain.chat.repository.ChatMessageRepository;
 import com.example.eroom.domain.chat.repository.ChatRoomRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
-import com.example.eroom.domain.entity.ChatMessage;
-import com.example.eroom.domain.entity.ChatRoom;
-import com.example.eroom.domain.entity.ChatRoomMember;
-import com.example.eroom.domain.entity.Member;
+import com.example.eroom.domain.entity.*;
 import com.example.eroom.domain.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -70,7 +67,7 @@ public class ChatMessageService {
                 String notificationMessage = senderName + ": " + messageContent;
 
                 notificationService.sendNotification(
-                        recipient, notificationMessage, "CHAT_MESSAGE"
+                        recipient, notificationMessage, NotificationType.CHAT_MESSAGE
                 );
             }
         }
