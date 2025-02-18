@@ -1,6 +1,8 @@
 package com.example.eroom.domain.chat.controller;
 
 import com.example.eroom.domain.chat.dto.request.ProjectCreateRequestDTO;
+import com.example.eroom.domain.chat.dto.request.TaskCreateRequestDTO;
+import com.example.eroom.domain.chat.dto.response.ProjectDetailChatDTO;
 import com.example.eroom.domain.chat.dto.response.ProjectDetailDTO;
 import com.example.eroom.domain.chat.dto.response.ProjectListResponseDTO;
 import com.example.eroom.domain.chat.dto.response.ProjectResponseDTO;
@@ -59,15 +61,15 @@ public class ProjectController {
         return ResponseEntity.ok(projectList);
     }
 
-    // 우선 프로젝트의 채팅방을 불러오는 api
+    // 프로젝트의 채팅방을 불러오는 api
     @GetMapping("/{projectId}/chatroom")
-    public ResponseEntity<ProjectDetailDTO> getProjectDetail(@PathVariable Long projectId, HttpSession session) {
+    public ResponseEntity<ProjectDetailChatDTO> getProjectDetail(@PathVariable Long projectId, HttpSession session) {
         Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        ProjectDetailDTO projectDetail = projectService.getProjectDetail(projectId);
+        ProjectDetailChatDTO projectDetail = projectService.getProjectDetail(projectId);
         return ResponseEntity.ok(projectDetail);
     }
 
@@ -96,4 +98,17 @@ public class ProjectController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
+
+    // 프로젝트 상세보기 (채팅방 X, Task 정보 포함)
+    @GetMapping("/{projectId}/detail")
+    public ResponseEntity<ProjectDetailDTO> getProjectDetailForView(@PathVariable Long projectId, HttpSession session) {
+        Member currentMember = (Member) session.getAttribute("member");
+        if (currentMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        ProjectDetailDTO projectDetail = projectService.getProjectDetailForView(projectId);
+        return ResponseEntity.ok(projectDetail);
+    }
+
 }

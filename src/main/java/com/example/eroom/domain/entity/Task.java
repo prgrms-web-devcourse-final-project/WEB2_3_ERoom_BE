@@ -27,7 +27,7 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TaskStatus status = TaskStatus.START; // 테스크 상태 기본값 START
+    private TaskStatus status = TaskStatus.BEFORE_START; // 테스크 상태 기본값 BEFORE_START
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)

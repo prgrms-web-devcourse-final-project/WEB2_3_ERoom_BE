@@ -4,18 +4,14 @@ import com.example.eroom.domain.entity.ProjectStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class ProjectDetailDTO {
 
     private Long projectId;
     private String projectName;
-    private String description;
-    private String tag1;
-    private String tag2;
-    private String tag3;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
-    private ProjectStatus status;
-    private ChatRoomDTO groupChatRoom;
+
+    // Task 목록
+    private List<TaskDTO> tasks;
 }
