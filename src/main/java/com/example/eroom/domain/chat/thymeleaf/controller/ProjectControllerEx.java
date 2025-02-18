@@ -1,7 +1,7 @@
 package com.example.eroom.domain.chat.thymeleaf.controller;
 
 import com.example.eroom.domain.chat.thymeleaf.service.ProjectServiceEx;
-import com.example.eroom.domain.chat.thymeleaf.service.TaskService;
+import com.example.eroom.domain.chat.thymeleaf.service.TaskServiceEx;
 import com.example.eroom.domain.chat.thymeleaf.service.MemberService;
 import com.example.eroom.domain.entity.Project;
 import com.example.eroom.domain.entity.Task;
@@ -22,7 +22,7 @@ public class ProjectControllerEx {
 
     private final ProjectServiceEx projectServiceEx;
     private final MemberService memberService;
-    private final TaskService taskService;
+    private final TaskServiceEx taskServiceEx;
 
     // 프로젝트 목록 보기
     @GetMapping("/list")
@@ -76,7 +76,7 @@ public class ProjectControllerEx {
 //        model.addAttribute("project", project);
 
         Project project = projectServiceEx.getProjectById(projectId);
-        List<Task> tasks = taskService.getTasksByProject(project);
+        List<Task> tasks = taskServiceEx.getTasksByProject(project);
         List<Member> participants = projectServiceEx.getProjectParticipantsExceptCurrentMember(project, currentMember);
 
         model.addAttribute("project", project);
@@ -97,7 +97,7 @@ public class ProjectControllerEx {
         LocalDateTime startDateTime = LocalDateTime.parse(startDate + "T00:00:00");
         LocalDateTime endDateTime = LocalDateTime.parse(endDate + "T23:59:59");
 
-        taskService.addTaskToProject(projectId, title, description, assignedUserId, startDateTime, endDateTime);
+        taskServiceEx.addTaskToProject(projectId, title, description, assignedUserId, startDateTime, endDateTime);
         return "redirect:/project/" + projectId;
     }
 

@@ -1,9 +1,7 @@
 package com.example.eroom.domain.chat.service;
 
 import com.example.eroom.domain.chat.dto.request.ProjectCreateRequestDTO;
-import com.example.eroom.domain.chat.dto.response.ChatMessageDTO;
-import com.example.eroom.domain.chat.dto.response.ChatRoomDTO;
-import com.example.eroom.domain.chat.dto.response.ProjectDetailDTO;
+import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.entity.*;
@@ -27,12 +25,12 @@ public class ProjectService {
     }
 
     // 프로젝트 상세
-    public ProjectDetailDTO getProjectDetail(Long projectId) {
+    public ProjectDetailChatDTO getProjectDetail(Long projectId) {
 
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid project Id:" + projectId));
 
-        ProjectDetailDTO dto = new ProjectDetailDTO();
+        ProjectDetailChatDTO dto = new ProjectDetailChatDTO();
         dto.setProjectId(project.getId());
         dto.setProjectName(project.getName());
         dto.setDescription(project.getDescription());
@@ -121,5 +119,39 @@ public class ProjectService {
         Project project = getProjectById(projectId);
         return project.getMembers().stream()
                 .anyMatch(member -> member.getMember().getId().equals(user.getId()));
+    }
+
+    public ProjectDetailDTO getProjectDetailForView(Long projectId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
+
+        ProjectDetailDTO dto = new ProjectDetailDTO();
+        dto.setProjectId(project.getId());
+        dto.setProjectName(project.getName());
+
+        // Task 정보 추가
+        List<TaskDTO> taskDTOList = project.getTasks().stream().map(task -> {
+            TaskDTO taskDTO = new TaskDTO();
+            taskDTO.setTaskId(task.getId());
+            taskDTO.setTitle(task.getTitle());
+            taskDTO.setStartDate(task.getStartDate());
+            taskDTO.setEndDate(task.getEndDate());
+            taskDTO.setStatus(task.getStatus());
+
+            // 담당자 이름
+            taskDTO.setAssignedMemberName(task.getAssignedMember() != null ? task.getAssignedMember().getUsername() : null);
+
+            // 참여자 이름 목록
+            List<String> participantNames = task.getParticipants().stream()
+                    .map(taskMember -> taskMember.getMember().getUsername())
+                    .collect(Collectors.toList());
+            taskDTO.setParticipants(participantNames);
+
+            return taskDTO;
+        }).collect(Collectors.toList());
+
+        dto.setTasks(taskDTOList);
+
+        return dto;
     }
 }

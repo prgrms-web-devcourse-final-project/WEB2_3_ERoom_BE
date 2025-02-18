@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TaskService {
+public class TaskServiceEx {
 
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
