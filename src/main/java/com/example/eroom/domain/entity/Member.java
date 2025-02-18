@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -25,8 +26,8 @@ public class Member {
     private String organization;
     private MemberGrade memberGrade;
     private String profile;
-    @CreatedDate
-    private LocalDate createdAt;
+    //@CreatedDate
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
     private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
