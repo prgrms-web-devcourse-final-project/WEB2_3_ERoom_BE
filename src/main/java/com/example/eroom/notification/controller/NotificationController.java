@@ -29,9 +29,11 @@ public class NotificationController {
         return ResponseEntity.ok("알림이 읽음 처리되었습니다.");
     }
 
-    @MessageMapping("/sendNotification")  // 클라이언트 → 서버로 메시지 받을 때
-    public void sendNotification(String message) {
-        messagingTemplate.convertAndSend("/queue/notifications", message);
+    @PostMapping("/sendNotification")
+    @ResponseBody
+    public String sendNotification(@RequestParam String username, @RequestParam String message) {
+        messagingTemplate.convertAndSendToUser(username, "/queue/notifications", message);
+        return "Notification sent!";
     }
 }
 

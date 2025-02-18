@@ -7,6 +7,7 @@ import com.example.eroom.domain.chat.dto.response.ProjectDetailDTO;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.entity.*;
+import com.example.eroom.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     // 현재 사용자가 참여 중인 프로젝트 목록 가져오기
     public List<Project> getProjectsByUser(Member member) {
@@ -107,7 +109,22 @@ public class ProjectService {
             project.getMembers().add(projectMember);
         }
 
+        sendProjectCreationNotification(project);
+
         return projectRepository.save(project);
+    }
+
+    private void sendProjectCreationNotification(Project project) {
+        String message = "새 프로젝트 '" + project.getName() + "'에 초대되었습니다.";
+
+        for (ProjectMember member : project.getMembers()) {
+            notificationService.sendNotification(
+                    member.getMember(),
+                    message,
+                    "PROJECT_INVITE"
+                    //member.getFcmToken() // FCM 푸시 알림
+            );
+        }
     }
 
     public Project getProjectById(Long projectId) {

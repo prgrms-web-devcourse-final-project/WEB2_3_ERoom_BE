@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProjectService {
+public class ProjectService2 {
     private final ProjectRepository projectRepository;
     private final NotificationService notificationService;
 

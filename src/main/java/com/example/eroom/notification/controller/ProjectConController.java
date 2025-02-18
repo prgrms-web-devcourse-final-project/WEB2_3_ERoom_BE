@@ -2,37 +2,32 @@ package com.example.eroom.notification.controller;
 
 import com.example.eroom.entity.Member;
 import com.example.eroom.entity.Project;
-import com.example.eroom.notification.repository.MemberRepository;
-import com.example.eroom.notification.service.ProjectService;
+import com.example.eroom.notification.dto.ProjectCreateRequest;
+import com.example.eroom.notification.repository.MemberRepository2;
+import com.example.eroom.notification.service.ProjectService2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor
-public class ProjectController {
-    private final ProjectService projectService;
-    private final MemberRepository memberRepository;
+public class ProjectConController {
+    private final ProjectService2 projectService;
+    private final MemberRepository2 memberRepository;
 
-    @PostMapping("/create")
-    public ResponseEntity<Project> createProject(
-            @RequestParam String projectName,
-            @RequestParam String description,
-            @RequestParam String ownerUsername,
-            @RequestParam List<String> memberUsernames) {
+    @PostMapping("/create2")
+    public ResponseEntity<Project> createProject2(
+            @RequestBody ProjectCreateRequest request) {
 
-        Member creator = memberRepository.findByUsername(ownerUsername)
+        Member creator = memberRepository.findByUsername(request.getCreator())
                 .orElseThrow(() -> new RuntimeException("프로젝트 생성자 없음"));
 
-        List<Member> members = memberRepository.findByUsernameIn(memberUsernames);
+        List<Member> members = memberRepository.findByUsernameIn(request.getMemberUsernames());
 
-        Project project = projectService.createProject(projectName, description, creator, members);
+        Project project = projectService.createProject(request.getProjectName(), request.getDescription(), creator, members);
 
         return ResponseEntity.ok(project);
     }

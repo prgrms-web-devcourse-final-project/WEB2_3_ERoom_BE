@@ -2,6 +2,7 @@ package com.example.eroom.notification.service;
 
 import com.example.eroom.entity.Member;
 import com.example.eroom.entity.Notification;
+import com.example.eroom.entity.ProjectMember;
 import com.example.eroom.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
