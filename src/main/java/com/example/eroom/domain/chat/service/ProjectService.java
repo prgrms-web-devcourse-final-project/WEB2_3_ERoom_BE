@@ -6,8 +6,8 @@ import com.example.eroom.domain.chat.dto.response.ChatRoomDTO;
 import com.example.eroom.domain.chat.dto.response.ProjectDetailDTO;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
-import com.example.eroom.entity.*;
-import com.example.eroom.notification.service.NotificationService;
+import com.example.eroom.domain.entity.*;
+import com.example.eroom.domain.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

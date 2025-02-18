@@ -1,4 +1,4 @@
-package com.example.eroom.notification.dto;
+package com.example.eroom.domain.notification.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

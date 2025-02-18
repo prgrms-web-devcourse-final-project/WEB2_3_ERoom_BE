@@ -1,6 +1,6 @@
 package com.example.eroom.domain.chat.dto.response;
 
-import com.example.eroom.entity.ChatRoomType;
+import com.example.eroom.domain.entity.ChatRoomType;
 import lombok.Data;
 
 import java.util.List;

@@ -4,9 +4,11 @@ import com.example.eroom.domain.chat.dto.response.ChatMessageDTO;
 import com.example.eroom.domain.chat.repository.ChatMessageRepository;
 import com.example.eroom.domain.chat.repository.ChatRoomRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
-import com.example.eroom.entity.ChatMessage;
-import com.example.eroom.entity.ChatRoom;
-import com.example.eroom.entity.Member;
+import com.example.eroom.domain.entity.ChatMessage;
+import com.example.eroom.domain.entity.ChatRoom;
+import com.example.eroom.domain.entity.ChatRoomMember;
+import com.example.eroom.domain.entity.Member;
+import com.example.eroom.domain.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +21,17 @@ public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     public ChatMessage saveMessage(ChatMessage message) {
-        return chatMessageRepository.save(message);
+        ChatMessage savedMessage = chatMessageRepository.save(message);
+        sendChatNotification(savedMessage);
+        return savedMessage;
     }
 
     public List<ChatMessage> getMessagesByRoomId(Long roomId) {
         return chatMessageRepository.findByChatRoomIdOrderBySentAtAsc(roomId);
+
     }
 
     // DTO → Entity 변환 메서드
@@ -49,5 +55,24 @@ public class ChatMessageService {
         chatMessage.setSentAt(dto.getSentAt());
 
         return chatMessage;
+    }
+
+    private void sendChatNotification(ChatMessage chatMessage) {
+        ChatRoom chatRoom = chatMessage.getChatRoom();
+        String messageContent = chatMessage.getMessage();
+        String senderName = chatMessage.getSender().getUsername();
+
+        for (ChatRoomMember chatRoomMember : chatRoom.getParticipants()) {
+            Member recipient = chatRoomMember.getMember();
+
+            // 자기 자신에게는 알림을 보내지 않음
+            if (!recipient.getId().equals(chatMessage.getSender().getId())) {
+                String notificationMessage = senderName + ": " + messageContent;
+
+                notificationService.sendNotification(
+                        recipient, notificationMessage, "CHAT_MESSAGE"
+                );
+            }
+        }
     }
 }

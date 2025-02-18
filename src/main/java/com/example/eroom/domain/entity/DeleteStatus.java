@@ -1,4 +1,4 @@
-package com.example.eroom.entity;
+package com.example.eroom.domain.entity;
 
 public enum DeleteStatus {
 

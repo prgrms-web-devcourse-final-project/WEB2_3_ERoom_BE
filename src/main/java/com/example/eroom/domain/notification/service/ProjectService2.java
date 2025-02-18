@@ -1,9 +1,9 @@
-package com.example.eroom.notification.service;
+package com.example.eroom.domain.notification.service;
 
 import com.example.eroom.domain.chat.repository.ProjectRepository;
-import com.example.eroom.entity.Member;
-import com.example.eroom.entity.Project;
-import com.example.eroom.entity.ProjectMember;
+import com.example.eroom.domain.entity.Member;
+import com.example.eroom.domain.entity.Project;
+import com.example.eroom.domain.entity.ProjectMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

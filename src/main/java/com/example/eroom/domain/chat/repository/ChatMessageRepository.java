@@ -1,6 +1,6 @@
 package com.example.eroom.domain.chat.repository;
 
-import com.example.eroom.entity.ChatMessage;
+import com.example.eroom.domain.entity.ChatMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

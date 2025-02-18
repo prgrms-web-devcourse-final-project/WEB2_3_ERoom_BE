@@ -4,9 +4,9 @@ import com.example.eroom.domain.chat.dto.ChatMessageDTO;
 import com.example.eroom.domain.chat.repository.ChatMessageRepository;
 import com.example.eroom.domain.chat.repository.ChatRoomRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
-import com.example.eroom.entity.ChatMessage;
-import com.example.eroom.entity.ChatRoom;
-import com.example.eroom.entity.Member;
+import com.example.eroom.domain.entity.ChatMessage;
+import com.example.eroom.domain.entity.ChatRoom;
+import com.example.eroom.domain.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

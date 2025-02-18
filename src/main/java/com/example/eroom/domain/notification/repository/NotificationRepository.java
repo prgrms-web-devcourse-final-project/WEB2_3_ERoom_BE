@@ -1,7 +1,7 @@
-package com.example.eroom.notification.repository;
+package com.example.eroom.domain.notification.repository;
 
-import com.example.eroom.entity.Member;
-import com.example.eroom.entity.Notification;
+import com.example.eroom.domain.entity.Member;
+import com.example.eroom.domain.entity.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
