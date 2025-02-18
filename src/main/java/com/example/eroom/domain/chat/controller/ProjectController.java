@@ -59,7 +59,8 @@ public class ProjectController {
         return ResponseEntity.ok(projectList);
     }
 
-    @GetMapping("/{projectId}")
+    // 우선 프로젝트의 채팅방을 불러오는 api
+    @GetMapping("/{projectId}/chatroom")
     public ResponseEntity<ProjectDetailDTO> getProjectDetail(@PathVariable Long projectId, HttpSession session) {
         Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {

@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -34,4 +36,8 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "assigned_member_id")
     private Member assignedMember; // 담당자
+
+    // 참여자 (여러 명 가능)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    private List<TaskMember> participants = new ArrayList<>();
 }
