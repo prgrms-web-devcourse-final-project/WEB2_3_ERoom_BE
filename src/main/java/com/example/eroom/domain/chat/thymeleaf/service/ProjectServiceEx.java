@@ -3,9 +3,9 @@ package com.example.eroom.domain.chat.thymeleaf.service;
 import com.example.eroom.domain.chat.repository.ProjectMemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
-import com.example.eroom.entity.Project;
-import com.example.eroom.entity.Member;
-import com.example.eroom.entity.ProjectMember;
+import com.example.eroom.domain.entity.Project;
+import com.example.eroom.domain.entity.Member;
+import com.example.eroom.domain.entity.ProjectMember;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

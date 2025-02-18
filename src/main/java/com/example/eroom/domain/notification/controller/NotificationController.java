@@ -1,11 +1,10 @@
-package com.example.eroom.notification.controller;
+package com.example.eroom.domain.notification.controller;
 
-import com.example.eroom.entity.Member;
-import com.example.eroom.entity.Notification;
-import com.example.eroom.notification.service.NotificationService;
+import com.example.eroom.domain.entity.Member;
+import com.example.eroom.domain.entity.Notification;
+import com.example.eroom.domain.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 

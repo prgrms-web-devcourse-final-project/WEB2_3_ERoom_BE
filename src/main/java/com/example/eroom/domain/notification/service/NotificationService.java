@@ -1,9 +1,8 @@
-package com.example.eroom.notification.service;
+package com.example.eroom.domain.notification.service;
 
-import com.example.eroom.entity.Member;
-import com.example.eroom.entity.Notification;
-import com.example.eroom.entity.ProjectMember;
-import com.example.eroom.notification.repository.NotificationRepository;
+import com.example.eroom.domain.entity.Member;
+import com.example.eroom.domain.entity.Notification;
+import com.example.eroom.domain.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

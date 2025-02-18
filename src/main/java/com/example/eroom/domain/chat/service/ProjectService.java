@@ -6,8 +6,7 @@ import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.entity.*;
-import com.example.eroom.entity.*;
-import com.example.eroom.notification.service.NotificationService;
+import com.example.eroom.domain.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,12 +110,9 @@ public class ProjectService {
             project.getMembers().add(projectMember);
         }
 
-        sendProjectCreationNotification(project);
-
         return projectRepository.save(project);
     }
 
-<<<<<<< HEAD
     public ProjectUpdateResponseDTO getProjectForEdit(Long projectId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
@@ -218,20 +214,8 @@ public class ProjectService {
 
         project.setDeleteStatus(DeleteStatus.DELETED);
         projectRepository.save(project);
-=======
-    private void sendProjectCreationNotification(Project project) {
-        String message = "새 프로젝트 '" + project.getName() + "'에 초대되었습니다.";
-
-        for (ProjectMember member : project.getMembers()) {
-            notificationService.sendNotification(
-                    member.getMember(),
-                    message,
-                    "PROJECT_INVITE"
-                    //member.getFcmToken() // FCM 푸시 알림
-            );
-        }
->>>>>>> feature/alarm
     }
+
 
     public Project getProjectById(Long projectId) {
 //        return projectRepository.findById(projectId)
