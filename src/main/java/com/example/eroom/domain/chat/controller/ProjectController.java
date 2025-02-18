@@ -2,12 +2,11 @@ package com.example.eroom.domain.chat.controller;
 
 import com.example.eroom.domain.chat.dto.request.ProjectCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.request.ProjectUpdateRequestDTO;
-import com.example.eroom.domain.chat.dto.request.TaskCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.service.ChatRoomService;
 import com.example.eroom.domain.chat.service.ProjectService;
-import com.example.eroom.entity.Member;
-import com.example.eroom.entity.Project;
+import com.example.eroom.domain.entity.Member;
+import com.example.eroom.domain.entity.Project;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

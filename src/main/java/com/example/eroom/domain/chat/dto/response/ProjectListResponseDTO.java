@@ -1,6 +1,6 @@
 package com.example.eroom.domain.chat.dto.response;
 
-import com.example.eroom.entity.ProjectStatus;
+import com.example.eroom.domain.entity.ProjectStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
