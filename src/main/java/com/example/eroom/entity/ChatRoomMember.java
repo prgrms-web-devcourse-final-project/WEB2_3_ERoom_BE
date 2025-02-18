@@ -1,17 +1,15 @@
-package com.example.eroom.domain.entity;
+package com.example.eroom.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChatMessage {
+public class ChatRoomMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,10 +19,6 @@ public class ChatMessage {
     private ChatRoom chatRoom;
 
     @ManyToOne
-    @JoinColumn(name = "sender_id", nullable = false)
-    private Member sender;
-
-    private String message;
-    private Integer unreadCount = 0; // 읽지 않은 메시지 개수
-    private LocalDateTime sentAt = LocalDateTime.now();
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 }

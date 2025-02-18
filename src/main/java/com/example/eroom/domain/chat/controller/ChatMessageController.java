@@ -2,8 +2,7 @@ package com.example.eroom.domain.chat.controller;
 
 import com.example.eroom.domain.chat.dto.response.ChatMessageDTO;
 import com.example.eroom.domain.chat.service.ChatMessageService;
-import com.example.eroom.domain.chat.thymeleaf.service.ChatMessageServiceEx;
-import com.example.eroom.domain.entity.ChatMessage;
+import com.example.eroom.entity.ChatMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;

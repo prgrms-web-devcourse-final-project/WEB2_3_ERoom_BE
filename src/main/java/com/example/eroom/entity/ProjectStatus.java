@@ -1,4 +1,4 @@
-package com.example.eroom.domain.entity;
+package com.example.eroom.entity;
 
 public enum ProjectStatus {
     BEFORE_START,
