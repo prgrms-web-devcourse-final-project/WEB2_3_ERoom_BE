@@ -14,7 +14,7 @@
   <ul>
     <li th:each="member : ${members}">
       <label>
-        <input type="checkbox" name="invitedUserIds" th:value="${member.id}">
+        <input type="checkbox" name="invitedMemberIds" th:value="${member.id}">
         <span th:text="${member.username}">유저 이름</span>
       </label>
     </li>

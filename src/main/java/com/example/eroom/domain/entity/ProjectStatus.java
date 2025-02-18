@@ -1,7 +1,7 @@
 package com.example.eroom.domain.entity;
 
 public enum ProjectStatus {
-    START,
+    BEFORE_START,
     IN_PROGRESS,
     COMPLETED,
     CANCELLED
