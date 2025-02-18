@@ -2,7 +2,7 @@ package com.example.eroom.domain.entity;
 
 public enum TaskStatus {
 
-    START,
+    BEFORE_START,
     IN_PROGRESS,
     COMPLETED,
     CANCELLED
