@@ -31,6 +31,7 @@ public class ChatMessageController {
         // DTO → Entity 변환 후 저장
         ChatMessage chatMessage = chatMessageService.convertToEntity(chatMessageDTO);
         chatMessageService.saveMessage(chatMessage);
+        chatMessageService.createChatNotification(chatMessage);
 
         // SimpMessagingTemplate을 사용하여 메시지 전송
         messagingTemplate.convertAndSend(

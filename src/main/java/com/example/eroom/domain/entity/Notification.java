@@ -1,25 +1,24 @@
 package com.example.eroom.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Builder
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String message;
-    private String type; // 프로젝트 초대, 마감, 업무 배정, 새로운 메시지
+    private NotificationType notificationType; // 프로젝트 초대, 마감, 업무 배정, 새로운 메시지
     private boolean isRead;
 
     @ManyToOne
@@ -28,8 +27,8 @@ public class Notification {
 
     private LocalDateTime createdAt;
 
-    public void setRead(boolean read) {
-        isRead = read;
+    public boolean getRead(){
+        return isRead;
     }
 }
 

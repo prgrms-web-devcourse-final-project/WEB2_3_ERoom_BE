@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Notifications</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h1>알림 목록</h1>
+
+<ul id="notificationList">
+    <li th:each="notification : ${notifications}">
+        <span th:text="${notification.message}">알림 내용</span>
+        <em th:text="${#temporals.format(notification.createdAt, 'yyyy-MM-dd HH:mm')}"></em>
+        <span th:if="${!notification.isRead}" style="color: red;">(읽지 않음)</span>
+    </li>
+</ul>
+
+<script th:inline="javascript">
+    let stompClient = null;
+    const memberId = /*[[${currentMember.id}]]*/ 'defaultMember';
+
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function () {
+            // 해당 멤버의 알림을 구독
+            stompClient.subscribe('/topic/notifications/' + memberId, function (notification) {
+                showNotification(JSON.parse(notification.body));
+            });
+        });
+    }
+
+    function showNotification(notification) {
+        const notificationList = document.getElementById('notificationList');
+        const newNotification = document.createElement('li');
+        newNotification.innerHTML = `
+                <span>${notification.message}</span>
+                <em>${notification.createdAt}</em>
+                <span style="color: red;">(새 알림)</span>
+            `;
+        notificationList.prepend(newNotification);
+    }
+
+    connect();
+</script>
+</body>
+</html>
