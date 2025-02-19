@@ -110,7 +110,16 @@ public class ProjectService {
             project.getMembers().add(projectMember);
         }
 
-        return projectRepository.save(project);
+        // 프로젝트 저장
+        Project savedProject = projectRepository.save(project);
+
+        // 프로젝트 초대 알림 보내기
+        for (Member member : invitedMembers) {
+            String message = "새로운 프로젝트에 초대되었습니다: " + savedProject.getName();
+            notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId());
+        }
+
+        return savedProject;
     }
 
     public ProjectUpdateResponseDTO getProjectForEdit(Long projectId) {
@@ -262,5 +271,26 @@ public class ProjectService {
         dto.setTasks(taskDTOList);
 
         return dto;
+    }
+
+    public void leaveProject(Long projectId, Member member) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
+
+        // 현재 사용자가 이 프로젝트의 멤버인지 확인
+        boolean isMember = project.getMembers().stream()
+                .anyMatch(pm -> pm.getMember().getId().equals(member.getId()));
+        if (!isMember) {
+            throw new IllegalArgumentException("해당 프로젝트의 멤버가 아닙니다.");
+        }
+
+        // 프로젝트 생성자는 나갈 수 없음 (프로젝트 소유권을 이전 하던가 해야함)
+        if (project.getCreator().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("프로젝트 생성자는 나갈 수 없습니다.");
+        }
+
+        // 멤버 제거
+        project.getMembers().removeIf(pm -> pm.getMember().getId().equals(member.getId()));
+        projectRepository.save(project);
     }
 }
