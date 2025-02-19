@@ -67,7 +67,7 @@ public class ChatMessageService {
             if (!member.equals(message.getSender())) { // 자기 자신 제외
                 Notification notification = new Notification();
                 notification.setMessage("새로운 메시지가 도착했습니다: " + message.getMessage());
-                notification.setNotificationType(NotificationType.MESSAGE_SEND);
+                notification.setType(NotificationType.MESSAGE_SEND);
                 notification.setRead(false);
                 notification.setMember(member);
                 notificationRepository.save(notification);

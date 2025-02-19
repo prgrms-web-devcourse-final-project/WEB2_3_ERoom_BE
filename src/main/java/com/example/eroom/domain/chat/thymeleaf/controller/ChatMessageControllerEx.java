@@ -37,7 +37,6 @@ public class ChatMessageControllerEx {
                 "/topic/chatroom/" + chatMessageDTO.getChatRoomId(),
                 chatMessageDTO
         );
-
     }
 
 }

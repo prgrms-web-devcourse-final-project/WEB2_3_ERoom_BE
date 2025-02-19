@@ -147,4 +147,16 @@ public class ProjectController {
         return ResponseEntity.ok(projectDetail);
     }
 
+    // 프로젝트 나가기
+    @DeleteMapping("/{projectId}/leave")
+    public ResponseEntity<Void> leaveProject(@PathVariable Long projectId, HttpSession session) {
+        Member currentMember = (Member) session.getAttribute("member");
+        if (currentMember == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        projectService.leaveProject(projectId, currentMember);
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -6,8 +6,8 @@ import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.entity.*;
-import com.example.eroom.domain.chat.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +23,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
     private final NotificationService notificationService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // 현재 사용자가 참여 중인 프로젝트 목록 가져오기
     public List<Project> getProjectsByUser(Member member) {
@@ -110,7 +111,17 @@ public class ProjectService {
             project.getMembers().add(projectMember);
         }
 
-        return projectRepository.save(project);
+        // 프로젝트 저장
+        Project savedProject = projectRepository.save(project);
+
+        // 프로젝트 초대 알림 보내기
+        for (Member member : invitedMembers) {
+            String message = "새로운 프로젝트에 초대되었습니다: " + savedProject.getName();
+            Notification notification = notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId());
+            messagingTemplate.convertAndSend("/topic/notifications/"+member.getId(), notification);
+        }
+
+        return savedProject;
     }
 
     public ProjectUpdateResponseDTO getProjectForEdit(Long projectId) {
@@ -262,5 +273,26 @@ public class ProjectService {
         dto.setTasks(taskDTOList);
 
         return dto;
+    }
+
+    public void leaveProject(Long projectId, Member member) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
+
+        // 현재 사용자가 이 프로젝트의 멤버인지 확인
+        boolean isMember = project.getMembers().stream()
+                .anyMatch(pm -> pm.getMember().getId().equals(member.getId()));
+        if (!isMember) {
+            throw new IllegalArgumentException("해당 프로젝트의 멤버가 아닙니다.");
+        }
+
+        // 프로젝트 생성자는 나갈 수 없음 (프로젝트 소유권을 이전 하던가 해야함)
+        if (project.getCreator().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("프로젝트 생성자는 나갈 수 없습니다.");
+        }
+
+        // 멤버 제거
+        project.getMembers().removeIf(pm -> pm.getMember().getId().equals(member.getId()));
+        projectRepository.save(project);
     }
 }

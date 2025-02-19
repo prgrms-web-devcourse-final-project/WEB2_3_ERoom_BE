@@ -23,9 +23,13 @@ public class ChatMessageServiceEx {
     private final SimpMessagingTemplate messagingTemplate;
 
     public ChatMessage saveMessage(ChatMessage message) {
-        createChatNotification(message);
+        ChatMessage savedMessage = chatMessageRepository.save(message);
 
-        return chatMessageRepository.save(message);
+        createChatNotification(savedMessage);
+
+        // 채팅방 멤버들에게 알림 생성
+
+        return savedMessage;
     }
 
     public List<ChatMessage> getMessagesByRoomId(Long roomId) {
@@ -63,7 +67,7 @@ public class ChatMessageServiceEx {
             if (!member.equals(message.getSender())) { // 자기 자신 제외
                 Notification notification = new Notification();
                 notification.setMessage("새로운 메시지가 도착했습니다: " + message.getMessage());
-                notification.setNotificationType(NotificationType.MESSAGE_SEND);
+                notification.setType(NotificationType.MESSAGE_SEND);
                 notification.setRead(false);
                 notification.setMember(member);
                 notificationRepository.save(notification);
