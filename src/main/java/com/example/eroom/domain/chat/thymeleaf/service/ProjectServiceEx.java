@@ -3,25 +3,23 @@ package com.example.eroom.domain.chat.thymeleaf.service;
 import com.example.eroom.domain.chat.repository.ProjectMemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
-import com.example.eroom.domain.entity.Project;
-import com.example.eroom.domain.entity.Member;
-import com.example.eroom.domain.entity.ProjectMember;
+import com.example.eroom.domain.chat.service.NotificationService;
+import com.example.eroom.domain.entity.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ProjectServiceEx {
 
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
     private final ProjectMemberRepository projectMemberRepository;
-
-    public ProjectServiceEx(ProjectRepository projectRepository, MemberRepository memberRepository, ProjectMemberRepository projectMemberRepository) {
-        this.projectRepository = projectRepository;
-        this.memberRepository = memberRepository;
-        this.projectMemberRepository = projectMemberRepository;
-    }
+    private final NotificationService notificationService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public List<Project> getProjectsByUser(Member member) {
         return projectRepository.findByMembers_Member(member);
@@ -44,6 +42,9 @@ public class ProjectServiceEx {
             member.setProject(project);
             member.setMember(invitedMember);
             projectMemberRepository.save(member);
+            String message = "새로운 프로젝트에 초대되었습니다: " + project.getName();
+            Notification notification = notificationService.createNotification(invitedMember, message, NotificationType.PROJECT_INVITE, project.getId());
+            messagingTemplate.convertAndSend("/topic/notifications/"+member.getId(), notification);
         }
     }
 
