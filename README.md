@@ -48,4 +48,3 @@
 - Spring Data Redis(Access+Driver)
 - spring-boot-starter-websocket
 - SpringDoc OpenAPI Starter
-- Jakarta Servlet API
