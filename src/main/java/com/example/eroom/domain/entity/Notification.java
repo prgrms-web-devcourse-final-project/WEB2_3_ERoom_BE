@@ -27,13 +27,8 @@ public class Notification {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    private NotificationType type; // PROJECT_INVITE, PROJECT_EXIT
-
-    // 연관된 프로젝트
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
+    private NotificationType type; // PROJECT_INVITE, PROJECT_EXIT, MESSAGE_SEND...
 
     // 관련 엔티티의 ID만 저장하는 방식도 괜찮을듯
-    //private Long referenceId;
+    private Long referenceId;
 }

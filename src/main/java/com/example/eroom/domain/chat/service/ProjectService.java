@@ -115,7 +115,7 @@ public class ProjectService {
         // 프로젝트 초대 알림 보내기
         for (Member member : invitedMembers) {
             String message = "새로운 프로젝트에 초대되었습니다: " + savedProject.getName();
-            notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject);
+            notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId());
         }
 
         return savedProject;
