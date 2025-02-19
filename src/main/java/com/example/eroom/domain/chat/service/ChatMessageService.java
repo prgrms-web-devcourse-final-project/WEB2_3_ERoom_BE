@@ -25,6 +25,8 @@ public class ChatMessageService {
     public ChatMessage saveMessage(ChatMessage message) {
         ChatMessage savedMessage = chatMessageRepository.save(message);
 
+        createChatNotification(savedMessage);
+
         // 채팅방 멤버들에게 알림 생성
 
         return savedMessage;
