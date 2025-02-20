@@ -23,4 +23,5 @@ public class ProjectListResponseDTO {
     private LocalDateTime endDate;
     private ProjectStatus status;
     private List<String> memberNames;
+    private Long chatRoomId;
 }

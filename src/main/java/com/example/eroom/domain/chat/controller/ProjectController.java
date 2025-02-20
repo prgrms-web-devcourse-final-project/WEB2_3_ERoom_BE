@@ -52,7 +52,8 @@ public class ProjectController {
                         project.getStatus(),
                         project.getMembers().stream()
                                 .map(pm -> pm.getMember().getUsername()) // 멤버 이름만 추출
-                                .collect(Collectors.toList())
+                                .collect(Collectors.toList()),
+                        project.getChatRooms().get(0).getId()
                 )
         ).collect(Collectors.toList());
 
