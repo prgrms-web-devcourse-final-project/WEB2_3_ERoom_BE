@@ -2,7 +2,7 @@ package com.example.eroom.domain.chat.thymeleaf.controller;
 
 import com.example.eroom.domain.chat.thymeleaf.service.ProjectServiceEx;
 import com.example.eroom.domain.chat.thymeleaf.service.TaskServiceEx;
-import com.example.eroom.domain.chat.thymeleaf.service.MemberService;
+import com.example.eroom.domain.chat.service.MemberService;
 import com.example.eroom.domain.entity.Project;
 import com.example.eroom.domain.entity.Task;
 import com.example.eroom.domain.entity.Member;
