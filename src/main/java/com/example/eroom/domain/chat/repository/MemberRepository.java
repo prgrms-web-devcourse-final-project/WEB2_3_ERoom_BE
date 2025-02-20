@@ -19,4 +19,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findMembersByChatRoomId(@Param("chatRoomId") Long chatRoomId);
 
     Member findByUsername(String username);
+
+    // 멤버 이름으로 검색
+    List<Member> findByUsernameContainingIgnoreCase(String username);
 }
