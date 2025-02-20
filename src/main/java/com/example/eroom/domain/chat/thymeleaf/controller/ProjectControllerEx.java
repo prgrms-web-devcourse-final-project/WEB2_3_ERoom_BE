@@ -47,6 +47,7 @@ public class ProjectControllerEx {
 
         model.addAttribute("project", new Project());
         model.addAttribute("members", memberService.getAllUsersExcept(currentMember));
+
         return "project/create";
     }
 

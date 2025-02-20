@@ -4,6 +4,7 @@ import com.example.eroom.domain.chat.dto.request.ProjectCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.request.ProjectUpdateRequestDTO;
 import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.repository.MemberRepository;
+import com.example.eroom.domain.chat.repository.NotificationRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.entity.*;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class ProjectService {
     private final MemberRepository memberRepository;
     private final NotificationService notificationService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationRepository notificationRepository;
 
     // 현재 사용자가 참여 중인 프로젝트 목록 가져오기
     public List<Project> getProjectsByUser(Member member) {
@@ -118,6 +120,7 @@ public class ProjectService {
         for (Member member : invitedMembers) {
             String message = "새로운 프로젝트에 초대되었습니다: " + savedProject.getName();
             Notification notification = notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId());
+            notificationRepository.save(notification);
             messagingTemplate.convertAndSend("/topic/notifications/"+member.getId(), notification);
         }
 
