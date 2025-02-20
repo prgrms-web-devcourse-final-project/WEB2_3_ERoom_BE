@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Entity
 @Getter
 @Setter
@@ -25,10 +24,19 @@ public class Project {
     private String name;
     private String description; // x
     private LocalDateTime createdAt = LocalDateTime.now();
+
     // 카테고리
-    private String tag1;
-    private String tag2;
-    private String tag3;
+    private String category; // 1개의 카테고리 선택
+
+    @ElementCollection
+    @CollectionTable(name = "project_subcategory1", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "subcategory1")
+    private List<String> subCategories1 = new ArrayList<>(); // 첫 번째 카테고리의 하위 선택
+
+    @ElementCollection
+    @CollectionTable(name = "project_subcategory2", joinColumns = @JoinColumn(name = "project_id"))
+    @Column(name = "subcategory2")
+    private List<String> subCategories2 = new ArrayList<>(); // 두 번째 카테고리의 하위 선택
 
     @Enumerated(EnumType.STRING)
     private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED

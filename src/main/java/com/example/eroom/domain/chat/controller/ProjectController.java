@@ -57,9 +57,9 @@ public class ProjectController {
                     project.getId(),
                     project.getName(),
                     project.getCreatedAt(),
-                    project.getTag1(),
-                    project.getTag2(),
-                    project.getTag3(),
+                    project.getCategory(),
+                    project.getSubCategories1(),
+                    project.getSubCategories2(),
                     project.getStartDate(),
                     project.getEndDate(),
                     project.getStatus(),
@@ -146,8 +146,12 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        projectService.softDeleteProject(projectId);
-        return ResponseEntity.noContent().build();
+        try {
+            projectService.softDeleteProject(projectId, currentMember);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
     }
 
 
