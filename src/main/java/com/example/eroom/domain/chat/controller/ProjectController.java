@@ -7,6 +7,7 @@ import com.example.eroom.domain.chat.service.ChatRoomService;
 import com.example.eroom.domain.chat.service.ProjectService;
 import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.Project;
+import com.example.eroom.domain.entity.TaskStatus;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,22 +39,37 @@ public class ProjectController {
         System.out.println("조회된 프로젝트 수: " + projects.size()); // 확인용 로그
 
         // DTO로 변환
-        List<ProjectListResponseDTO> projectList = projects.stream().map(project ->
-                new ProjectListResponseDTO(
-                        project.getId(),
-                        project.getName(),
-                        project.getCreatedAt(),
-                        project.getTag1(),
-                        project.getTag2(),
-                        project.getTag3(),
-                        project.getStartDate(),
-                        project.getEndDate(),
-                        project.getStatus(),
-                        project.getMembers().stream()
-                                .map(pm -> pm.getMember().getUsername()) // 멤버 이름만 추출
-                                .collect(Collectors.toList())
-                )
-        ).collect(Collectors.toList());
+        List<ProjectListResponseDTO> projectList = projects.stream().map(project -> {
+            // Task 상태별 개수
+            long completedTasks = project.getTasks().stream()
+                    .filter(task -> task.getStatus() == TaskStatus.COMPLETED)
+                    .count();
+
+            long inProgressOrBeforeStartTasks = project.getTasks().stream()
+                    .filter(task -> task.getStatus() == TaskStatus.IN_PROGRESS || task.getStatus() == TaskStatus.BEFORE_START)
+                    .count();
+
+            // 진행률 계산 (완료된 작업이 없으면 0%)
+            double progressRate = (completedTasks == 0) ? 0.0
+                    : (double) completedTasks / (completedTasks + inProgressOrBeforeStartTasks) * 100;
+
+            return new ProjectListResponseDTO(
+                    project.getId(),
+                    project.getName(),
+                    project.getCreatedAt(),
+                    project.getTag1(),
+                    project.getTag2(),
+                    project.getTag3(),
+                    project.getStartDate(),
+                    project.getEndDate(),
+                    project.getStatus(),
+                    project.getMembers().stream()
+                            .map(pm -> pm.getMember().getUsername()) // 멤버 이름만 추출
+                            .collect(Collectors.toList()),
+                    project.getChatRooms().get(0).getId(),
+                    progressRate
+            );
+        }).collect(Collectors.toList());
 
         return ResponseEntity.ok(projectList);
     }
