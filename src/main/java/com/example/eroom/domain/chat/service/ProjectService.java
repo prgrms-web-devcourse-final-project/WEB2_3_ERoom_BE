@@ -42,9 +42,9 @@ public class ProjectService {
         dto.setProjectId(project.getId());
         dto.setProjectName(project.getName());
         dto.setDescription(project.getDescription());
-        dto.setTag1(project.getTag1());
-        dto.setTag2(project.getTag2());
-        dto.setTag3(project.getTag3());
+        dto.setCategory(project.getCategory());
+        dto.setSubCategories1(project.getSubCategories1());
+        dto.setSubCategories2(project.getSubCategories2());
         dto.setStartDate(project.getStartDate());
         dto.setEndDate(project.getEndDate());
         dto.setStatus(project.getStatus());
@@ -87,9 +87,9 @@ public class ProjectService {
         Project project = new Project();
         project.setName(dto.getName()); // 프로젝트 이름
         project.setDescription(dto.getDescription()); // 프로젝트 설명
-        project.setTag1(dto.getTag1()); // 카테고리1
-        project.setTag2(dto.getTag2()); // 카테고리2
-        project.setTag3(dto.getTag3()); // 카테고리3
+        project.setCategory(dto.getCategory()); // 카테고리1
+        project.setSubCategories1(dto.getSubCategories1()); // 카테고리2
+        project.setSubCategories2(dto.getSubCategories2()); // 카테고리3
         project.setStartDate(dto.getStartDate()); // 시작일
         project.setEndDate(dto.getEndDate()); // 마감일
         project.setStatus(ProjectStatus.BEFORE_START); // 프로젝트 상태(기본값 : 시작 전)
@@ -134,9 +134,9 @@ public class ProjectService {
         ProjectUpdateResponseDTO dto = new ProjectUpdateResponseDTO();
         dto.setId(project.getId());
         dto.setName(project.getName());
-        dto.setTag1(project.getTag1());
-        dto.setTag2(project.getTag2());
-        dto.setTag3(project.getTag3());
+        dto.setCategory(project.getCategory());
+        dto.setSubCategories1(project.getSubCategories1());
+        dto.setSubCategories2(project.getSubCategories2());
         dto.setStartDate(project.getStartDate());
         dto.setEndDate(project.getEndDate());
         dto.setStatus(project.getStatus());
@@ -164,9 +164,9 @@ public class ProjectService {
             project.setName(projectUpdateRequestDTO.getName());
         }
         // 태그 수정
-        project.setTag1(projectUpdateRequestDTO.getTag1());
-        project.setTag2(projectUpdateRequestDTO.getTag2());
-        project.setTag3(projectUpdateRequestDTO.getTag3());
+        project.setCategory(projectUpdateRequestDTO.getCategory());
+        project.setSubCategories1(projectUpdateRequestDTO.getSubCategories1());
+        project.setSubCategories2(projectUpdateRequestDTO.getSubCategories2());
 
         // 시작일, 종료일 수정
         project.setStartDate(projectUpdateRequestDTO.getStartDate());
