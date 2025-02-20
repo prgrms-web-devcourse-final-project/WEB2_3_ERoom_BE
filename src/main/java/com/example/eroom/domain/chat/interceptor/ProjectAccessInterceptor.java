@@ -1,7 +1,6 @@
 package com.example.eroom.domain.chat.interceptor;
 
 import com.example.eroom.domain.chat.service.ProjectService;
-import com.example.eroom.domain.chat.thymeleaf.service.ProjectServiceEx;
 import com.example.eroom.domain.entity.Member;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>알림 페이지</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+</head>
+<body>
+<h1>알림</h1>
+<ul id="notificationList">
+    <!-- 여기에 알림이 추가됨 -->
+</ul>
+
+<script>
+    let socket = new SockJS('/ws'); // WebSocket 엔드포인트
+    let stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+        console.log("Connected: " + frame);
+
+        // ✅ 현재 로그인한 사용자의 알림을 구독
+        stompClient.subscribe('/user/queue/notifications', function (message) {
+            let notification = JSON.parse(message.body);
+            showNotification(notification);
+        });
+    });
+
+    function showNotification(notification) {
+        let list = document.getElementById("notificationList");
+        let li = document.createElement("li");
+        li.innerText = notification;
+        list.appendChild(li);
+    }
+</script>
+</body>
+</html>

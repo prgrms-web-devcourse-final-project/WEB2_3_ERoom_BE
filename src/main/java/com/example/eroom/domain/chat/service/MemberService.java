@@ -1,4 +1,4 @@
-package com.example.eroom.domain.chat.thymeleaf.service;
+package com.example.eroom.domain.chat.service;
 
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.entity.Member;
@@ -30,5 +30,15 @@ public class MemberService {
 
     public List<Member> getAllMembers() {
         return memberRepository.findAll();
+    }
+
+    public Member getMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found with ID: " + memberId));
+    }
+
+    // Username으로 멤버 조회
+    public Member getMemberByUsername(String username) {
+        return memberRepository.findByUsername(username);
     }
 }

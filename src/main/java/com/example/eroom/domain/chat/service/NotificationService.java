@@ -20,10 +20,10 @@ public class NotificationService {
     private final SimpMessagingTemplate messagingTemplate;
 
     // 알림 생성
-    public void createNotification(Member recipient, String message, NotificationType type, Long projectId) {
+    public Notification createNotification(Member recipient, String message, NotificationType type, Long projectId) {
 
         Notification notification = new Notification();
-        notification.setRecipient(recipient);
+        notification.setMember(recipient);
         notification.setMessage(message);
         notification.setRead(false);
         notification.setCreatedAt(LocalDateTime.now());
@@ -34,11 +34,12 @@ public class NotificationService {
 
         // 웹소켓으로 실시간 알림 전송
         messagingTemplate.convertAndSend("/notifications/" + recipient.getId(), message);
+        return notification;
     }
 
     // 읽지 않은 알림 조회
     public List<Notification> getUnreadNotifications(Member member) {
-        return notificationRepository.findByRecipientAndIsReadFalse(member);
+        return notificationRepository.findByMemberAndIsReadFalseOrderByCreatedAtDesc(member);
     }
 
     // 알림 읽음 처리

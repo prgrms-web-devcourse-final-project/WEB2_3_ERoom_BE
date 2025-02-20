@@ -17,12 +17,12 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member recipient; // 알림을 받는 유저
-
     private String message;
     private boolean isRead;
+
+    @ManyToOne
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
     private LocalDateTime createdAt;
 

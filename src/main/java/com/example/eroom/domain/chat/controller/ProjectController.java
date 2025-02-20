@@ -2,7 +2,6 @@ package com.example.eroom.domain.chat.controller;
 
 import com.example.eroom.domain.chat.dto.request.ProjectCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.request.ProjectUpdateRequestDTO;
-import com.example.eroom.domain.chat.dto.request.TaskCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.service.ChatRoomService;
 import com.example.eroom.domain.chat.service.ProjectService;

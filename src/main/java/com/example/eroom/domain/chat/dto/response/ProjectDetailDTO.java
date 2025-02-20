@@ -1,9 +1,7 @@
 package com.example.eroom.domain.chat.dto.response;
 
-import com.example.eroom.domain.entity.ProjectStatus;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data

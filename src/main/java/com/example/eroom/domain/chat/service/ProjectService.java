@@ -7,6 +7,7 @@ import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.entity.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ public class ProjectService {
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
     private final NotificationService notificationService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     // 현재 사용자가 참여 중인 프로젝트 목록 가져오기
     public List<Project> getProjectsByUser(Member member) {
@@ -115,7 +117,8 @@ public class ProjectService {
         // 프로젝트 초대 알림 보내기
         for (Member member : invitedMembers) {
             String message = "새로운 프로젝트에 초대되었습니다: " + savedProject.getName();
-            notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId());
+            Notification notification = notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId());
+            messagingTemplate.convertAndSend("/topic/notifications/"+member.getId(), notification);
         }
 
         return savedProject;
@@ -223,6 +226,7 @@ public class ProjectService {
         project.setDeleteStatus(DeleteStatus.DELETED);
         projectRepository.save(project);
     }
+
 
     public Project getProjectById(Long projectId) {
 //        return projectRepository.findById(projectId)
