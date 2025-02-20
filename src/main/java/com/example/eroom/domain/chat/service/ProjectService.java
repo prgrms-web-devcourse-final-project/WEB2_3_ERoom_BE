@@ -30,7 +30,8 @@ public class ProjectService {
 
     // 현재 사용자가 참여 중인 프로젝트 목록 가져오기
     public List<Project> getProjectsByUser(Member member) {
-        return projectRepository.findByMembers_Member(member);
+//        return projectRepository.findByMembers_Member(member);
+        return projectRepository.findByMembers_MemberAndDeleteStatus(member, DeleteStatus.ACTIVE);
     }
 
     // 프로젝트 상세
