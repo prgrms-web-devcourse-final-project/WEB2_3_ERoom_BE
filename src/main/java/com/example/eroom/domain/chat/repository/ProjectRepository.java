@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,4 +23,11 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     // 프로젝트 이름으로 검색
     List<Project> findByNameContainingIgnoreCase(String name);
+
+    // 현재 시각 + 24시간이 endDate와 일치하는 프로젝트 조회
+    @Query("SELECT p FROM Project p WHERE p.endDate BETWEEN :startOfNextDay AND :endOfNextDay")
+    List<Project> findProjectsEndingIn24Hours(
+            @Param("startOfNextDay") LocalDateTime startOfNextDay,
+            @Param("endOfNextDay") LocalDateTime endOfNextDay
+    );
 }
