@@ -9,6 +9,7 @@ import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -308,5 +309,21 @@ public class ProjectService {
         // 멤버 제거
         project.getMembers().removeIf(pm -> pm.getMember().getId().equals(member.getId()));
         projectRepository.save(project);
+    }
+
+    @Scheduled(cron = "0 0 * * * ?") // 매 시간 정각(00:00, 01:00, 02:00...) 실행
+    public void sendEndDateReminder() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startOfNextDay = now.plusHours(24); // 정확히 24시간 후
+        LocalDateTime endOfNextDay = startOfNextDay.plusHours(1); // 1시간 범위
+
+        List<Project> projects = projectRepository.findProjectsEndingIn24Hours(startOfNextDay, endOfNextDay);
+
+        for (Project project : projects) {
+            for(ProjectMember projectMember : project.getMembers()){
+                String message = "프로젝트가 마감 24시간 전입니다: " + project.getName();
+                notificationService.createNotification(projectMember.getMember(), message, NotificationType.PROJECT_EXIT, project.getId());// 알림생성, 저장, 알림 전송
+            }
+        }
     }
 }
