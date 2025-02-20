@@ -146,8 +146,12 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        projectService.softDeleteProject(projectId);
-        return ResponseEntity.noContent().build();
+        try {
+            projectService.softDeleteProject(projectId, currentMember);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
     }
 
 

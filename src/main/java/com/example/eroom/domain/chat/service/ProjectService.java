@@ -219,9 +219,21 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public void softDeleteProject(Long projectId) {
+    public void softDeleteProject(Long projectId, Member currentMember) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
+
+        // 프로젝트 생성자가 아닌 경우 예외 발생
+        if (!project.getCreator().getId().equals(currentMember.getId())) {
+            System.out.println("프로젝트 생성자만 삭제할 수 있습니다.");
+            throw new IllegalStateException("프로젝트 생성자만 삭제할 수 있습니다.");
+        }
+
+        // 프로젝트에 속한 멤버가 생성자 혼자만 있는 경우에만 삭제 가능
+        if (project.getMembers().size() > 1) {
+            System.out.println("프로젝트에 다른 멤버가 없어야 삭제할 수 있습니다.");
+            throw new IllegalStateException("프로젝트에 다른 멤버가 없어야 삭제할 수 있습니다.");
+        }
 
         project.setDeleteStatus(DeleteStatus.DELETED);
         projectRepository.save(project);
