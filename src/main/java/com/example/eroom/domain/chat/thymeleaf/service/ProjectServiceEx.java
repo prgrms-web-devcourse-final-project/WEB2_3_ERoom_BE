@@ -1,27 +1,25 @@
 package com.example.eroom.domain.chat.thymeleaf.service;
 
+import com.example.eroom.domain.chat.repository.NotificationRepository;
 import com.example.eroom.domain.chat.repository.ProjectMemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
-import com.example.eroom.domain.entity.Project;
-import com.example.eroom.domain.entity.Member;
-import com.example.eroom.domain.entity.ProjectMember;
+import com.example.eroom.domain.entity.*;
+import lombok.AllArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
 public class ProjectServiceEx {
 
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
     private final ProjectMemberRepository projectMemberRepository;
-
-    public ProjectServiceEx(ProjectRepository projectRepository, MemberRepository memberRepository, ProjectMemberRepository projectMemberRepository) {
-        this.projectRepository = projectRepository;
-        this.memberRepository = memberRepository;
-        this.projectMemberRepository = projectMemberRepository;
-    }
+    private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationRepository notificationRepository;
 
     public List<Project> getProjectsByUser(Member member) {
         return projectRepository.findByMembers_Member(member);
@@ -44,6 +42,13 @@ public class ProjectServiceEx {
             member.setProject(project);
             member.setMember(invitedMember);
             projectMemberRepository.save(member);
+            Notification notification = new Notification();
+            notification.setMessage("새로운 프로젝트가 생성됐습니다: " + project.getName());
+            notification.setType(NotificationType.PROJECT_INVITE);
+            notification.setRead(false);
+            notification.setMember(memberRepository.findByUsername(member.getMember().getUsername()));
+            notificationRepository.save(notification);
+            messagingTemplate.convertAndSend("/topic/notifications/" + member.getId(), project);
         }
     }
 

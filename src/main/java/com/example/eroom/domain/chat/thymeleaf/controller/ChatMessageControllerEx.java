@@ -1,13 +1,23 @@
 package com.example.eroom.domain.chat.thymeleaf.controller;
 
 import com.example.eroom.domain.chat.dto.ChatMessageDTO;
+import com.example.eroom.domain.chat.service.NotificationService;
 import com.example.eroom.domain.chat.thymeleaf.service.ChatMessageServiceEx;
+import com.example.eroom.domain.chat.service.MemberService;
 import com.example.eroom.domain.entity.ChatMessage;
+import com.example.eroom.domain.entity.Member;
+import com.example.eroom.domain.entity.Notification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -15,6 +25,8 @@ public class ChatMessageControllerEx {
 
     private final ChatMessageServiceEx chatMessageServiceEx;
     private final SimpMessagingTemplate messagingTemplate;
+    private final MemberService memberService;
+    private final NotificationService notificationService;
 
 //    @MessageMapping("/chat/send")
 //    @SendTo("/topic/chatroom/{roomId}")
@@ -37,6 +49,18 @@ public class ChatMessageControllerEx {
                 "/topic/chatroom/" + chatMessageDTO.getChatRoomId(),
                 chatMessageDTO
         );
+    }
+
+    @GetMapping("/notifications/{memberId}")
+    public String Notifications(@PathVariable Long memberId, Model model) {
+        Member member = memberService.getMemberById(memberId);
+
+        List<Notification> notifications = notificationService.getUnreadNotifications(member);
+
+        model.addAttribute("notifications", notifications);
+        model.addAttribute("currentMember", member);
+
+        return "notification";
     }
 
 }
