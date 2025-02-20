@@ -4,13 +4,11 @@ import com.example.eroom.domain.chat.dto.request.TaskCreateRequestDTO;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.chat.repository.TaskRepository;
-import com.example.eroom.domain.entity.Member;
-import com.example.eroom.domain.entity.Project;
-import com.example.eroom.domain.entity.Task;
-import com.example.eroom.domain.entity.TaskMember;
+import com.example.eroom.domain.entity.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +19,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 
     public void createTask(TaskCreateRequestDTO requestDTO) {
         Project project = projectRepository.findById(requestDTO.getProjectId())
@@ -50,6 +49,12 @@ public class TaskService {
                     taskMember.setMember(member);
                     return taskMember;
                 }).collect(Collectors.toList());
+
+        for(TaskMember taskMember : participants){
+            Member member = taskMember.getMember();
+            String message = "새로운 업무에 배정되었습니다: " + member.getUsername();
+            notificationService.createNotification(member, message, NotificationType.TASK_ASSIGN, taskMember.getTask().getId());
+        }
 
         task.setParticipants(participants);
         taskRepository.save(task);
