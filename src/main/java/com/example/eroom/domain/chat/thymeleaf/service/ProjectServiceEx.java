@@ -1,25 +1,25 @@
 package com.example.eroom.domain.chat.thymeleaf.service;
 
+import com.example.eroom.domain.chat.repository.MemberRepository;
+import com.example.eroom.domain.chat.repository.NotificationRepository;
 import com.example.eroom.domain.chat.repository.ProjectMemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
-import com.example.eroom.domain.chat.repository.MemberRepository;
-import com.example.eroom.domain.chat.service.NotificationService;
 import com.example.eroom.domain.entity.*;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@AllArgsConstructor
 @Service
-@RequiredArgsConstructor
 public class ProjectServiceEx {
 
     private final ProjectRepository projectRepository;
     private final MemberRepository memberRepository;
     private final ProjectMemberRepository projectMemberRepository;
-    private final NotificationService notificationService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final NotificationRepository notificationRepository;
 
     public List<Project> getProjectsByUser(Member member) {
         return projectRepository.findByMembers_Member(member);
@@ -42,9 +42,13 @@ public class ProjectServiceEx {
             member.setProject(project);
             member.setMember(invitedMember);
             projectMemberRepository.save(member);
-            String message = "새로운 프로젝트에 초대되었습니다: " + project.getName();
-            Notification notification = notificationService.createNotification(invitedMember, message, NotificationType.PROJECT_INVITE, project.getId());
-            messagingTemplate.convertAndSend("/topic/notifications/"+member.getId(), notification);
+            Notification notification = new Notification();
+            notification.setMessage("새로운 프로젝트가 생성됐습니다: " + project.getName());
+            notification.setType(NotificationType.PROJECT_INVITE);
+            notification.setRead(false);
+            notification.setMember(memberRepository.findByUsername(member.getMember().getUsername()));
+            notificationRepository.save(notification);
+            messagingTemplate.convertAndSend("/topic/notifications/" + member.getId(), project);
         }
     }
 
