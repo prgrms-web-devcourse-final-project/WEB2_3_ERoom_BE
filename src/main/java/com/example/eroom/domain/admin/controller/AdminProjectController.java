@@ -16,11 +16,9 @@ public class AdminProjectController {
 
     @GetMapping("/list")
     public ResponseEntity<List<AdminProjectDTO>> projectList() {
-        // 전체 프로젝트 목록
         List<AdminProjectDTO> totalProjects = adminProjectService.getTotalProjects();
         return ResponseEntity.ok(totalProjects);
     }
-
 
     @PutMapping("/{projectId}/modify")
     public ResponseEntity<AdminProjectDTO> projectModify(

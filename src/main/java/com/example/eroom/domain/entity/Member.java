@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDate;
 
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE member SET delete_status = 'DELETED' WHERE id = ?")
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
