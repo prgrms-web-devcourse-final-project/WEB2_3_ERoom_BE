@@ -8,6 +8,7 @@ import com.example.eroom.domain.chat.repository.NotificationRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.entity.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
@@ -310,15 +314,18 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    @Scheduled(cron = "0 0 * * * ?") // 매 시간 정각(00:00, 01:00, 02:00...) 실행
+    @Scheduled(cron = "0 */10 * * * ?") // 매 시간 정각(00:00, 01:00, 02:00...) 실행
     public void sendEndDateReminder() {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startOfNextDay = now.plusHours(24); // 정확히 24시간 후
-        LocalDateTime endOfNextDay = startOfNextDay.plusHours(1); // 1시간 범위
+        LocalDateTime now = LocalDateTime.now().withNano(0);
+        LocalDateTime startOfNextDay = now.plusHours(24).withNano(0); // 정확히 24시간 후
+        LocalDateTime endOfNextDay = startOfNextDay.plusMinutes(10).withNano(0); // 1시간 범위
 
         List<Project> projects = projectRepository.findProjectsEndingIn24Hours(startOfNextDay, endOfNextDay);
 
+        log.info("24시간 후 종료될 프로젝트 수: " + projects.size());
+
         for (Project project : projects) {
+            log.info("알림 전송 대상 프로젝트: " + project.getName());
             for(ProjectMember projectMember : project.getMembers()){
                 String message = "프로젝트가 마감 24시간 전입니다: " + project.getName();
                 notificationService.createNotification(projectMember.getMember(), message, NotificationType.PROJECT_EXIT, project.getId());// 알림생성, 저장, 알림 전송
