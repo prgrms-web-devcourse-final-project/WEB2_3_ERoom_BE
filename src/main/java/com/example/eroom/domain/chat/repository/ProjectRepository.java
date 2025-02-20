@@ -19,4 +19,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     Optional<Project> findByIdWithMembers(@Param("projectId") Long projectId);
 
     Optional<Project> findById(Long id);
+
+    // 프로젝트 이름으로 검색
+    List<Project> findByNameContainingIgnoreCase(String name);
 }
