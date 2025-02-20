@@ -24,4 +24,5 @@ public class ProjectListResponseDTO {
     private ProjectStatus status;
     private List<String> memberNames;
     private Long chatRoomId;
+    private double progressRate;
 }
