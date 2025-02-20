@@ -1,4 +1,4 @@
-package com.example.eroom.domain.admin.dto;
+package com.example.eroom.domain.admin.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,11 +9,11 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-public class MemberCountDTO {
+public class TotalMemberCountDTO {
     private LocalDate startDate;
     private Long totalMembers;
 
-    public MemberCountDTO(LocalDate startDate, Long totalMembers) {
+    public TotalMemberCountDTO(LocalDate startDate, Long totalMembers) {
         this.startDate = startDate;
         this.totalMembers = totalMembers;
     }
