@@ -142,7 +142,7 @@ public class ProjectController {
     }
 
     // 프로젝트 삭제 (softDelete)
-    @PatchMapping("/{projectId}/delete")
+    @DeleteMapping("/{projectId}/delete")
     public ResponseEntity<Void> softDeleteProject(@PathVariable Long projectId, HttpSession session) {
         Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
