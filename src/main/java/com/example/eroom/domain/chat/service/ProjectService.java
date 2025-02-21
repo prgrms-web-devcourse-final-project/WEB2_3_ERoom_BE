@@ -8,7 +8,9 @@ import com.example.eroom.domain.chat.repository.NotificationRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.entity.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +18,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
@@ -29,7 +34,8 @@ public class ProjectService {
 
     // 현재 사용자가 참여 중인 프로젝트 목록 가져오기
     public List<Project> getProjectsByUser(Member member) {
-        return projectRepository.findByMembers_Member(member);
+//        return projectRepository.findByMembers_Member(member);
+        return projectRepository.findByMembers_MemberAndDeleteStatus(member, DeleteStatus.ACTIVE);
     }
 
     // 프로젝트 상세
@@ -42,9 +48,9 @@ public class ProjectService {
         dto.setProjectId(project.getId());
         dto.setProjectName(project.getName());
         dto.setDescription(project.getDescription());
-        dto.setTag1(project.getTag1());
-        dto.setTag2(project.getTag2());
-        dto.setTag3(project.getTag3());
+        dto.setCategory(project.getCategory());
+        dto.setSubCategories1(project.getSubCategories1());
+        dto.setSubCategories2(project.getSubCategories2());
         dto.setStartDate(project.getStartDate());
         dto.setEndDate(project.getEndDate());
         dto.setStatus(project.getStatus());
@@ -87,9 +93,9 @@ public class ProjectService {
         Project project = new Project();
         project.setName(dto.getName()); // 프로젝트 이름
         project.setDescription(dto.getDescription()); // 프로젝트 설명
-        project.setTag1(dto.getTag1()); // 카테고리1
-        project.setTag2(dto.getTag2()); // 카테고리2
-        project.setTag3(dto.getTag3()); // 카테고리3
+        project.setCategory(dto.getCategory()); // 카테고리1
+        project.setSubCategories1(dto.getSubCategories1()); // 카테고리2
+        project.setSubCategories2(dto.getSubCategories2()); // 카테고리3
         project.setStartDate(dto.getStartDate()); // 시작일
         project.setEndDate(dto.getEndDate()); // 마감일
         project.setStatus(ProjectStatus.BEFORE_START); // 프로젝트 상태(기본값 : 시작 전)
@@ -119,9 +125,7 @@ public class ProjectService {
         // 프로젝트 초대 알림 보내기
         for (Member member : invitedMembers) {
             String message = "새로운 프로젝트에 초대되었습니다: " + savedProject.getName();
-            Notification notification = notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId());
-            notificationRepository.save(notification);
-            messagingTemplate.convertAndSend("/topic/notifications/"+member.getId(), notification);
+            notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId());// 알림생성, 저장, 알림 전송
         }
 
         return savedProject;
@@ -134,9 +138,9 @@ public class ProjectService {
         ProjectUpdateResponseDTO dto = new ProjectUpdateResponseDTO();
         dto.setId(project.getId());
         dto.setName(project.getName());
-        dto.setTag1(project.getTag1());
-        dto.setTag2(project.getTag2());
-        dto.setTag3(project.getTag3());
+        dto.setCategory(project.getCategory());
+        dto.setSubCategories1(project.getSubCategories1());
+        dto.setSubCategories2(project.getSubCategories2());
         dto.setStartDate(project.getStartDate());
         dto.setEndDate(project.getEndDate());
         dto.setStatus(project.getStatus());
@@ -164,9 +168,9 @@ public class ProjectService {
             project.setName(projectUpdateRequestDTO.getName());
         }
         // 태그 수정
-        project.setTag1(projectUpdateRequestDTO.getTag1());
-        project.setTag2(projectUpdateRequestDTO.getTag2());
-        project.setTag3(projectUpdateRequestDTO.getTag3());
+        project.setCategory(projectUpdateRequestDTO.getCategory());
+        project.setSubCategories1(projectUpdateRequestDTO.getSubCategories1());
+        project.setSubCategories2(projectUpdateRequestDTO.getSubCategories2());
 
         // 시작일, 종료일 수정
         project.setStartDate(projectUpdateRequestDTO.getStartDate());
@@ -222,9 +226,21 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
-    public void softDeleteProject(Long projectId) {
+    public void softDeleteProject(Long projectId, Member currentMember) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
+
+        // 프로젝트 생성자가 아닌 경우 예외 발생
+        if (!project.getCreator().getId().equals(currentMember.getId())) {
+            System.out.println("프로젝트 생성자만 삭제할 수 있습니다.");
+            throw new IllegalStateException("프로젝트 생성자만 삭제할 수 있습니다.");
+        }
+
+        // 프로젝트에 속한 멤버가 생성자 혼자만 있는 경우에만 삭제 가능
+        if (project.getMembers().size() > 1) {
+            System.out.println("프로젝트에 다른 멤버가 없어야 삭제할 수 있습니다.");
+            throw new IllegalStateException("프로젝트에 다른 멤버가 없어야 삭제할 수 있습니다.");
+        }
 
         project.setDeleteStatus(DeleteStatus.DELETED);
         projectRepository.save(project);
@@ -297,5 +313,24 @@ public class ProjectService {
         // 멤버 제거
         project.getMembers().removeIf(pm -> pm.getMember().getId().equals(member.getId()));
         projectRepository.save(project);
+    }
+
+    @Scheduled(cron = "0 */10 * * * ?") // 매 시간 정각(00:00, 01:00, 02:00...) 실행
+    public void sendEndDateReminder() {
+        LocalDateTime now = LocalDateTime.now().withNano(0);
+        LocalDateTime startOfNextDay = now.plusHours(24).withNano(0); // 정확히 24시간 후
+        LocalDateTime endOfNextDay = startOfNextDay.plusMinutes(10).withNano(0); // 1시간 범위
+
+        List<Project> projects = projectRepository.findProjectsEndingIn24Hours(startOfNextDay, endOfNextDay);
+
+        log.info("24시간 후 종료될 프로젝트 수: " + projects.size());
+
+        for (Project project : projects) {
+            log.info("알림 전송 대상 프로젝트: " + project.getName());
+            for(ProjectMember projectMember : project.getMembers()){
+                String message = "프로젝트가 마감 24시간 전입니다: " + project.getName();
+                notificationService.createNotification(projectMember.getMember(), message, NotificationType.PROJECT_EXIT, project.getId());// 알림생성, 저장, 알림 전송
+            }
+        }
     }
 }

@@ -4,7 +4,6 @@ import com.example.eroom.domain.chat.dto.request.ProjectCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.request.ProjectUpdateRequestDTO;
 import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.service.ChatRoomService;
-import com.example.eroom.domain.chat.service.MemberService;
 import com.example.eroom.domain.chat.service.ProjectService;
 import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.Project;
@@ -13,7 +12,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +24,6 @@ public class ProjectController {
 
     private final ProjectService projectService;
     private final ChatRoomService chatRoomService;
-    private final SimpMessagingTemplate messagingTemplate;
 
     // 프로젝트 목록 보기
     @GetMapping("/list")
@@ -60,9 +57,9 @@ public class ProjectController {
                     project.getId(),
                     project.getName(),
                     project.getCreatedAt(),
-                    project.getTag1(),
-                    project.getTag2(),
-                    project.getTag3(),
+                    project.getCategory(),
+                    project.getSubCategories1(),
+                    project.getSubCategories2(),
                     project.getStartDate(),
                     project.getEndDate(),
                     project.getStatus(),
@@ -149,8 +146,12 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        projectService.softDeleteProject(projectId);
-        return ResponseEntity.noContent().build();
+        try {
+            projectService.softDeleteProject(projectId, currentMember);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
     }
 
 

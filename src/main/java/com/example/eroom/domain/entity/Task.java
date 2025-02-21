@@ -26,6 +26,9 @@ public class Task {
     private LocalDateTime endDate;
 
     @Enumerated(EnumType.STRING)
+    private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
+
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status = TaskStatus.BEFORE_START; // 테스크 상태 기본값 BEFORE_START
 
