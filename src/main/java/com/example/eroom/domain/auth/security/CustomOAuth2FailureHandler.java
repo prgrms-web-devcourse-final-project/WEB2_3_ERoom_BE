@@ -17,7 +17,7 @@ public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler 
             String redirectUrl = ((OAuth2RedirectException) exception.getCause()).getRedirectUrl();
             response.sendRedirect(redirectUrl);
         } else {
-            response.sendRedirect("/auth/login?error"); // 일반적인 로그인 실패
+            response.sendRedirect("/auth/login?error");
         }
     }
 }

@@ -33,7 +33,7 @@ public class CustomOAuth2Member implements OAuth2User {
 
     @Override
     public String getName() {
-        return String.valueOf(member.getId()); // ID 반환 (일반적으로 보안적으로 안전)
+        return String.valueOf(member.getId());
     }
 
     public Member getMember() {

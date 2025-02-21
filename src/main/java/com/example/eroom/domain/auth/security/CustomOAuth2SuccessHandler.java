@@ -33,7 +33,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         HttpSession session = request.getSession();
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        // ✅ GUEST 사용자라면 회원가입 페이지로 리디렉트
+        // GUEST 사용자라면 회원가입 페이지로 리디렉트
         if (oAuth2User.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_GUEST"))) {
             response.sendRedirect("/auth/signup");

@@ -56,7 +56,7 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
             session.setAttribute("oauth_name", name);
             session.setAttribute("oauth_profile", profile);
 
-            // ✅ **가짜 OAuth2User 객체 생성해서 반환 (ROLE_GUEST)**
+            // 가짜 OAuth2User 객체 생성해서 반환 (ROLE_GUEST)
             return new DefaultOAuth2User(
                     Collections.singleton(new SimpleGrantedAuthority("ROLE_GUEST")),
                     oAuth2User.getAttributes(),
@@ -64,7 +64,7 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
             );
         }
 
-        // ✅ 기존 회원이면 계속 진행
+        // 기존 회원이면 계속 진행
         Member member = existingMember.get();
         session.setAttribute("member", member);
 

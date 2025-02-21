@@ -26,12 +26,13 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // CSRF 비활성화 (필요하면 설정)
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/auth/login", "/auth/signup").permitAll() // 비로그인 사용자 접근 가능
+                        .requestMatchers("/", "/auth/login", "/auth/signup").permitAll()
+                        .requestMatchers("/project/list").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
-                .oauth2Login(oauth2 -> oauth2 // 소셜 로그인
+                .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                         .defaultSuccessUrl("/project/list", true)
                         .successHandler(successHandler)
