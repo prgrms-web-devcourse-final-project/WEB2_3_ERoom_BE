@@ -3,6 +3,8 @@ package com.example.eroom.domain.chat.service;
 import com.example.eroom.domain.chat.dto.request.ProjectCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.request.ProjectUpdateRequestDTO;
 import com.example.eroom.domain.chat.dto.response.*;
+import com.example.eroom.domain.chat.error.CustomException;
+import com.example.eroom.domain.chat.error.ErrorCode;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.NotificationRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
@@ -44,7 +46,7 @@ public class ProjectService {
     public ProjectDetailChatDTO getProjectDetail(Long projectId) {
 
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid project Id:" + projectId));
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         ProjectDetailChatDTO dto = new ProjectDetailChatDTO();
         dto.setProjectId(project.getId());
@@ -134,8 +136,9 @@ public class ProjectService {
     }
 
     public ProjectUpdateResponseDTO getProjectForEdit(Long projectId) {
+
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         ProjectUpdateResponseDTO dto = new ProjectUpdateResponseDTO();
         dto.setId(project.getId());
@@ -166,8 +169,9 @@ public class ProjectService {
     }
 
     public void updateProject(Long projectId, ProjectUpdateRequestDTO projectUpdateRequestDTO) {
+
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         // 이름 수정
         if (projectUpdateRequestDTO.getName() != null) {
@@ -234,18 +238,18 @@ public class ProjectService {
 
     public void softDeleteProject(Long projectId, Member currentMember) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         // 프로젝트 생성자가 아닌 경우 예외 발생
         if (!project.getCreator().getId().equals(currentMember.getId())) {
             System.out.println("프로젝트 생성자만 삭제할 수 있습니다.");
-            throw new IllegalStateException("프로젝트 생성자만 삭제할 수 있습니다.");
+            throw new CustomException(ErrorCode.INVALID_PROJECT_CREATOR);
         }
 
         // 프로젝트에 속한 멤버가 생성자 혼자만 있는 경우에만 삭제 가능
         if (project.getMembers().size() > 1) {
             System.out.println("프로젝트에 다른 멤버가 없어야 삭제할 수 있습니다.");
-            throw new IllegalStateException("프로젝트에 다른 멤버가 없어야 삭제할 수 있습니다.");
+            throw new CustomException(ErrorCode.PROJECT_MEMBER_EXISTS);
         }
 
         project.setDeleteStatus(DeleteStatus.DELETED);
@@ -257,7 +261,7 @@ public class ProjectService {
 //        return projectRepository.findById(projectId)
 //                .orElseThrow(() -> new IllegalArgumentException("Invalid project Id:" + projectId));
         return projectRepository.findByIdWithMembers(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid project Id:" + projectId));
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
     }
 
     public boolean isUserMemberOfProject(Member user, Long projectId) {
@@ -268,7 +272,7 @@ public class ProjectService {
 
     public ProjectDetailDTO getProjectDetailForView(Long projectId) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         ProjectDetailDTO dto = new ProjectDetailDTO();
         dto.setProjectId(project.getId());
@@ -335,18 +339,18 @@ public class ProjectService {
 
     public void leaveProject(Long projectId, Member member) {
         Project project = projectRepository.findById(projectId)
-                .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         // 현재 사용자가 이 프로젝트의 멤버인지 확인
         boolean isMember = project.getMembers().stream()
                 .anyMatch(pm -> pm.getMember().getId().equals(member.getId()));
         if (!isMember) {
-            throw new IllegalArgumentException("해당 프로젝트의 멤버가 아닙니다.");
+            throw new CustomException(ErrorCode.USER_NOT_PROJECT_MEMBER);
         }
 
         // 프로젝트 생성자는 나갈 수 없음 (프로젝트 소유권을 이전 하던가 해야함)
         if (project.getCreator().getId().equals(member.getId())) {
-            throw new IllegalArgumentException("프로젝트 생성자는 나갈 수 없습니다.");
+            throw new CustomException(ErrorCode.PROJECT_CREATOR_CANNOT_LEAVE);
         }
 
         // 해당 멤버가 담당자로 설정된 Task 찾기
