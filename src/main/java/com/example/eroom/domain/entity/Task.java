@@ -26,11 +26,12 @@ public class Task {
     private LocalDateTime endDate;
 
     @Enumerated(EnumType.STRING)
-    private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
+    @Column(name = "status", nullable = false)
+    private TaskStatus status = TaskStatus.BEFORE_START; // 테스크 상태 기본값 BEFORE_START
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TaskStatus status = TaskStatus.BEFORE_START; // 테스크 상태 기본값 BEFORE_START
+    @Column(name = "delete_status", nullable = false)
+    private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
@@ -41,6 +42,6 @@ public class Task {
     private Member assignedMember; // 담당자
 
     // 참여자 (여러 명 가능)
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<TaskMember> participants = new ArrayList<>();
 }
