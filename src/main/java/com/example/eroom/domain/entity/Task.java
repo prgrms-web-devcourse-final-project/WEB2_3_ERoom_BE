@@ -26,8 +26,12 @@ public class Task {
     private LocalDateTime endDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private TaskStatus status = TaskStatus.BEFORE_START; // 테스크 상태 기본값 BEFORE_START
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "delete_status", nullable = false)
+    private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
