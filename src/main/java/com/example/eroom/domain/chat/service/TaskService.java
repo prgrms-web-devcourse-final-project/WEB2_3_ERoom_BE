@@ -120,6 +120,19 @@ public class TaskService {
         taskRepository.save(task);
     }
 
+    public void deleteTask(Long taskId, Member editor) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new IllegalArgumentException("업무가 존재하지 않습니다."));
+
+        // 삭제 권한 : Task 담당자 or 프로젝트 생성자만 가능
+        if (!canEditTask(task, editor)) {
+            throw new IllegalArgumentException("삭제 권한이 없습니다.");
+        }
+
+        task.setDeleteStatus(DeleteStatus.DELETED); // soft delete
+        taskRepository.save(task);
+    }
+
     // Task 수정 권한
     private boolean canEditTask(Task task, Member editor) {
         return (task.getAssignedMember() != null && task.getAssignedMember().getId().equals(editor.getId()))

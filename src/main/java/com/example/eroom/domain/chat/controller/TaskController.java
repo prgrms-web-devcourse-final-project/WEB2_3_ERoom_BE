@@ -57,4 +57,16 @@ public class TaskController {
         taskService.updateTask(taskId, requestDTO, editor);
         return ResponseEntity.ok().build();
     }
+
+    // Task 삭제 (soft delete)
+    @DeleteMapping("/{taskId}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId, HttpSession session) {
+        Member editor = (Member) session.getAttribute("member");
+        if (editor == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        taskService.deleteTask(taskId, editor);
+        return ResponseEntity.ok().build();
+    }
 }
