@@ -66,6 +66,9 @@ public class ProjectController {
                     project.getMembers().stream()
                             .map(pm -> pm.getMember().getUsername()) // 멤버 이름만 추출
                             .collect(Collectors.toList()),
+                    project.getMembers().stream()
+                            .map(pm -> pm.getMember().getProfile()) // 멤버 프로필
+                            .collect(Collectors.toList()),
                     project.getChatRooms().get(0).getId(),
                     progressRate
             );
@@ -139,7 +142,7 @@ public class ProjectController {
     }
 
     // 프로젝트 삭제 (softDelete)
-    @PatchMapping("/{projectId}/delete")
+    @DeleteMapping("/{projectId}/delete")
     public ResponseEntity<Void> softDeleteProject(@PathVariable Long projectId, HttpSession session) {
         Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {

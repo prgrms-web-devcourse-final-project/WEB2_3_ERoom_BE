@@ -27,5 +27,6 @@ public class Member {
     private LocalDate createdAt = LocalDate.now();
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "delete_status", nullable = false)
     private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
 }

@@ -2,14 +2,12 @@ package com.example.eroom.domain.chat.dto.response;
 
 import com.example.eroom.domain.entity.ProjectStatus;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 public class ProjectListResponseDTO {
 
@@ -23,6 +21,7 @@ public class ProjectListResponseDTO {
     private LocalDateTime endDate;
     private ProjectStatus status;
     private List<String> memberNames;
+    private List<String> memberProfiles; // 프로필 추가
     private Long chatRoomId;
     private double progressRate;
 }

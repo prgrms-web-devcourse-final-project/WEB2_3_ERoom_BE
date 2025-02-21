@@ -39,6 +39,7 @@ public class Project {
     private List<String> subCategories2 = new ArrayList<>(); // 두 번째 카테고리의 하위 선택
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "delete_status", nullable = false)
     private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
 
     @Column(name = "start_date")
@@ -48,7 +49,7 @@ public class Project {
     private LocalDateTime endDate; // 프로젝트 종료 날짜
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private ProjectStatus status = ProjectStatus.BEFORE_START; // 프로젝트 상태 기본값 START
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)

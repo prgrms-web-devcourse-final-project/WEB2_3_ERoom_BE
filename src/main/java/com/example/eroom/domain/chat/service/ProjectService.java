@@ -6,6 +6,7 @@ import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.NotificationRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
+import com.example.eroom.domain.chat.repository.TaskRepository;
 import com.example.eroom.domain.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,7 @@ public class ProjectService {
     private final NotificationService notificationService;
     private final SimpMessagingTemplate messagingTemplate;
     private final NotificationRepository notificationRepository;
+    private final TaskRepository taskRepository;
 
     // 현재 사용자가 참여 중인 프로젝트 목록 가져오기
     public List<Project> getProjectsByUser(Member member) {
@@ -152,9 +154,13 @@ public class ProjectService {
         List<String> memberNames = project.getMembers().stream()
                 .map(pm -> pm.getMember().getUsername())
                 .collect(Collectors.toList());
+        List<String> memberProfiles = project.getMembers().stream()
+                .map(pm -> pm.getMember().getProfile())
+                .collect(Collectors.toList());
 
         dto.setMemberIds(memberIds);
         dto.setMemberNames(memberNames);
+        dto.setMemberProfiles(memberProfiles);
 
         return dto;
     }
@@ -268,8 +274,13 @@ public class ProjectService {
         dto.setProjectId(project.getId());
         dto.setProjectName(project.getName());
 
-        // Task 정보 추가
-        List<TaskDTO> taskDTOList = project.getTasks().stream().map(task -> {
+        dto.setCategory(project.getCategory());
+        dto.setSubCategories1(project.getSubCategories1());
+        dto.setSubCategories2(project.getSubCategories2());
+
+        // Task 정보 추가 (데이터베이스에서 필터링)
+        List<Task> activeTasks = taskRepository.findByProjectIdAndDeleteStatus(projectId, DeleteStatus.ACTIVE);
+        List<TaskDTO> taskDTOList = activeTasks.stream().map(task -> {
             TaskDTO taskDTO = new TaskDTO();
             taskDTO.setTaskId(task.getId());
             taskDTO.setTitle(task.getTitle());
@@ -277,10 +288,8 @@ public class ProjectService {
             taskDTO.setEndDate(task.getEndDate());
             taskDTO.setStatus(task.getStatus());
 
-            // 담당자 이름
             taskDTO.setAssignedMemberName(task.getAssignedMember() != null ? task.getAssignedMember().getUsername() : null);
 
-            // 참여자 이름 목록
             List<String> participantNames = task.getParticipants().stream()
                     .map(taskMember -> taskMember.getMember().getUsername())
                     .collect(Collectors.toList());
@@ -289,7 +298,37 @@ public class ProjectService {
             return taskDTO;
         }).collect(Collectors.toList());
 
+//        // Task 정보 추가 (필터로 하는 방식)
+//        List<TaskDTO> taskDTOList = project.getTasks().stream()
+//                .filter(task -> task.getDeleteStatus() == DeleteStatus.ACTIVE)
+//                .map(task -> {
+//                    TaskDTO taskDTO = new TaskDTO();
+//                    taskDTO.setTaskId(task.getId());
+//                    taskDTO.setTitle(task.getTitle());
+//                    taskDTO.setStartDate(task.getStartDate());
+//                    taskDTO.setEndDate(task.getEndDate());
+//                    taskDTO.setStatus(task.getStatus());
+//
+//                    // 담당자 이름
+//                    taskDTO.setAssignedMemberName(task.getAssignedMember() != null ? task.getAssignedMember().getUsername() : null);
+//
+//                    // 참여자 이름 목록
+//                    List<String> participantNames = task.getParticipants().stream()
+//                            .map(taskMember -> taskMember.getMember().getUsername())
+//                            .collect(Collectors.toList());
+//                    taskDTO.setParticipants(participantNames);
+//
+//                    return taskDTO;
+//                }).collect(Collectors.toList());
+
         dto.setTasks(taskDTOList);
+
+        // 참여 멤버 추가
+        List<MemberDTO> memberDTOs = project.getMembers().stream()
+                .map(pm -> new MemberDTO(pm.getMember().getId(), pm.getMember().getUsername(), pm.getMember().getProfile()))
+                .collect(Collectors.toList());
+
+        dto.setMembers(memberDTOs);
 
         return dto;
     }
@@ -308,6 +347,19 @@ public class ProjectService {
         // 프로젝트 생성자는 나갈 수 없음 (프로젝트 소유권을 이전 하던가 해야함)
         if (project.getCreator().getId().equals(member.getId())) {
             throw new IllegalArgumentException("프로젝트 생성자는 나갈 수 없습니다.");
+        }
+
+        // 해당 멤버가 담당자로 설정된 Task 찾기
+        List<Task> assignedTasks = project.getTasks().stream()
+                .filter(task -> task.getAssignedMember() != null && task.getAssignedMember().getId().equals(member.getId()))
+                .collect(Collectors.toList());
+
+        // 프로젝트 생성자
+        Member projectCreator = project.getCreator();
+
+        // 담당자 변경 (담당자를 프로젝트 생성자로 변경)
+        for (Task task : assignedTasks) {
+            task.setAssignedMember(projectCreator);
         }
 
         // 멤버 제거
