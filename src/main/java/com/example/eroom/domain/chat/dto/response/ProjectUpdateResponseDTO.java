@@ -19,4 +19,5 @@ public class ProjectUpdateResponseDTO {
     private ProjectStatus status;
     private List<Long> memberIds;
     private List<String> memberNames; // 화면에 표시할 멤버 이름
+    private List<String> memberProfiles; // 화면에 표시할 멤버 프로필
 }
