@@ -28,7 +28,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findByNameContainingIgnoreCase(String name);
 
     // 현재 시각 + 24시간이 endDate와 일치하는 프로젝트 조회
-    @Query("SELECT p FROM Project p WHERE p.endDate BETWEEN :startOfNextDay AND :endOfNextDay")
+    @Query("SELECT p FROM Project p WHERE p.endDate >= :startOfNextDay AND p.endDate <:endOfNextDay")
     List<Project> findProjectsEndingIn24Hours(
             @Param("startOfNextDay") LocalDateTime startOfNextDay,
             @Param("endOfNextDay") LocalDateTime endOfNextDay
