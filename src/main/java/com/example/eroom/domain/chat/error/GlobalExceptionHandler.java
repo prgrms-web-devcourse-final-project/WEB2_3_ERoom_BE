@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex) {
 
         log.error("알 수 없는 오류 발생: {}", ex.getMessage());
-        ErrorResponse response = new ErrorResponse(ErrorCode.PROJECT_NOT_FOUND.getStatus(), "서버 오류가 발생했습니다.");
-        return ResponseEntity.status(ErrorCode.PROJECT_NOT_FOUND.getStatus()).body(response);
+        ErrorResponse response = new ErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR.getStatus(), "서버 오류가 발생했습니다.");
+        return ResponseEntity.status(ErrorCode.INTERNAL_SERVER_ERROR.getStatus()).body(response);
     }
 }

@@ -3,6 +3,8 @@ package com.example.eroom.domain.chat.service;
 import com.example.eroom.domain.chat.dto.request.TaskCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.request.TaskUpdateRequestDTO;
 import com.example.eroom.domain.chat.dto.response.TaskUpdateResponseDTO;
+import com.example.eroom.domain.chat.error.CustomException;
+import com.example.eroom.domain.chat.error.ErrorCode;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.chat.repository.TaskRepository;
@@ -27,7 +29,7 @@ public class TaskService {
 
     public void createTask(TaskCreateRequestDTO requestDTO) {
         Project project = projectRepository.findById(requestDTO.getProjectId())
-                .orElseThrow(() -> new IllegalArgumentException("프로젝트가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
         Task task = new Task();
         task.setTitle(requestDTO.getTitle());
@@ -39,7 +41,7 @@ public class TaskService {
         // 담당자 설정
         if (requestDTO.getAssignedMemberId() != null) {
             Member assignedMember = memberRepository.findById(requestDTO.getAssignedMemberId())
-                    .orElseThrow(() -> new IllegalArgumentException("담당자가 존재하지 않습니다."));
+                    .orElseThrow(() -> new CustomException(ErrorCode.TASK_ASSIGNEE_NOT_FOUND));
             task.setAssignedMember(assignedMember);
         }
 
@@ -47,7 +49,7 @@ public class TaskService {
         List<TaskMember> participants = requestDTO.getParticipantIds().stream()
                 .map(memberId -> {
                     Member member = memberRepository.findById(memberId)
-                            .orElseThrow(() -> new IllegalArgumentException("참여자가 존재하지 않습니다."));
+                            .orElseThrow(() -> new CustomException(ErrorCode.TASK_PARTICIPANT_NOT_FOUND));
                     TaskMember taskMember = new TaskMember();
                     taskMember.setTask(task);
                     taskMember.setMember(member);
@@ -67,18 +69,18 @@ public class TaskService {
     public TaskUpdateResponseDTO getTask(Long taskId) {
 
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new IllegalArgumentException("업무가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
 
         return TaskUpdateResponseDTO.fromEntity(task);
     }
 
     public void updateTask(Long taskId, TaskUpdateRequestDTO requestDTO, Member editor) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new IllegalArgumentException("업무가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
 
         // 수정 권한 체크: Task 담당자 or 프로젝트 생성자만 가능
         if (!canEditTask(task, editor)) {
-            throw new IllegalArgumentException("수정 권한이 없습니다.");
+            throw new CustomException(ErrorCode.TASK_ACCESS_DENIED);
         }
 
         // 제목, 날짜, 상태 변경
@@ -91,7 +93,7 @@ public class TaskService {
         List<TaskMember> newParticipants = requestDTO.getParticipantIds().stream()
                 .map(memberId -> {
                     Member member = memberRepository.findById(memberId)
-                            .orElseThrow(() -> new IllegalArgumentException("참여자가 존재하지 않습니다."));
+                            .orElseThrow(() -> new CustomException(ErrorCode.TASK_PARTICIPANT_NOT_FOUND));
                     TaskMember taskMember = new TaskMember();
                     taskMember.setTask(task);
                     taskMember.setMember(member);
@@ -107,11 +109,11 @@ public class TaskService {
                     .anyMatch(participant -> participant.getMember().getId().equals(requestDTO.getAssignedMemberId()));
 
             if (!isAssignedInParticipants) {
-                throw new IllegalArgumentException("담당자는 참여자 목록에 있어야 합니다.");
+                throw new CustomException(ErrorCode.TASK_ASSIGNEE_MUST_BE_PARTICIPANT);
             }
 
             Member assignedMember = memberRepository.findById(requestDTO.getAssignedMemberId())
-                    .orElseThrow(() -> new IllegalArgumentException("담당자가 존재하지 않습니다."));
+                    .orElseThrow(() -> new CustomException(ErrorCode.TASK_ASSIGNEE_NOT_FOUND));
             task.setAssignedMember(assignedMember);
         } else {
             task.setAssignedMember(null);
@@ -122,11 +124,11 @@ public class TaskService {
 
     public void deleteTask(Long taskId, Member editor) {
         Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new IllegalArgumentException("업무가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
 
         // 삭제 권한 : Task 담당자 or 프로젝트 생성자만 가능
         if (!canEditTask(task, editor)) {
-            throw new IllegalArgumentException("삭제 권한이 없습니다.");
+            throw new CustomException(ErrorCode.TASK_ACCESS_DENIED);
         }
 
         task.setDeleteStatus(DeleteStatus.DELETED); // soft delete
