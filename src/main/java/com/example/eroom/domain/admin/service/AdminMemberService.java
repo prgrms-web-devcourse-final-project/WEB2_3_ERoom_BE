@@ -2,12 +2,10 @@ package com.example.eroom.domain.admin.service;
 
 
 import com.example.eroom.domain.admin.dto.request.AdminUpdateMemberDTO;
-import com.example.eroom.domain.admin.dto.request.AdminUpdateProjectDTO;
 import com.example.eroom.domain.admin.dto.response.AdminMemberDTO;
-import com.example.eroom.domain.admin.dto.response.AdminProjectDTO;
 import com.example.eroom.domain.admin.repository.AdminMemberJPARepository;
+import com.example.eroom.domain.entity.DeleteStatus;
 import com.example.eroom.domain.entity.Member;
-import com.example.eroom.domain.entity.Project;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +20,23 @@ public class AdminMemberService {
         this.adminMemberJPARepository = adminMemberJPARepository;
     }
 
-    // [ 전체 관리 회원 목록 ]
-    public List<AdminMemberDTO> getTotalMembers() {
-        // 1. Member 엔티티 리스트 가져오기
-        List<Member> members = adminMemberJPARepository.findAll();
-
-        // 2. Member 엔티티 -> AdminMemberDTO로 변환
-        return members.stream()
+    // [ 전체 활성화 회원 목록 ]
+    public List<AdminMemberDTO> getActiveMembers() {
+        return adminMemberJPARepository.findByDeleteStatus(DeleteStatus.ACTIVE)
+                .stream()
                 .map(AdminMemberDTO::new)
                 .collect(Collectors.toList());
     }
 
-    // [ 특정 관리 회원 수정 ]
+    // [ 전체 비활성화 회원 목록 ]
+    public List<AdminMemberDTO> getInActiveMembers() {
+        return adminMemberJPARepository.findByDeleteStatus(DeleteStatus.DELETED)
+                .stream()
+                .map(AdminMemberDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    // [ 특정 회원 수정 ]
     public AdminMemberDTO updateMember(Long memberId, AdminUpdateMemberDTO updatedMemberDTO) {
         // 1. 회원 존재 여부 확인
         Member existingMember = adminMemberJPARepository.findById(memberId)
@@ -64,7 +67,7 @@ public class AdminMemberService {
         return new AdminMemberDTO(savedMember);
     }
 
-    // [ 특정 관리 회원 삭제 ]
+    // [ 특정 회원 삭제 ]
     public void deleteMember(Long memberId) {
         // 1. 회원 존재 여부 확인
         Member existingMember = adminMemberJPARepository.findById(memberId)
