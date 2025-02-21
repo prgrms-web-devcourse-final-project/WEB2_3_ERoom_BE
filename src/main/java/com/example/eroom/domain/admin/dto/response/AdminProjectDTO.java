@@ -16,8 +16,8 @@ import java.time.LocalDateTime;
 public class AdminProjectDTO {
     private Long projectId;
     private String projectName;
+    private String assignedEmail;
     private ProjectStatus projectStatus;
-    private LocalDateTime createdAt;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
@@ -29,8 +29,8 @@ public class AdminProjectDTO {
     public AdminProjectDTO(Project project) {
         this.projectId = project.getId();
         this.projectName = project.getName();
+        this.assignedEmail = project.getCreator().getEmail();
         this.projectStatus = project.getStatus();
-        this.createdAt = project.getCreatedAt();
         this.startDate = project.getStartDate();
         this.endDate = project.getEndDate();
 

@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,8 +13,5 @@ import java.time.LocalDateTime;
 public class AdminUpdateProjectDTO {
     private String projectName;
     private ProjectStatus projectStatus;
-    private LocalDateTime createAt;
-    private LocalDateTime startDate;
-    private LocalDateTime endDate;
 
 }
