@@ -19,6 +19,7 @@ public class TaskUpdateResponseDTO {
     private TaskStatus status;
     private Long assignedMemberId;
     private List<Long> participantIds;
+    private List<String> participantProfiles;
 
     // DTO 내에서 생성
     public static TaskUpdateResponseDTO fromEntity(Task task) {
@@ -31,6 +32,9 @@ public class TaskUpdateResponseDTO {
                 task.getAssignedMember() != null ? task.getAssignedMember().getId() : null,
                 task.getParticipants().stream()
                         .map(participant -> participant.getMember().getId())
+                        .collect(Collectors.toList()),
+                task.getParticipants().stream()
+                        .map(participant -> participant.getMember().getProfile())
                         .collect(Collectors.toList())
         );
     }

@@ -148,9 +148,13 @@ public class ProjectService {
         List<String> memberNames = project.getMembers().stream()
                 .map(pm -> pm.getMember().getUsername())
                 .collect(Collectors.toList());
+        List<String> memberProfiles = project.getMembers().stream()
+                .map(pm -> pm.getMember().getProfile())
+                .collect(Collectors.toList());
 
         dto.setMemberIds(memberIds);
         dto.setMemberNames(memberNames);
+        dto.setMemberProfiles(memberProfiles);
 
         return dto;
     }
@@ -264,6 +268,10 @@ public class ProjectService {
         dto.setProjectId(project.getId());
         dto.setProjectName(project.getName());
 
+        dto.setCategory(project.getCategory());
+        dto.setSubCategories1(project.getSubCategories1());
+        dto.setSubCategories2(project.getSubCategories2());
+
         // Task 정보 추가
         List<TaskDTO> taskDTOList = project.getTasks().stream().map(task -> {
             TaskDTO taskDTO = new TaskDTO();
@@ -286,6 +294,13 @@ public class ProjectService {
         }).collect(Collectors.toList());
 
         dto.setTasks(taskDTOList);
+
+        // 참여 멤버 추가
+        List<MemberDTO> memberDTOs = project.getMembers().stream()
+                .map(pm -> new MemberDTO(pm.getMember().getId(), pm.getMember().getUsername(), pm.getMember().getProfile()))
+                .collect(Collectors.toList());
+
+        dto.setMembers(memberDTOs);
 
         return dto;
     }

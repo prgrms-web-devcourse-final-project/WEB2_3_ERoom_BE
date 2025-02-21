@@ -17,6 +17,8 @@ public class TaskDTO {
 
     // 담당자 이름
     private String assignedMemberName;
+    // 담당자 프로필
+    private String assignedMemberProfile;
 
     // 참여자 목록
     private List<String> participants;
