@@ -1,6 +1,8 @@
 package com.example.eroom.domain.chat.controller;
 
 import com.example.eroom.domain.chat.dto.response.ChatMessageDTO;
+import com.example.eroom.domain.chat.error.CustomException;
+import com.example.eroom.domain.chat.error.ErrorCode;
 import com.example.eroom.domain.chat.service.ChatMessageService;
 import com.example.eroom.domain.entity.ChatMessage;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +25,9 @@ public class ChatMessageController {
 //    }
 
     @MessageMapping("/chat/send")
-    public void sendMessage(@Payload ChatMessageDTO chatMessageDTO) {  // 반환 타입을 void로 변경
+    public void sendMessage(@Payload ChatMessageDTO chatMessageDTO) {
         if (chatMessageDTO.getSenderName() == null) {
-            throw new RuntimeException("SenderUsername is null!");
+            throw new CustomException(ErrorCode.SENDER_NOT_FOUND);
         }
 
         // DTO → Entity 변환 후 저장

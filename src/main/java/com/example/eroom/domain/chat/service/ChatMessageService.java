@@ -1,6 +1,8 @@
 package com.example.eroom.domain.chat.service;
 
 import com.example.eroom.domain.chat.dto.response.ChatMessageDTO;
+import com.example.eroom.domain.chat.error.CustomException;
+import com.example.eroom.domain.chat.error.ErrorCode;
 import com.example.eroom.domain.chat.repository.ChatMessageRepository;
 import com.example.eroom.domain.chat.repository.ChatRoomRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
@@ -41,12 +43,12 @@ public class ChatMessageService {
 
         // ChatRoom 조회
         ChatRoom chatRoom = chatRoomRepository.findById(dto.getChatRoomId())
-                .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
+                .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
 
-        // User 조회
+        // Member 조회
         Member sender = memberRepository.findByUsername(dto.getSenderName());
         if (sender == null) {
-            throw new RuntimeException("Sender not found: " + dto.getSenderName());
+            throw new CustomException(ErrorCode.SENDER_NOT_FOUND);
         }
 
         chatMessage.setChatRoom(chatRoom);
