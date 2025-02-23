@@ -58,12 +58,13 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public String signup(@RequestParam String organization,
+    public String signup(@RequestParam String name,
+                         @RequestParam String organization,
                          @RequestParam("profileImage")MultipartFile profileImage,
                          HttpServletRequest request,
                          HttpServletResponse response) {
         String email = (String) httpSession.getAttribute("oauth_email");
-        String name = (String) httpSession.getAttribute("oauth_name");
+        //String name = (String) httpSession.getAttribute("oauth_name");
         String profileUrl = amazonS3Service.uploadFile(profileImage);
 
         // 회원 정보 저장
