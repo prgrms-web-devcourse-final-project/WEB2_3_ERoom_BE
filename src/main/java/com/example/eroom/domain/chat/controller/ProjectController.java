@@ -4,12 +4,15 @@ import com.example.eroom.domain.chat.dto.request.ProjectCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.request.ProjectUpdateRequestDTO;
 import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.service.ChatRoomService;
+import com.example.eroom.domain.chat.service.MemberService;
 import com.example.eroom.domain.chat.service.ProjectService;
 import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.Project;
 import com.example.eroom.domain.entity.TaskStatus;
 import jakarta.servlet.http.HttpSession;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -137,7 +140,7 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        projectService.updateProject(projectId, projectUpdateRequestDTO);
+        projectService.updateProject(projectId, projectUpdateRequestDTO, currentMember);
         return ResponseEntity.noContent().build();
     }
 

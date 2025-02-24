@@ -170,10 +170,15 @@ public class ProjectService {
         return dto;
     }
 
-    public void updateProject(Long projectId, ProjectUpdateRequestDTO projectUpdateRequestDTO) {
+    public void updateProject(Long projectId, ProjectUpdateRequestDTO projectUpdateRequestDTO, Member editor) {
 
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+        // 수정 권한 확인: 프로젝트 생성자만 가능
+        if (!project.getCreator().getId().equals(editor.getId())) {
+            throw new CustomException(ErrorCode.PROJECT_UPDATE_DENIED);
+        }
 
         // 이름 수정
         if (projectUpdateRequestDTO.getName() != null) {
