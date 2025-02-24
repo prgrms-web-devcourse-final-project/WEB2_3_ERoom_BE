@@ -1,6 +1,7 @@
 package com.example.eroom.domain.report.controller;
 
 import com.example.eroom.domain.report.service.MeetingReportService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/report")
 public class ReportController {
@@ -28,6 +30,7 @@ public class ReportController {
 
         // 회의록 생성 요청
         String report = meetingReportService.generateMeetingSummary(chatRoomId, startTime, endTime);
+        log.info(report);
         return ResponseEntity.ok(report);
     }
 }
