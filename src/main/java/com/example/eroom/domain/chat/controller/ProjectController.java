@@ -137,7 +137,7 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        projectService.updateProject(projectId, projectUpdateRequestDTO);
+        projectService.updateProject(projectId, projectUpdateRequestDTO, currentMember);
         return ResponseEntity.noContent().build();
     }
 

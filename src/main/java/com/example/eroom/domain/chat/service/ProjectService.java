@@ -128,8 +128,10 @@ public class ProjectService {
 
         // 프로젝트 초대 알림 보내기
         for (Member member : invitedMembers) {
-            String message = "새로운 프로젝트에 초대되었습니다: " + savedProject.getName();
-            notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId());// 알림생성, 저장, 알림 전송
+            if(!project.getCreator().getId().equals(member.getId())) {
+                String message = "새로운 프로젝트에 초대되었습니다: " + savedProject.getName();
+                notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId());// 알림생성, 저장, 알림 전송
+            }
         }
 
         return savedProject;
@@ -168,10 +170,15 @@ public class ProjectService {
         return dto;
     }
 
-    public void updateProject(Long projectId, ProjectUpdateRequestDTO projectUpdateRequestDTO) {
+    public void updateProject(Long projectId, ProjectUpdateRequestDTO projectUpdateRequestDTO, Member editor) {
 
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
+
+        // 수정 권한 확인: 프로젝트 생성자만 가능
+        if (!project.getCreator().getId().equals(editor.getId())) {
+            throw new CustomException(ErrorCode.PROJECT_UPDATE_DENIED);
+        }
 
         // 이름 수정
         if (projectUpdateRequestDTO.getName() != null) {
