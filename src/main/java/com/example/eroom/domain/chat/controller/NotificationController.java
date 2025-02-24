@@ -31,7 +31,7 @@ public class NotificationController {
     }
 
     // 알림 읽음 처리
-    @PatchMapping("/{notificationId}/read")
+    @PatchMapping("/read/{notificationId}")
     public ResponseEntity<Void> markAsRead(@PathVariable Long notificationId) {
         notificationService.markAsRead(notificationId);
         return ResponseEntity.noContent().build();
