@@ -9,6 +9,7 @@ public class ChatMessageDTO {
 
     private Long messageId;
     private Long chatRoomId;
+    private Long senderId;
     private String senderName;
     private String senderProfile;
     private String message;

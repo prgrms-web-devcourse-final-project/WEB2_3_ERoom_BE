@@ -1,5 +1,6 @@
 package com.example.eroom.domain.entity;
 
+import com.example.eroom.domain.chat.converter.ColorInfoConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -60,4 +61,8 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Task> tasks = new ArrayList<>();
+
+    @Convert(converter = ColorInfoConverter.class)
+    @Column(columnDefinition = "TEXT")
+    private ColorInfo colors;
 }
