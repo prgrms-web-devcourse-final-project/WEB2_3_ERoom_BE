@@ -1,5 +1,6 @@
 package com.example.eroom.domain.chat.dto.request;
 
+import com.example.eroom.domain.entity.ColorInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,4 +21,5 @@ public class ProjectCreateRequestDTO {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private List<Long> invitedMemberIds;
+    private ColorInfo colors;
 }

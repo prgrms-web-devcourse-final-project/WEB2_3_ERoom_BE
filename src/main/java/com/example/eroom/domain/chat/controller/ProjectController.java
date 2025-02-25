@@ -73,7 +73,8 @@ public class ProjectController {
                             .map(pm -> pm.getMember().getProfile()) // 멤버 프로필
                             .collect(Collectors.toList()),
                     project.getChatRooms().get(0).getId(),
-                    progressRate
+                    progressRate,
+                    project.getColors()
             );
         }).collect(Collectors.toList());
 

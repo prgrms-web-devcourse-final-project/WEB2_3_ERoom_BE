@@ -35,9 +35,11 @@ public class MeetingReportService {
         }
 
         // 메시지를 문자열로 변환
-        String conversation = messages.stream()
+        String conversation = "채팅 시작 시간 : "+messages.get(0).getSentAt().toString() + " , ";
+        conversation += messages.stream()
                 .map(msg -> msg.getSender().getUsername() + " : " + msg.getMessage())
                 .collect(Collectors.joining(" "));
+        conversation += " , 채팅 끝나는 시간 : " + messages.get(messages.size()-1).getSentAt().toString();
 
         if(conversation.length()>4000){
             log.info("conversation is too long");
