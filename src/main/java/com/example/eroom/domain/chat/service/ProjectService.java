@@ -104,6 +104,8 @@ public class ProjectService {
         project.setEndDate(dto.getEndDate()); // 마감일
         project.setStatus(ProjectStatus.BEFORE_START); // 프로젝트 상태(기본값 : 시작 전)
         project.setCreator(creator); // 프로젝트 생성자
+        // 프로젝트 생성할 때 랜덤한 color
+        project.setColors(dto.getColors() != null ? dto.getColors() : new ColorInfo("#FFFFFF", "#000000"));
 
         // 프로젝트 생성자를 프로젝트 멤버로 추가
         ProjectMember creatorMember = new ProjectMember();
