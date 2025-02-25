@@ -1,5 +1,6 @@
 package com.example.eroom.domain.chat.dto.response;
 
+import com.example.eroom.domain.entity.ColorInfo;
 import com.example.eroom.domain.entity.TaskStatus;
 import lombok.Data;
 
@@ -19,7 +20,7 @@ public class TaskDTO {
     private String assignedMemberName;
     // 담당자 프로필
     private String assignedMemberProfile;
-
     // 참여자 목록
     private List<String> participants;
+    private ColorInfo colors;
 }

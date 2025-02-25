@@ -63,6 +63,8 @@ public class TaskService {
         }
 
         task.setParticipants(participants);
+        // color 추가
+        task.setColors(requestDTO.getColors() != null ? requestDTO.getColors() : new ColorInfo("#FF5733", "#FFFFFF"));
         taskRepository.save(task);
     }
 

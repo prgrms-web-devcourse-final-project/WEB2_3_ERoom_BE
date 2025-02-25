@@ -1,5 +1,6 @@
 package com.example.eroom.domain.entity;
 
+import com.example.eroom.domain.chat.converter.ColorInfoConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,4 +45,8 @@ public class Task {
     // 참여자 (여러 명 가능)
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<TaskMember> participants = new ArrayList<>();
+
+    @Convert(converter = ColorInfoConverter.class)
+    @Column(columnDefinition = "TEXT")
+    private ColorInfo colors;
 }
