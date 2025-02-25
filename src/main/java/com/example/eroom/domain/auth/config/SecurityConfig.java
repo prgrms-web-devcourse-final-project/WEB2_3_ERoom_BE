@@ -3,6 +3,7 @@ package com.example.eroom.domain.auth.config;
 import com.example.eroom.domain.auth.security.CustomOAuth2FailureHandler;
 import com.example.eroom.domain.auth.security.CustomOAuth2MemberService;
 import com.example.eroom.domain.auth.security.CustomOAuth2SuccessHandler;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,7 @@ public class SecurityConfig{
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/auth/login", "/auth/signup").permitAll()
+                        .requestMatchers("/", "/auth/**", "/api/auth/**").permitAll()
                         .requestMatchers("/project/list").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
@@ -44,7 +45,16 @@ public class SecurityConfig{
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
+                )
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setContentType("application/json");
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"로그인이 필요합니다.\"}");
+                        })
                 );
+
         return http.build();
     }
+
 }

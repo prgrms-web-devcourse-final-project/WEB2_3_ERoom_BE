@@ -1,46 +1,38 @@
-package com.example.eroom.domain.auth.controller;
+package com.example.eroom.domain.auth.thymeleaf;
 
-import com.example.eroom.domain.auth.dto.response.MemberResponseDTO;
 import com.example.eroom.domain.auth.repository.AuthMemberRepository;
 import com.example.eroom.domain.auth.service.AmazonS3Service;
 import com.example.eroom.domain.entity.Member;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/mypage")
-public class MyPageController {
+@RequestMapping("/mypage")
+public class MyPageControllerEx {
 
     private final AuthMemberRepository memberRepository;
     private final AmazonS3Service amazonS3Service;
     private final HttpSession httpSession;
 
     @GetMapping
-    public ResponseEntity<MemberResponseDTO> getMyProfile() {
+    public String getMyProfile(Model model) {
         Member member = getLoggedInMember();
+        model.addAttribute("email", member.getEmail());
+        model.addAttribute("username", member.getUsername());
+        model.addAttribute("organization", member.getOrganization());
+        model.addAttribute("profileUrl", member.getProfile());
 
-        MemberResponseDTO responseDTO = new MemberResponseDTO(
-                member.getId(),
-                member.getEmail(),
-                member.getUsername(),
-                member.getOrganization(),
-                member.getProfile()
-        );
-
-        return ResponseEntity.ok(responseDTO);
+        return "auth/mypage";
     }
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MemberResponseDTO> updateMyProfile(
+    @PostMapping
+    public String updateMyProfile(
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String organization,
             @RequestParam(required = false) MultipartFile profileImage) {
@@ -66,25 +58,17 @@ public class MyPageController {
 
         memberRepository.save(member);
 
-        MemberResponseDTO responseDTO = new MemberResponseDTO(
-                member.getId(),
-                member.getEmail(),
-                member.getUsername(),
-                member.getOrganization(),
-                member.getProfile()
-        );
-
-        return ResponseEntity.ok(responseDTO);
+        return "redirect:/mypage";
     }
+
 
     private Member getLoggedInMember() {
         Member member = (Member) httpSession.getAttribute("member");
         if (member == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
+            throw new RuntimeException("로그인이 필요합니다.");
         }
         return member;
     }
 }
-
 
 
