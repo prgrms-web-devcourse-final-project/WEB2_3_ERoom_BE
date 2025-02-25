@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
@@ -46,7 +45,7 @@ public class AuthController {
 
     @GetMapping("/login")
     public String login() {
-        return "login";
+        return "auth/login";
     }
 
     @GetMapping("/signup")
@@ -54,7 +53,7 @@ public class AuthController {
         model.addAttribute("email", httpSession.getAttribute("oauth_email"));
         model.addAttribute("name", httpSession.getAttribute("oauth_name"));
         model.addAttribute("profile", httpSession.getAttribute("oauth_profile"));
-        return "signup";
+        return "auth/signup";
     }
 
     @PostMapping("/signup")

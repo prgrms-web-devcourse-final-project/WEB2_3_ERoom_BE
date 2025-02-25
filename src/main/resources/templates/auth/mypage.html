@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>My Page</title>
+</head>
+<body>
+
+<h2>마이페이지</h2>
+
+<form id="mypageForm">
+  <img id="profileImage" th:src="${profileUrl}" alt="Profile Image" width="100"><br>
+  <input type="file" id="profileUpload"><br>
+
+  <label>닉네임: <input type="text" id="username"></label><br>
+  <label>조직(회사명): <input type="text" id="organization"></label><br>
+
+  <button type="button" id="updateProfile">저장</button>
+</form>
+
+<script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    const response = await fetch("/mypage");
+    const user = await response.json();
+    document.getElementById("profileImage").src = user.profileUrl;
+    document.getElementById("username").value = user.nickname;
+    document.getElementById("organization").value = user.organization;
+  });
+
+  document.getElementById("updateProfile").addEventListener("click", async () => {
+    const formData = new FormData();
+
+    const fileInput = document.getElementById("profileUpload");
+    if (fileInput.files.length > 0) {
+      formData.append("profileImage", fileInput.files[0]);
+    }
+
+    formData.append("username", document.getElementById("username").value);
+    formData.append("organization", document.getElementById("organization").value);
+
+    await fetch("/mypage", {
+      method: "POST",
+      body: formData
+    });
+
+    alert("프로필이 업데이트되었습니다!");
+  });
+
+</script>
+
+</body>
+</html>

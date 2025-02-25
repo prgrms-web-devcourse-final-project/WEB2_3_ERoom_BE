@@ -19,6 +19,9 @@ public class AmazonS3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${cloud.aws.region.static}")
+    private String region;
+
     public String uploadFile(MultipartFile file) {
         String originalFileName = file.getOriginalFilename();
         String extension = "";
@@ -28,7 +31,7 @@ public class AmazonS3Service {
         }
 
         String newFileName = UUID.randomUUID().toString() + extension;
-        String fileUrl = "https://" + bucket + "/" + newFileName;
+        String fileUrl = "https://" + bucket + ".s3." + region + ".amazonaws.com/" + newFileName;
 
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(file.getContentType());
@@ -41,5 +44,14 @@ public class AmazonS3Service {
         }
 
         return fileUrl;
+    }
+
+    public void deleteFile(String fileUrl) {
+        String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+        amazonS3Client.deleteObject(bucket, fileName);
+    }
+
+    private String getFileExtension(String fileName) {
+        return fileName != null && fileName.contains(".") ? fileName.substring(fileName.lastIndexOf(".") + 1) : "";
     }
 }
