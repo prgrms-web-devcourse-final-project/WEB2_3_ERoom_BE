@@ -56,6 +56,11 @@ public class ProjectController {
             double progressRate = (completedTasks == 0) ? 0.0
                     : (double) completedTasks / (completedTasks + inProgressOrBeforeStartTasks) * 100;
 
+            // members 리스트를 MemberDTO로 변환
+            List<MemberDTO> memberDTOs = project.getMembers().stream()
+                    .map(pm -> new MemberDTO(pm.getMember().getId(), pm.getMember().getUsername(), pm.getMember().getProfile()))
+                    .collect(Collectors.toList());
+
             return new ProjectListResponseDTO(
                     project.getId(),
                     project.getName(),
@@ -66,15 +71,11 @@ public class ProjectController {
                     project.getStartDate(),
                     project.getEndDate(),
                     project.getStatus(),
-                    project.getMembers().stream()
-                            .map(pm -> pm.getMember().getUsername()) // 멤버 이름만 추출
-                            .collect(Collectors.toList()),
-                    project.getMembers().stream()
-                            .map(pm -> pm.getMember().getProfile()) // 멤버 프로필
-                            .collect(Collectors.toList()),
-                    project.getChatRooms().get(0).getId(),
+                    memberDTOs, // members 리스트 추가
+                    project.getChatRooms().isEmpty() ? null : project.getChatRooms().get(0).getId(), // ✅ 채팅방이 없을 경우 대비
                     progressRate,
-                    project.getColors()
+                    project.getColors(),
+                    project.getCreator().getId() // 프로젝트 생성자 ID 추가
             );
         }).collect(Collectors.toList());
 
