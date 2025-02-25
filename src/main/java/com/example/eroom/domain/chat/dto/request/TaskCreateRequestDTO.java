@@ -1,5 +1,6 @@
 package com.example.eroom.domain.chat.dto.request;
 
+import com.example.eroom.domain.entity.ColorInfo;
 import com.example.eroom.domain.entity.TaskStatus;
 import lombok.Data;
 
@@ -16,4 +17,5 @@ public class TaskCreateRequestDTO {
     private TaskStatus status;
     private Long assignedMemberId;
     private List<Long> participantIds;
+    private ColorInfo colors;
 }

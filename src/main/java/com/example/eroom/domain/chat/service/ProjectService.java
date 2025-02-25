@@ -307,6 +307,9 @@ public class ProjectService {
                     .map(taskMember -> taskMember.getMember().getUsername())
                     .collect(Collectors.toList());
             taskDTO.setParticipants(participantNames);
+            // task 생성할 때 랜덤한 color
+            taskDTO.setColors(task.getColors() != null ? task.getColors() : new ColorInfo("#FFFFFF", "#000000"));
+            //taskDTO.setColors(task.getColors()); // color 정보 추가
 
             return taskDTO;
         }).collect(Collectors.toList());
