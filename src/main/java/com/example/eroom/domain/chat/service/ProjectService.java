@@ -154,20 +154,11 @@ public class ProjectService {
         dto.setEndDate(project.getEndDate());
         dto.setStatus(project.getStatus());
 
-        // 멤버 정보 추가
-        List<Long> memberIds = project.getMembers().stream()
-                .map(pm -> pm.getMember().getId())
-                .collect(Collectors.toList());
-        List<String> memberNames = project.getMembers().stream()
-                .map(pm -> pm.getMember().getUsername())
-                .collect(Collectors.toList());
-        List<String> memberProfiles = project.getMembers().stream()
-                .map(pm -> pm.getMember().getProfile())
+        List<MemberDTO> memberDTOs = project.getMembers().stream()
+                .map(pm -> new MemberDTO(pm.getMember().getId(), pm.getMember().getUsername(), pm.getMember().getProfile()))
                 .collect(Collectors.toList());
 
-        dto.setMemberIds(memberIds);
-        dto.setMemberNames(memberNames);
-        dto.setMemberProfiles(memberProfiles);
+        dto.setMembers(memberDTOs);
 
         return dto;
     }
