@@ -53,6 +53,7 @@ public class ChatMessageService {
 
         chatMessage.setChatRoom(chatRoom);
         chatMessage.setSender(sender);
+        System.out.println("sender : " + sender);
         chatMessage.setMessage(dto.getMessage());
         chatMessage.setUnreadCount(0);
         chatMessage.setSentAt(dto.getSentAt());
