@@ -2,13 +2,11 @@ package com.example.eroom.domain.chat.service;
 
 import com.example.eroom.domain.chat.dto.request.ProjectCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.request.ProjectUpdateRequestDTO;
+import com.example.eroom.domain.chat.dto.request.SubCategoryRequest;
 import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.error.CustomException;
 import com.example.eroom.domain.chat.error.ErrorCode;
-import com.example.eroom.domain.chat.repository.MemberRepository;
-import com.example.eroom.domain.chat.repository.NotificationRepository;
-import com.example.eroom.domain.chat.repository.ProjectRepository;
-import com.example.eroom.domain.chat.repository.TaskRepository;
+import com.example.eroom.domain.chat.repository.*;
 import com.example.eroom.domain.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +34,11 @@ public class ProjectService {
     private final SimpMessagingTemplate messagingTemplate;
     private final NotificationRepository notificationRepository;
     private final TaskRepository taskRepository;
+    private final CategoryRepository categoryRepository;
+    private final SubCategoryRepository subCategoryRepository;
+    private final TagRepository tagRepository;
+    private final ProjectSubCategoryRepository projectSubCategoryRepository;
+    private final ProjectTagRepository projectTagRepository;
 
     // 현재 사용자가 참여 중인 프로젝트 목록 가져오기
     public List<Project> getProjectsByUser(Member member) {
@@ -52,9 +56,6 @@ public class ProjectService {
         dto.setProjectId(project.getId());
         dto.setProjectName(project.getName());
         dto.setDescription(project.getDescription());
-        dto.setCategory(project.getCategory());
-        dto.setSubCategories1(project.getSubCategories1());
-        dto.setSubCategories2(project.getSubCategories2());
         dto.setStartDate(project.getStartDate());
         dto.setEndDate(project.getEndDate());
         dto.setStatus(project.getStatus());
@@ -97,13 +98,62 @@ public class ProjectService {
         Project project = new Project();
         project.setName(dto.getName()); // 프로젝트 이름
         project.setDescription(dto.getDescription()); // 프로젝트 설명
-        project.setCategory(dto.getCategory()); // 카테고리1
-        project.setSubCategories1(dto.getSubCategories1()); // 카테고리2
-        project.setSubCategories2(dto.getSubCategories2()); // 카테고리3
         project.setStartDate(dto.getStartDate()); // 시작일
         project.setEndDate(dto.getEndDate()); // 마감일
         project.setStatus(ProjectStatus.BEFORE_START); // 프로젝트 상태(기본값 : 시작 전)
         project.setCreator(creator); // 프로젝트 생성자
+
+        // 1. 카테고리 설정
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+        project.setCategory(category);
+
+        // 2. 서브 카테고리와 태그 설정
+        if (dto.getSubCategories() != null && !dto.getSubCategories().isEmpty()) {
+            for (SubCategoryRequest subCategoryRequest : dto.getSubCategories()) {
+                // 서브 카테고리 조회
+                SubCategory subCategory = subCategoryRepository.findById(subCategoryRequest.getSubCategoryId())
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid sub-category ID: " + subCategoryRequest.getSubCategoryId()));
+
+                // 프로젝트, 서브카테고리 연결 엔티티 생성
+                ProjectSubCategory projectSubCategory = new ProjectSubCategory();
+                projectSubCategory.setProject(project);
+                projectSubCategory.setSubCategory(subCategory);
+
+                // 프로젝트에 ProjectSubCategory 추가
+                project.getProjectSubCategories().add(projectSubCategory);
+
+                // 태그 처리
+                if (subCategoryRequest.getTagIds() != null && !subCategoryRequest.getTagIds().isEmpty()) {
+                    List<Tag> tags = tagRepository.findAllById(subCategoryRequest.getTagIds());
+
+                    List<Tag> updatedTags = new ArrayList<>();
+
+                    for (Tag tag : tags) {
+                        // 태그가 해당 서브카테고리에 속하는지 확인
+                        if (tag.getSubCategory().getId().equals(subCategory.getId())) {
+
+                            // 태그 사용 횟수 증가
+                            tag.setCount(tag.getCount() + 1);
+                            updatedTags.add(tag);
+
+                            // 프로젝트, 태그 연결 엔티티 생성
+                            ProjectTag projectTag = new ProjectTag();
+                            projectTag.setProject(project);
+                            projectTag.setTag(tag);
+
+                            // 프로젝트에 ProjectTag 추가
+                            project.getTags().add(projectTag);
+                        } else {
+                            throw new IllegalArgumentException("Tag ID " + tag.getId() + " does not belong to sub-category ID " + subCategory.getId());
+                        }
+                    }
+                    // 태그들 한번에 저장
+                    tagRepository.saveAll(updatedTags);
+                }
+            }
+        }
+
         // 프로젝트 생성할 때 랜덤한 color
         project.setColors(dto.getColors() != null ? dto.getColors() : new ColorInfo("#FFFFFF", "#000000"));
 
@@ -147,9 +197,32 @@ public class ProjectService {
         ProjectUpdateResponseDTO dto = new ProjectUpdateResponseDTO();
         dto.setId(project.getId());
         dto.setName(project.getName());
-        dto.setCategory(project.getCategory());
-        dto.setSubCategories1(project.getSubCategories1());
-        dto.setSubCategories2(project.getSubCategories2());
+        dto.setCategoryName(project.getCategory().getName());
+
+        // 서브 카테고리와 태그 정보 변환
+        List<SubCategoryDetail> subCategoryDetails = new ArrayList<>();
+        for (ProjectSubCategory psc : project.getProjectSubCategories()) {
+            SubCategory subCategory = psc.getSubCategory();
+            SubCategoryDetail detail = new SubCategoryDetail();
+            detail.setId(subCategory.getId());
+            detail.setName(subCategory.getName());
+
+            // 해당 서브 카테고리에 선택된 태그들 찾기
+            List<TagDetail> tagDetails = project.getTags().stream()
+                    .filter(pt -> pt.getTag().getSubCategory().getId().equals(subCategory.getId()))
+                    .map(pt -> {
+                        TagDetail td = new TagDetail();
+                        td.setId(pt.getTag().getId());
+                        td.setName(pt.getTag().getName());
+                        return td;
+                    })
+                    .collect(Collectors.toList());
+
+            detail.setTags(tagDetails);
+            subCategoryDetails.add(detail);
+        }
+
+        dto.setSubCategories(subCategoryDetails);
         dto.setStartDate(project.getStartDate());
         dto.setEndDate(project.getEndDate());
         dto.setStatus(project.getStatus());
@@ -177,10 +250,72 @@ public class ProjectService {
         if (projectUpdateRequestDTO.getName() != null) {
             project.setName(projectUpdateRequestDTO.getName());
         }
-        // 태그 수정
-        project.setCategory(projectUpdateRequestDTO.getCategory());
-        project.setSubCategories1(projectUpdateRequestDTO.getSubCategories1());
-        project.setSubCategories2(projectUpdateRequestDTO.getSubCategories2());
+
+        // 카테고리 수정 (기존 데이터 제거 후 변경)
+        if (projectUpdateRequestDTO.getCategoryId() != null) {
+            Category category = categoryRepository.findById(projectUpdateRequestDTO.getCategoryId())
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+
+            // 기존의 서브 카테고리 및 태그 제거
+            project.getProjectSubCategories().clear();
+            project.getTags().clear();
+            projectRepository.flush();
+
+            project.setCategory(category);
+        }
+
+        // 서브 카테고리 및 태그 수정
+        if (projectUpdateRequestDTO.getSubCategories() != null) {
+            // 기존 서브 카테고리 연결 제거
+            project.getProjectSubCategories().clear();
+
+            // 기존 태그 연결 제거
+            project.getTags().clear();
+
+            // 기존 서브 카테고리 및 태그 삭제
+            projectSubCategoryRepository.deleteAllByProject(project);
+            project.getProjectSubCategories().clear();
+            projectTagRepository.deleteAllByProject(project);
+            project.getTags().clear();
+            projectRepository.flush();
+
+            // 새로운 서브 카테고리 및 태그 추가
+            for (SubCategoryRequest subCategoryRequest : projectUpdateRequestDTO.getSubCategories()) {
+                SubCategory subCategory = subCategoryRepository.findById(subCategoryRequest.getSubCategoryId())
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid sub-category ID: " + subCategoryRequest.getSubCategoryId()));
+
+                ProjectSubCategory projectSubCategory = new ProjectSubCategory();
+                projectSubCategory.setProject(project);
+                projectSubCategory.setSubCategory(subCategory);
+                project.getProjectSubCategories().add(projectSubCategory);
+
+                // 태그 처리
+                if (subCategoryRequest.getTagIds() != null && !subCategoryRequest.getTagIds().isEmpty()) {
+                    List<Tag> tags = tagRepository.findAllById(subCategoryRequest.getTagIds());
+
+                    List<Tag> updatedTags = new ArrayList<>();
+
+                    for (Tag tag : tags) {
+
+                        // 태그 사용 횟수 증가
+                        tag.setCount(tag.getCount() + 1);
+                        updatedTags.add(tag);
+
+                        if (tag.getSubCategory().getId().equals(subCategory.getId())) {
+                            ProjectTag projectTag = new ProjectTag();
+                            projectTag.setProject(project);
+                            projectTag.setTag(tag);
+                            project.getTags().add(projectTag);
+                        } else {
+                            throw new IllegalArgumentException("Tag ID " + tag.getId() + " does not belong to sub-category ID " + subCategory.getId());
+                        }
+                    }
+
+                    // 태그들 한번에 저장
+                    tagRepository.saveAll(updatedTags);
+                }
+            }
+        }
 
         // 시작일, 종료일 수정
         project.setStartDate(projectUpdateRequestDTO.getStartDate());
@@ -278,9 +413,33 @@ public class ProjectService {
         dto.setProjectId(project.getId());
         dto.setProjectName(project.getName());
 
-        dto.setCategory(project.getCategory());
-        dto.setSubCategories1(project.getSubCategories1());
-        dto.setSubCategories2(project.getSubCategories2());
+        // 카테고리 정보 설정
+        dto.setCategoryName(project.getCategory().getName());
+
+        // 서브 카테고리 설정
+        List<SubCategoryDetail> subCategoryDetails = project.getProjectSubCategories().stream()
+                .map(projectSubCategory -> {
+                    SubCategoryDetail detail = new SubCategoryDetail();
+                    detail.setId(projectSubCategory.getSubCategory().getId());
+                    detail.setName(projectSubCategory.getSubCategory().getName());
+
+                    // 해당 서브카테고리에 속한 태그들만 필터링
+                    List<TagDetail> tagDetails = project.getTags().stream()
+                            .filter(tag -> tag.getTag().getSubCategory().getId().equals(projectSubCategory.getSubCategory().getId()))
+                            .map(projectTag -> {
+                                TagDetail tagDetail = new TagDetail();
+                                tagDetail.setId(projectTag.getTag().getId());
+                                tagDetail.setName(projectTag.getTag().getName());
+                                return tagDetail;
+                            })
+                            .collect(Collectors.toList());
+
+                    detail.setTags(tagDetails);
+                    return detail;
+                })
+                .collect(Collectors.toList());
+
+        dto.setSubCategories(subCategoryDetails);
 
         // Task 정보 추가 (데이터베이스에서 필터링)
         List<Task> activeTasks = taskRepository.findByProjectIdAndDeleteStatus(projectId, DeleteStatus.ACTIVE);

@@ -6,9 +6,7 @@ import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.service.ChatRoomService;
 import com.example.eroom.domain.chat.service.MemberService;
 import com.example.eroom.domain.chat.service.ProjectService;
-import com.example.eroom.domain.entity.Member;
-import com.example.eroom.domain.entity.Project;
-import com.example.eroom.domain.entity.TaskStatus;
+import com.example.eroom.domain.entity.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -61,21 +59,45 @@ public class ProjectController {
                     .map(pm -> new MemberDTO(pm.getMember().getId(), pm.getMember().getUsername(), pm.getMember().getProfile()))
                     .collect(Collectors.toList());
 
+            List<SubCategoryDetail> subCategoryDetails = project.getProjectSubCategories().stream()
+                    .map(projectSubCategory -> {
+                        List<TagDetail> tagDetails = project.getTags().stream()
+                                .filter(projectTag -> projectTag.getTag().getSubCategory().getId().equals(projectSubCategory.getSubCategory().getId())) // ✅ 올바르게 수정
+                                .map(projectTag -> new TagDetail(
+                                        projectTag.getTag().getId(),
+                                        projectTag.getTag().getName()
+                                ))
+                                .collect(Collectors.toList());
+
+                        return new SubCategoryDetail(
+                                projectSubCategory.getSubCategory().getId(),
+                                projectSubCategory.getSubCategory().getName(),
+                                tagDetails
+                        );
+                    })
+                    .collect(Collectors.toList());
+
+            // 그룹 채팅방 찾기
+            Long groupChatRoomId = project.getChatRooms().stream()
+                    .filter(chatRoom -> chatRoom.getType() == ChatRoomType.GROUP)
+                    .map(ChatRoom::getId)
+                    .findFirst()
+                    .orElse(null);
+
             return new ProjectListResponseDTO(
                     project.getId(),
                     project.getName(),
                     project.getCreatedAt(),
-                    project.getCategory(),
-                    project.getSubCategories1(),
-                    project.getSubCategories2(),
+                    project.getCategory().getName(),
+                    subCategoryDetails,
                     project.getStartDate(),
                     project.getEndDate(),
                     project.getStatus(),
-                    memberDTOs, // members 리스트 추가
-                    project.getChatRooms().isEmpty() ? null : project.getChatRooms().get(0).getId(), // ✅ 채팅방이 없을 경우 대비
+                    memberDTOs,
+                    groupChatRoomId,
                     progressRate,
                     project.getColors(),
-                    project.getCreator().getId() // 프로젝트 생성자 ID 추가
+                    project.getCreator().getId() // ✅ 프로젝트 생성자 ID 추가
             );
         }).collect(Collectors.toList());
 

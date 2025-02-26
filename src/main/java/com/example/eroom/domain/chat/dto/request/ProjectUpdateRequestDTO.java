@@ -9,9 +9,8 @@ import java.util.List;
 @Data
 public class ProjectUpdateRequestDTO {
     private String name;
-    private String category;
-    private List<String> subCategories1;
-    private List<String> subCategories2;
+    private Long categoryId;
+    private List<SubCategoryRequest> subCategories;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private ProjectStatus status;

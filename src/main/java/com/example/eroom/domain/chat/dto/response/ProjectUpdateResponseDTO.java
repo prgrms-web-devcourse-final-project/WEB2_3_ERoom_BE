@@ -11,9 +11,8 @@ public class ProjectUpdateResponseDTO {
 
     private Long id;
     private String name;
-    private String category;
-    private List<String> subCategories1;
-    private List<String> subCategories2;
+    private String categoryName;
+    private List<SubCategoryDetail> subCategories;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private ProjectStatus status;

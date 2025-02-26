@@ -22,9 +22,9 @@ public class AdminProjectDTO {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
 
-    private String category;
-    private List<String> subCategories1;
-    private List<String> subCategories2;
+//    private String category;
+//    private List<String> subCategories1;
+//    private List<String> subCategories2;
 
     // Project 엔티티를 매개변수로 받는 생성자
     public AdminProjectDTO(Project project) {
@@ -35,8 +35,8 @@ public class AdminProjectDTO {
         this.startDate = project.getStartDate();
         this.endDate = project.getEndDate();
 
-        this.category = project.getCategory();
-        this.subCategories1 = project.getSubCategories1();
-        this.subCategories2 = project.getSubCategories2();
+//        this.category = project.getCategory();
+//        this.subCategories1 = project.getSubCategories1();
+//        this.subCategories2 = project.getSubCategories2();
     }
 }

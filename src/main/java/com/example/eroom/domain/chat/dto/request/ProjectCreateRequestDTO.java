@@ -1,23 +1,20 @@
 package com.example.eroom.domain.chat.dto.request;
 
 import com.example.eroom.domain.entity.ColorInfo;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class ProjectCreateRequestDTO {
 
     private String name;
     private String description;
-    private String category;
-    private List<String> subCategories1;
-    private List<String> subCategories2;
+    private Long categoryId; // 카테고리 ID
+    private List<SubCategoryRequest> subCategories; // 여러 서브 카테고리를 담을 수 있도록 변경
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private List<Long> invitedMemberIds;
