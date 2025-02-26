@@ -11,18 +11,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Tag {
+public class ProjectTag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
-
-    private int count = 0;
+    @ManyToOne
+    @JoinColumn(name = "project_id", nullable = false)
+    private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "sub_category_id", nullable = false)
-    private SubCategory subCategory;
+    @JoinColumn(name = "tag_id", nullable = false)
+    private Tag tag;
 }

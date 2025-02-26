@@ -26,18 +26,15 @@ public class Project {
     private String description; // x
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // 카테고리
-    private String category; // 1개의 카테고리 선택
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category; // 하나의 카테고리(ex : 개발)
 
-    @ElementCollection
-    @CollectionTable(name = "project_subcategory1", joinColumns = @JoinColumn(name = "project_id"))
-    @Column(name = "subcategory1")
-    private List<String> subCategories1 = new ArrayList<>(); // 첫 번째 카테고리의 하위 선택
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<ProjectSubCategory> projectSubCategories = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(name = "project_subcategory2", joinColumns = @JoinColumn(name = "project_id"))
-    @Column(name = "subcategory2")
-    private List<String> subCategories2 = new ArrayList<>(); // 두 번째 카테고리의 하위 선택
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectTag> tags = new ArrayList<>(); // 서브 카테고리에서 선택한 태그들
 
     @Enumerated(EnumType.STRING)
     @Column(name = "delete_status", nullable = false)
