@@ -8,6 +8,7 @@ import com.example.eroom.domain.chat.service.MemberService;
 import com.example.eroom.domain.chat.service.ProjectService;
 import com.example.eroom.domain.entity.*;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -117,7 +118,7 @@ public class ProjectController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ProjectResponseDTO> createProject(@RequestBody ProjectCreateRequestDTO projectCreateRequestDTO,
+    public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody ProjectCreateRequestDTO projectCreateRequestDTO,
                                                             HttpSession session) {
 
         Member creator = (Member) session.getAttribute("member");
@@ -154,10 +155,10 @@ public class ProjectController {
         return ResponseEntity.ok(projectUpdateResponse);
     }
 
-    @RequestMapping(value = "/{projectId}/update", method = RequestMethod.OPTIONS)
-    public ResponseEntity<Void> handleOptions() {
-        return ResponseEntity.ok().build();
-    }
+//    @RequestMapping(value = "/{projectId}/update", method = RequestMethod.OPTIONS)
+//    public ResponseEntity<Void> handleOptions(@PathVariable Long projectId) {
+//        return ResponseEntity.ok().build();
+//    }
 
     // 프로젝트 업데이트
     @PatchMapping("/{projectId}/update")
