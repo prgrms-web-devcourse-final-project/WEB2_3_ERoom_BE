@@ -97,7 +97,7 @@ public class ProjectController {
                     groupChatRoomId,
                     progressRate,
                     project.getColors(),
-                    project.getCreator().getId() // ✅ 프로젝트 생성자 ID 추가
+                    project.getCreator().getId()
             );
         }).collect(Collectors.toList());
 
