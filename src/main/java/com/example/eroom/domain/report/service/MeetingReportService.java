@@ -2,6 +2,10 @@ package com.example.eroom.domain.report.service;
 
 import com.example.eroom.domain.chat.repository.ChatMessageRepository;
 import com.example.eroom.domain.entity.ChatMessage;
+import com.example.eroom.domain.entity.ChatRoom;
+import com.example.eroom.domain.entity.Report;
+import com.example.eroom.domain.report.repository.ReportRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -16,15 +20,17 @@ import java.util.stream.Collectors;
 @Service
 public class MeetingReportService {
 
+    private final ReportRepository reportRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final WebClient webClient;
 
     @Value("${openai.api.key}")
     private String openAiApiKey;
 
-    public MeetingReportService(WebClient.Builder webClientBuilder, ChatMessageRepository chatMessageRepository) {
+    public MeetingReportService(WebClient.Builder webClientBuilder, ChatMessageRepository chatMessageRepository, ReportRepository reportRepository) {
         this.webClient = webClientBuilder.baseUrl("https://api.openai.com").build();
         this.chatMessageRepository = chatMessageRepository;
+        this.reportRepository = reportRepository;
     }
 
     public String generateMeetingSummary(Long chatRoomId, LocalDateTime startTime, LocalDateTime endTime) {
@@ -61,5 +67,17 @@ public class MeetingReportService {
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
+    }
+    public void saveReport(Report report){
+        reportRepository.save(report);
+    }
+
+    @Transactional
+    public void updateReport(Long reportId, String content){
+        reportRepository.updateReport(reportId, content);
+    }
+
+    public List<Report> getReportList(ChatRoom chatRoom){
+        return reportRepository.findAllByChatRoomOrderByCreatedAtAsc(chatRoom);
     }
 }
