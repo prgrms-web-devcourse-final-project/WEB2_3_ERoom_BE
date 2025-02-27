@@ -12,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Tag {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,7 +20,9 @@ public class Tag {
     @Column(nullable = false)
     private String name;
 
+    private int count = 0;
+
     @ManyToOne
-    @JoinColumn(name="sub_category_id", nullable = false)
+    @JoinColumn(name = "sub_category_id", nullable = false)
     private SubCategory subCategory;
 }
