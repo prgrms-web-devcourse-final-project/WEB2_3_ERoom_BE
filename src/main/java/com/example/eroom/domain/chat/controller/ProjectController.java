@@ -154,6 +154,11 @@ public class ProjectController {
         return ResponseEntity.ok(projectUpdateResponse);
     }
 
+    @RequestMapping(value = "/{projectId}/update", method = RequestMethod.OPTIONS)
+    public ResponseEntity<Void> handleOptions() {
+        return ResponseEntity.ok().build();
+    }
+
     // 프로젝트 업데이트
     @PatchMapping("/{projectId}/update")
     public ResponseEntity<Void> updateProject(@PathVariable Long projectId,
