@@ -27,6 +27,12 @@ public class SearchController {
         return ResponseEntity.ok(members);
     }
 
+    @GetMapping("/admin/members")
+    public ResponseEntity<List<MemberSearchResponseDTO>> searchAdminMembers(@RequestParam String name) {
+        List<MemberSearchResponseDTO> members = searchService.adminSearchMembersByName(name);
+        return ResponseEntity.ok(members);
+    }
+
     // 프로젝트 검색
     @GetMapping("/projects")
     public ResponseEntity<List<ProjectSearchResponseDTO>> searchProjects(@RequestParam String name) {
