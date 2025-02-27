@@ -27,6 +27,7 @@
     let stompClient = null;
     const roomId = /*[[${chatRoom.id}]]*/ 'defaultRoom';
     const currentMember = /*[[${currentMember.username}]]*/ 'Anonymous';
+    const senderId = /*[[${currentMember.id}]]*/ '101';
 
     function connect() {
         const socket = new SockJS('/ws');
@@ -48,7 +49,7 @@
     function showMessage(message) {
         const chat = document.getElementById('chat');
         const messageElement = document.createElement('p');
-        messageElement.innerHTML = `<strong>${message.senderUsername}</strong>: ${message.message} <em>${message.sentAt}</em>`;
+        messageElement.innerHTML = `<strong>${message.senderName}</strong>: ${message.message} <em>${message.sentAt}</em>`;
         chat.appendChild(messageElement);
     }
 
@@ -56,10 +57,11 @@
         e.preventDefault();
         const messageInput = document.getElementById('messageInput');
         const message = messageInput.value;
-        stompClient.send('/app/chat/send/ex', {}, JSON.stringify({
-            senderUsername: currentMember,
+        stompClient.send('/app/chat/send', {}, JSON.stringify({
+            senderName: currentMember,
             message: message,
-            chatRoomId: roomId
+            chatRoomId: roomId,
+            senderId : senderId
         }));
         messageInput.value = '';
     });

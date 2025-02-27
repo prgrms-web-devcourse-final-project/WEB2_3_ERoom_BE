@@ -1,6 +1,6 @@
 package com.example.eroom.domain.chat.thymeleaf.service;
 
-import com.example.eroom.domain.chat.dto.ChatMessageDTO;
+import com.example.eroom.domain.chat.dto.ChatMessageExDTO;
 import com.example.eroom.domain.chat.repository.ChatMessageRepository;
 import com.example.eroom.domain.chat.repository.ChatRoomRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
@@ -37,7 +37,7 @@ public class ChatMessageServiceEx {
     }
 
     // DTO → Entity 변환 메서드
-    public ChatMessage convertToEntity(ChatMessageDTO dto) {
+    public ChatMessage convertToEntity(ChatMessageExDTO dto) {
         ChatMessage chatMessage = new ChatMessage();
 
         // ChatRoom 조회
@@ -45,9 +45,9 @@ public class ChatMessageServiceEx {
                 .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
 
         // User 조회
-        Member sender = memberRepository.findByUsername(dto.getSenderUsername());
+        Member sender = memberRepository.findByUsername(dto.getSenderName());
         if (sender == null) {
-            throw new RuntimeException("Sender not found: " + dto.getSenderUsername());
+            throw new RuntimeException("Sender not found: " + dto.getSenderName());
         }
 
         chatMessage.setChatRoom(chatRoom);
