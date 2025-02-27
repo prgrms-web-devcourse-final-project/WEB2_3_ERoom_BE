@@ -1,16 +1,13 @@
 package com.example.eroom.domain.chat.config;
 
+import org.springframework.stereotype.Component;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 
-@Configuration
+@Component
 public class CorsConfig implements Filter {
-
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
@@ -29,3 +26,4 @@ public class CorsConfig implements Filter {
         chain.doFilter(request, response);
     }
 }
+
