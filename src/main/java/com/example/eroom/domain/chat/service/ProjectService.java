@@ -78,6 +78,7 @@ public class ProjectService {
                         ChatMessageDTO messageDTO = new ChatMessageDTO();
                         messageDTO.setMessageId(message.getId());
                         messageDTO.setChatRoomId(groupChatRoom.getId());
+                        messageDTO.setSenderId(message.getSender().getId());
                         messageDTO.setSenderName(message.getSender().getUsername());
                         messageDTO.setSenderProfile(message.getSender().getProfile());
                         messageDTO.setMessage(message.getMessage());

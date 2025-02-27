@@ -9,9 +9,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChatMessageDTO {
+public class ChatMessageExDTO {
     private Long chatRoomId;
-    private String senderUsername; // sender의 username
+    private String senderName; // sender의 username
+    private Long senderId;
     private String message;
     private Integer unreadCount;
     private LocalDateTime sentAt = LocalDateTime.now();
