@@ -25,10 +25,12 @@ public class Report {
     @JoinColumn(name = "chatroom_id")
     private ChatRoom chatRoom;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+
+    private String title;
 
     @Enumerated(EnumType.STRING)
     private DeleteStatus deleteStatus; // ACTIVE, DELETED
