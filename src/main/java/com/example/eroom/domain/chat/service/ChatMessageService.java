@@ -72,6 +72,7 @@ public class ChatMessageService {
                 notification.setType(NotificationType.MESSAGE_SEND);
                 notification.setRead(false);
                 notification.setMember(member);
+                notification.setReferenceId(chatRoom.getId());
                 notificationRepository.save(notification);
 
                 // 웹소켓을 통해 실시간 알림 전송
