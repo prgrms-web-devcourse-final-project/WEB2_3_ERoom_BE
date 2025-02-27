@@ -154,10 +154,10 @@ public class ProjectController {
         return ResponseEntity.ok(projectUpdateResponse);
     }
 
-    @RequestMapping(value = "/{projectId}/update", method = RequestMethod.OPTIONS)
+/*    @RequestMapping(value = "/{projectId}/update", method = RequestMethod.OPTIONS)
     public ResponseEntity<Void> handleOptions() {
         return ResponseEntity.ok().build();
-    }
+    }*/
 
     // 프로젝트 업데이트
     @PatchMapping("/{projectId}/update")
@@ -170,7 +170,7 @@ public class ProjectController {
         }
 
         projectService.updateProject(projectId, projectUpdateRequestDTO, currentMember);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     // 프로젝트 삭제 (softDelete)
