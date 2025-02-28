@@ -13,5 +13,5 @@ public class ChatMessageDTO {
     private String senderName;
     private String senderProfile;
     private String message;
-    private LocalDateTime sentAt;
+    private LocalDateTime sentAt = LocalDateTime.now();
 }

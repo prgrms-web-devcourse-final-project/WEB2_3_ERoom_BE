@@ -1,5 +1,6 @@
 package com.example.eroom.domain.chat.repository;
 
+import com.example.eroom.domain.entity.DeleteStatus;
 import com.example.eroom.domain.entity.Member;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +25,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     // 멤버 이름으로 검색
     List<Member> findByUsernameContainingIgnoreCase(String username);
+
+    // 멤버 이름 + 활성화된 멤버만(ACTIVE)
+    List<Member> findByUsernameContainingIgnoreCaseAndDeleteStatus(String name, DeleteStatus deleteStatus);
 }

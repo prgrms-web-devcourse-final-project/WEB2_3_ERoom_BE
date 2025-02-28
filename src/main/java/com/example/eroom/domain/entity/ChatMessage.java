@@ -24,7 +24,9 @@ public class ChatMessage {
     @JoinColumn(name = "sender_id", nullable = false)
     private Member sender;
 
-    private String message;
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String message = "";
     private Integer unreadCount = 0; // 읽지 않은 메시지 개수
     private LocalDateTime sentAt = LocalDateTime.now();
 }

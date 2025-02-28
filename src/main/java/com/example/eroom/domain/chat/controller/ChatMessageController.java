@@ -30,6 +30,10 @@ public class ChatMessageController {
             throw new CustomException(ErrorCode.SENDER_NOT_FOUND);
         }
 
+        System.out.println("chat senderName : " + chatMessageDTO.getSenderName());
+        System.out.println("chat message : " + chatMessageDTO.getMessage());
+        System.out.println("chat senderId : " + chatMessageDTO.getSenderId());
+
         // DTO → Entity 변환 후 저장
         ChatMessage chatMessage = chatMessageService.convertToEntity(chatMessageDTO);
         chatMessageService.saveMessage(chatMessage);

@@ -31,7 +31,7 @@ public class ChatRoom {
     private String name;
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ChatRoomMember> participants = new ArrayList<>();
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)

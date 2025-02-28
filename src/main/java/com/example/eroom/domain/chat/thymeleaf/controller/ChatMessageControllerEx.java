@@ -1,6 +1,6 @@
 package com.example.eroom.domain.chat.thymeleaf.controller;
 
-import com.example.eroom.domain.chat.dto.ChatMessageDTO;
+import com.example.eroom.domain.chat.dto.ChatMessageExDTO;
 import com.example.eroom.domain.chat.service.NotificationService;
 import com.example.eroom.domain.chat.thymeleaf.service.ChatMessageServiceEx;
 import com.example.eroom.domain.chat.service.MemberService;
@@ -8,7 +8,6 @@ import com.example.eroom.domain.entity.ChatMessage;
 import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.Notification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -35,19 +34,19 @@ public class ChatMessageControllerEx {
 //    }
 
     @MessageMapping("/chat/send/ex")
-    public void sendMessage(@Payload ChatMessageDTO chatMessageDTO) {  // 반환 타입을 void로 변경
-        if (chatMessageDTO.getSenderUsername() == null) {
+    public void sendMessage(@Payload ChatMessageExDTO chatMessageExDTO) {  // 반환 타입을 void로 변경
+        if (chatMessageExDTO.getSenderName() == null) {
             throw new RuntimeException("SenderUsername is null!");
         }
 
         // DTO → Entity 변환 후 저장
-        ChatMessage chatMessage = chatMessageServiceEx.convertToEntity(chatMessageDTO);
+        ChatMessage chatMessage = chatMessageServiceEx.convertToEntity(chatMessageExDTO);
         chatMessageServiceEx.saveMessage(chatMessage);
 
         // SimpMessagingTemplate을 사용하여 메시지 전송
         messagingTemplate.convertAndSend(
-                "/topic/chatroom/" + chatMessageDTO.getChatRoomId(),
-                chatMessageDTO
+                "/topic/chatroom/" + chatMessageExDTO.getChatRoomId(),
+                chatMessageExDTO
         );
     }
 
