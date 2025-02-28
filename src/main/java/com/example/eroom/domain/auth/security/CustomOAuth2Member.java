@@ -1,6 +1,6 @@
 package com.example.eroom.domain.auth.security;
 
-import com.example.eroom.domain.entity.Member;
+/*import com.example.eroom.domain.entity.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -44,4 +44,4 @@ public class CustomOAuth2Member implements OAuth2User {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
     }
-}
+}*/

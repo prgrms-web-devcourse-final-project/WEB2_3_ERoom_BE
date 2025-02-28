@@ -1,6 +1,6 @@
 package com.example.eroom.domain.auth.thymeleaf;
 
-import com.amazonaws.services.s3.AmazonS3Client;
+/*import com.amazonaws.services.s3.AmazonS3Client;
 import com.example.eroom.domain.auth.repository.AuthMemberRepository;
 import com.example.eroom.domain.auth.security.CustomOAuth2Member;
 import com.example.eroom.domain.auth.service.AmazonS3Service;
@@ -92,4 +92,4 @@ public class AuthControllerEx {
 
         return "redirect:/project/list";
     }
-}
+}*/

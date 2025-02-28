@@ -1,6 +1,6 @@
 package com.example.eroom.domain.auth.security;
 
-import com.example.eroom.domain.auth.repository.AuthMemberRepository;
+/*import com.example.eroom.domain.auth.repository.AuthMemberRepository;
 import com.example.eroom.domain.entity.DeleteStatus;
 import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.MemberGrade;
@@ -76,6 +76,6 @@ public class CustomOAuth2MemberService implements OAuth2UserService<OAuth2UserRe
         return memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
-}
+}*/
 
 

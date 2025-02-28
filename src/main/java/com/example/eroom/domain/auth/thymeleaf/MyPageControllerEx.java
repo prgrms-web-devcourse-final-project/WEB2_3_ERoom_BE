@@ -1,6 +1,6 @@
 package com.example.eroom.domain.auth.thymeleaf;
 
-import com.example.eroom.domain.auth.repository.AuthMemberRepository;
+/*import com.example.eroom.domain.auth.repository.AuthMemberRepository;
 import com.example.eroom.domain.auth.service.AmazonS3Service;
 import com.example.eroom.domain.entity.Member;
 import jakarta.servlet.http.HttpSession;
@@ -69,6 +69,6 @@ public class MyPageControllerEx {
         }
         return member;
     }
-}
+}*/
 
 

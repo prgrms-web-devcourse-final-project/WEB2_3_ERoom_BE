@@ -1,6 +1,6 @@
 package com.example.eroom.domain.auth.security;
 
-import jakarta.servlet.http.HttpServletRequest;
+/*import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -20,5 +20,5 @@ public class CustomOAuth2FailureHandler implements AuthenticationFailureHandler 
             response.sendRedirect("/auth/login?error");
         }
     }
-}
+}*/
 

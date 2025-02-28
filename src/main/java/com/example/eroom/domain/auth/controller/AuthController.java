@@ -1,10 +1,12 @@
 package com.example.eroom.domain.auth.controller;
 
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.example.eroom.domain.auth.dto.request.SocialLoginRequest;
+import com.example.eroom.domain.auth.dto.response.AuthResponse;
 import com.example.eroom.domain.auth.dto.response.MemberResponseDTO;
 import com.example.eroom.domain.auth.repository.AuthMemberRepository;
-import com.example.eroom.domain.auth.security.CustomOAuth2Member;
 import com.example.eroom.domain.auth.service.AmazonS3Service;
+import com.example.eroom.domain.auth.service.AuthService;
 import com.example.eroom.domain.entity.DeleteStatus;
 import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.MemberGrade;
@@ -30,6 +32,45 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final AuthService authService;
+
+    // 소셜 로그인 처리
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody SocialLoginRequest request) {
+        AuthResponse response = authService.login(request);
+
+        // 비회원일 경우, non-member 정보만 반환
+        if (!response.isRegistered()) {
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        // 기존 회원일 경우 JWT와 회원정보를 반환
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    /*@PostMapping("/signup")
+    public ResponseEntity<AuthResponse> signup(@RequestBody SignupRequest request) {
+        // 1. 이메일 중복 확인
+        if (memberRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+        }
+
+        // 2. 신규 회원 생성
+        Member newMember = createNewMember(request); // 여기서 S3 업로드 처리 가능
+        memberRepository.save(newMember);
+
+        // 3. JWT 발급 후 반환
+        String jwtToken = jwtTokenProvider.createToken(newMember.getEmail(), getRolesForMember(newMember));
+        return ResponseEntity.ok(AuthResponse.ofExistingUser(newMember, jwtToken));
+    }*/
+
+}
+
+/*@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -80,4 +121,4 @@ public class AuthController {
                 "profileUrl", member.getProfile()
         ));
     }
-}
+}*/

@@ -1,6 +1,6 @@
 package com.example.eroom.domain.auth.security;
 
-public class OAuth2RedirectException extends RuntimeException {
+/*public class OAuth2RedirectException extends RuntimeException {
     private final String redirectUrl;
 
     public OAuth2RedirectException(String redirectUrl) {
@@ -11,4 +11,4 @@ public class OAuth2RedirectException extends RuntimeException {
     public String getRedirectUrl() {
         return redirectUrl;
     }
-}
+}*/

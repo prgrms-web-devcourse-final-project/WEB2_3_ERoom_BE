@@ -1,6 +1,6 @@
 package com.example.eroom.domain.auth.security;
 
-import com.example.eroom.domain.entity.Member;
+/*import com.example.eroom.domain.entity.Member;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,4 +49,4 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         response.sendRedirect("/project/list");
     }
 
-}
+}*/
