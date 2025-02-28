@@ -1,7 +1,6 @@
 package com.example.eroom.domain.chat.service;
 
 import com.example.eroom.domain.chat.dto.response.MemberSearchResponseDTO;
-import com.example.eroom.domain.chat.dto.response.ProjectResponseDTO;
 import com.example.eroom.domain.chat.dto.response.ProjectSearchResponseDTO;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.ProjectRepository;
@@ -29,7 +28,8 @@ public class SearchService {
                         member.getId(),
                         member.getUsername(),
                         member.getEmail(),
-                        member.getProfile()
+                        member.getProfile(),
+                        member.getDeleteStatus()
                 ))
                 .collect(Collectors.toList());
     }
@@ -42,7 +42,8 @@ public class SearchService {
                         member.getId(),
                         member.getUsername(),
                         member.getEmail(),
-                        member.getProfile()
+                        member.getProfile(),
+                        member.getDeleteStatus()
                 ))
                 .collect(Collectors.toList());
     }
@@ -55,7 +56,8 @@ public class SearchService {
                         project.getId(),
                         project.getName(),
                         project.getCreator().getUsername(),
-                        project.getStatus()
+                        project.getStatus(),
+                        project.getDeleteStatus()
                 ))
                 .collect(Collectors.toList());
     }
