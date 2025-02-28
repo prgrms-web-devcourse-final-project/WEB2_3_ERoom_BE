@@ -1,5 +1,6 @@
 package com.example.eroom.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ public class Report {
     private String content;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "chatroom_id")
     private ChatRoom chatRoom;
 
