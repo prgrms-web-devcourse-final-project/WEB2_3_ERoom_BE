@@ -25,7 +25,7 @@ public class ProjectAccessInterceptor implements HandlerInterceptor {
                 Member currentMember = (Member) request.getSession().getAttribute("member");
 
                 // 사용자가 해당 프로젝트의 멤버인지 확인
-                if (currentMember == null || !projectService.isUserMemberOfProject(currentMember, projectId)) {
+                if (currentMember == null || !projectService.isMemberOfProject(currentMember, projectId)) {
                     response.setStatus(HttpStatus.FORBIDDEN.value());
                     response.getWriter().write("Access Denied");
                     return false;
