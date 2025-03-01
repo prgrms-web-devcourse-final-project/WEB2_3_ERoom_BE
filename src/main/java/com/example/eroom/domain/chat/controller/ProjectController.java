@@ -163,7 +163,7 @@ public class ProjectController {
     // 프로젝트 업데이트
     @PatchMapping("/{projectId}/update")
     public ResponseEntity<Void> updateProject(@PathVariable Long projectId,
-                                              @RequestBody ProjectUpdateRequestDTO projectUpdateRequestDTO,
+                                              @Valid @RequestBody ProjectUpdateRequestDTO projectUpdateRequestDTO,
                                               HttpSession session) {
         Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
