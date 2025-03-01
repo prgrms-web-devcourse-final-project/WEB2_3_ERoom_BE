@@ -99,24 +99,25 @@ public class ProjectService {
     public Project createProject(ProjectCreateRequestDTO dto, Member creator) {
 
         Project project = new Project();
-        project.setName(dto.getName()); // 프로젝트 이름
-        project.setDescription(dto.getDescription()); // 프로젝트 설명
-        project.setStartDate(dto.getStartDate()); // 시작일
-        project.setEndDate(dto.getEndDate()); // 마감일
+        project.setName(dto.getName());
+        project.setDescription(dto.getDescription());
+        project.setStartDate(dto.getStartDate());
+        project.setEndDate(dto.getEndDate());
         project.setStatus(ProjectStatus.BEFORE_START); // 프로젝트 상태(기본값 : 시작 전)
         project.setCreator(creator); // 프로젝트 생성자
 
-        // 1. 카테고리 설정
+        // 카테고리 설정
         Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+                .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
         project.setCategory(category);
 
-        // 2. 서브 카테고리와 태그 설정
+        // 서브 카테고리와 태그 설정
         if (dto.getSubCategories() != null && !dto.getSubCategories().isEmpty()) {
             for (SubCategoryRequest subCategoryRequest : dto.getSubCategories()) {
                 // 서브 카테고리 조회
                 SubCategory subCategory = subCategoryRepository.findById(subCategoryRequest.getSubCategoryId())
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid sub-category ID: " + subCategoryRequest.getSubCategoryId()));
+                        .orElseThrow(() -> new CustomException(ErrorCode.SUBCATEGORY_NOT_FOUND));
+
 
                 // 프로젝트, 서브카테고리 연결 엔티티 생성
                 ProjectSubCategory projectSubCategory = new ProjectSubCategory();
@@ -148,7 +149,7 @@ public class ProjectService {
                             // 프로젝트에 ProjectTag 추가
                             project.getTags().add(projectTag);
                         } else {
-                            throw new IllegalArgumentException("Tag ID " + tag.getId() + " does not belong to sub-category ID " + subCategory.getId());
+                            throw new CustomException(ErrorCode.TAG_NOT_BELONG_TO_SUBCATEGORY);
                         }
                     }
                     // 태그들 한번에 저장
@@ -260,7 +261,7 @@ public class ProjectService {
         // 카테고리 수정 (기존 데이터 제거 후 변경)
         if (projectUpdateRequestDTO.getCategoryId() != null) {
             Category category = categoryRepository.findById(projectUpdateRequestDTO.getCategoryId())
-                    .orElseThrow(() -> new IllegalArgumentException("Invalid category ID"));
+                    .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
             // 기존의 서브 카테고리 및 태그 제거
             project.getProjectSubCategories().clear();
@@ -288,7 +289,7 @@ public class ProjectService {
             // 새로운 서브 카테고리 및 태그 추가
             for (SubCategoryRequest subCategoryRequest : projectUpdateRequestDTO.getSubCategories()) {
                 SubCategory subCategory = subCategoryRepository.findById(subCategoryRequest.getSubCategoryId())
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid sub-category ID: " + subCategoryRequest.getSubCategoryId()));
+                        .orElseThrow(() -> new CustomException(ErrorCode.SUBCATEGORY_NOT_FOUND));
 
                 ProjectSubCategory projectSubCategory = new ProjectSubCategory();
                 projectSubCategory.setProject(project);
@@ -313,7 +314,7 @@ public class ProjectService {
                             projectTag.setTag(tag);
                             project.getTags().add(projectTag);
                         } else {
-                            throw new IllegalArgumentException("Tag ID " + tag.getId() + " does not belong to sub-category ID " + subCategory.getId());
+                            throw new CustomException(ErrorCode.TAG_NOT_BELONG_TO_SUBCATEGORY);
                         }
                     }
 
@@ -399,16 +400,15 @@ public class ProjectService {
 
 
     public Project getProjectById(Long projectId) {
-//        return projectRepository.findById(projectId)
-//                .orElseThrow(() -> new IllegalArgumentException("Invalid project Id:" + projectId));
+
         return projectRepository.findByIdWithMembers(projectId)
                 .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
     }
 
-    public boolean isUserMemberOfProject(Member user, Long projectId) {
+    public boolean isMemberOfProject(Member currentMember, Long projectId) {
         Project project = getProjectById(projectId);
         return project.getMembers().stream()
-                .anyMatch(member -> member.getMember().getId().equals(user.getId()));
+                .anyMatch(member -> member.getMember().getId().equals(currentMember.getId()));
     }
 
     public ProjectDetailDTO getProjectDetailForView(Long projectId) {
