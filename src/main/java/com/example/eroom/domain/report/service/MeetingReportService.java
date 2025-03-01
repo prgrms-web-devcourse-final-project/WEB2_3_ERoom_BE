@@ -2,11 +2,20 @@ package com.example.eroom.domain.report.service;
 
 import com.example.eroom.domain.chat.repository.ChatMessageRepository;
 import com.example.eroom.domain.entity.ChatMessage;
+import com.example.eroom.domain.entity.ChatRoom;
+import com.example.eroom.domain.entity.DeleteStatus;
+import com.example.eroom.domain.entity.Report;
+import com.example.eroom.domain.report.dto.Message;
+import com.example.eroom.domain.report.dto.OpenAiRequest;
+import com.example.eroom.domain.report.repository.ReportRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,15 +25,17 @@ import java.util.stream.Collectors;
 @Service
 public class MeetingReportService {
 
+    private final ReportRepository reportRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final WebClient webClient;
 
     @Value("${openai.api.key}")
     private String openAiApiKey;
 
-    public MeetingReportService(WebClient.Builder webClientBuilder, ChatMessageRepository chatMessageRepository) {
+    public MeetingReportService(WebClient.Builder webClientBuilder, ChatMessageRepository chatMessageRepository, ReportRepository reportRepository) {
         this.webClient = webClientBuilder.baseUrl("https://api.openai.com").build();
         this.chatMessageRepository = chatMessageRepository;
+        this.reportRepository = reportRepository;
     }
 
     public String generateMeetingSummary(Long chatRoomId, LocalDateTime startTime, LocalDateTime endTime) {
@@ -35,31 +46,54 @@ public class MeetingReportService {
         }
 
         // 메시지를 문자열로 변환
-        String conversation = "채팅 시작 시간 : "+messages.get(0).getSentAt().toString() + " , ";
+        String conversation = "채팅 시작 시간 : " + messages.get(0).getSentAt().toString() + " , ";
         conversation += messages.stream()
                 .map(msg -> msg.getSender().getUsername() + " : " + msg.getMessage())
                 .collect(Collectors.joining(" "));
-        conversation += " , 채팅 끝나는 시간 : " + messages.get(messages.size()-1).getSentAt().toString();
+        conversation += " , 채팅 끝나는 시간 : " + messages.get(messages.size() - 1).getSentAt().toString();
 
-        if(conversation.length()>4000){
-            log.info("conversation is too long");
+        if (conversation.length() > 3000) {
+            log.info("conversation is too long, truncating...");
+            conversation = conversation.substring(0, 3000) + "... (생략)";
         }
 
+        OpenAiRequest request = new OpenAiRequest(
+                "gpt-4",
+                List.of(
+                        new Message("system", "다음 채팅 기록을 기반으로 회의록을 작성해줘. 회의목 제목, 회의기간, 참여인원, 회의내용이 있어야하고 채팅 인원은 쉼표로 구분해."),
+                        new Message("user", conversation)
+                ),
+                0.7
+        );
+
         // ChatGPT API 요청
-        return webClient.post()
+        JsonNode response = webClient.post()
                 .uri("/v1/chat/completions")
                 .header("Authorization", "Bearer " + openAiApiKey)
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue("""
-                            {
-                                "model": "gpt-4",
-                                "messages": [{"role": "system", "content": "다음 채팅 기록을 기반으로 회의록을 작성해줘. 회의록 제목, 회의기간, 참여인원, 회의내용이 있어야해"},
-                                             {"role": "user", "content": "%s"}],
-                                "temperature": 0.7
-                            }
-                        """.formatted(conversation))
+                .bodyValue(request)
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(JsonNode.class)
                 .block();
+        assert response != null;
+        return response.path("choices").get(0).path("message").path("content").asText();
+    }
+
+    public void saveReport(Report report) {
+        reportRepository.save(report);
+    }
+
+    @Transactional
+    public void updateReport(Long reportId, String content) {
+        log.info("Updating reportId: {}, content: {}", reportId, content);
+        reportRepository.updateReport(reportId, content);
+    }
+
+    public List<Report> getReportList(ChatRoom chatRoom) {
+        return reportRepository.findActiveReports(chatRoom, DeleteStatus.ACTIVE);
+    }
+
+    public void softDeleteReport(Long ReportId){
+        reportRepository.softDeleteReport(ReportId, DeleteStatus.DELETED);
     }
 }

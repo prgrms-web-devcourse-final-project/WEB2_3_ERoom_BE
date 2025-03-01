@@ -1,10 +1,7 @@
 package com.example.eroom.domain.report.mock;
 
-import com.example.eroom.domain.chat.repository.ChatRoomRepository;
-import com.example.eroom.domain.chat.repository.MemberRepository;
-import com.example.eroom.domain.chat.repository.ProjectRepository;
+import com.example.eroom.domain.chat.repository.*;
 import com.example.eroom.domain.entity.*;
-import com.example.eroom.domain.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -19,6 +16,7 @@ public class ChatMessageDataInitializer implements CommandLineRunner {
     private final ProjectRepository projectRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -49,15 +47,22 @@ public class ChatMessageDataInitializer implements CommandLineRunner {
         memberRepository.save(member3);
         memberRepository.save(member4);
 
+        Category category1 = new Category();
+        category1.setName("category1");
+
+        categoryRepository.save(category1);
+
         // 백엔드 프로젝트
         Project project1 = new Project();
         project1.setStatus(ProjectStatus.BEFORE_START);
         project1.setCreator(member1);
+        project1.setCategory(category1);
 
         // 프론트엔드 프로젝트
         Project project2 = new Project();
         project2.setStatus(ProjectStatus.BEFORE_START);
         project2.setCreator(member1);
+        project2.setCategory(category1);
 
         // 프로젝트 저장
         projectRepository.save(project1);
