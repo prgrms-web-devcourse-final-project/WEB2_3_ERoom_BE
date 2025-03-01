@@ -6,6 +6,7 @@ import com.example.eroom.domain.chat.dto.response.TaskUpdateResponseDTO;
 import com.example.eroom.domain.chat.service.TaskService;
 import com.example.eroom.domain.entity.Member;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class TaskController {
 
     // Task 생성
     @PostMapping("/create")
-    public ResponseEntity<Void> createTask(@RequestBody TaskCreateRequestDTO requestDTO,
+    public ResponseEntity<Void> createTask(@Valid @RequestBody TaskCreateRequestDTO requestDTO,
                                            HttpSession session) {
 
         Member creator = (Member) session.getAttribute("member");
