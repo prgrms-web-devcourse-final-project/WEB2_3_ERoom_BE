@@ -12,15 +12,16 @@ public class AuthResponseDTO {
     private String accessToken;    // JWT 엑세스 토큰
     private String refreshToken;   // JWT 리프레시 토큰
     private Member member;         // 회원 정보
+    private String idToken;        // OAuth2 사용자 idToken
 
     // 기존 회원 응답 생성 메서드
     public static AuthResponseDTO ofExistingUser(Member member, String accessToken, String refreshToken) {
-        return new AuthResponseDTO(true, accessToken, refreshToken, member);
+        return new AuthResponseDTO(true, accessToken, refreshToken, member, null);
     }
 
     // 신규 회원 응답 생성 메서드
     public static AuthResponseDTO ofNewUser(OAuth2UserInfoDTO userInfo) {
-        return new AuthResponseDTO(false, null, null, null);
+        return new AuthResponseDTO(false, null, null, null, userInfo.getIdToken());
     }
 }
 

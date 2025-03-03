@@ -16,6 +16,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -85,19 +87,21 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponseDTO signup(SignupRequestDTO request, MultipartFile profileImage) {
+    public AuthResponseDTO signup(@RequestBody SignupRequestDTO request,
+                                  @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
         String profileUrl = null;
 
         if (profileImage != null && !profileImage.isEmpty()) {
             profileUrl = amazonS3Service.uploadFile(profileImage);
         }
-
-        String email = fetchEmailFromOAuthId(request.getEmail());
+        System.out.println("idToken : " + request.getIdToken());
+        String email = fetchEmailFromIdToken(request.getIdToken());
+        System.out.println(email);
 
         Member newMember = new Member();
         newMember.setUsername(request.getUsername());
         newMember.setEmail(email);
-        newMember.setPassword(passwordEncoder.encode(request.getPassword()));
+        newMember.setPassword(null);
         newMember.setOrganization(request.getOrganization());
         newMember.setMemberGrade(MemberGrade.DISABLE);
         newMember.setProfile(profileUrl);
@@ -114,17 +118,23 @@ public class AuthService {
         // 리프레시 토큰을 DB에 저장 (기존 토큰 덮어쓰기)
         refreshTokenRepository.save(new RefreshToken(newMember.getEmail(), refreshToken));
 
-        return new AuthResponseDTO(true, accessToken, refreshToken, newMember);
+        return new AuthResponseDTO(true, accessToken, refreshToken, newMember, null);
     }
 
     // oauthId로 이메일 조회
-    private String fetchEmailFromOAuthId(String oauthId) {
-        OAuth2UserInfoDTO userInfo = oAuth2TokenValidator.validateToken("google", oauthId);
+    private String fetchEmailFromIdToken(String idToken) {
+        System.out.println("idToken: " + idToken);
+
+        // idToken을 검증하고 사용자 정보를 가져옴
+        OAuth2UserInfoDTO userInfo = oAuth2TokenValidator.validateToken("google", idToken);
+
         if (userInfo == null || userInfo.getEmail() == null) {
-            throw new IllegalArgumentException("OAuth2 ID로 이메일 조회 실패");
+            throw new IllegalArgumentException("OAuth2 ID Token으로 이메일 조회 실패");
         }
-        return userInfo.getEmail();
+
+        return userInfo.getEmail(); // 이메일을 바로 반환
     }
+
 
 }
 

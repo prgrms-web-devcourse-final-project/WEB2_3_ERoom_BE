@@ -52,9 +52,12 @@ public class OAuth2TokenValidator {
 
             if (response != null) {
                 System.out.println("Google Token 검증 성공: " + response);
+                System.out.println("Google Token: " + token);
                 userInfo.setEmail(response.getEmail());
                 userInfo.setProvider("google");
-                userInfo.setOauthId(response.getSub());
+                userInfo.setIdToken(token);
+
+                System.out.println("OAuth2UserInfoDTO 생성됨: " + userInfo);
             } else {
                 System.out.println("Google Token 검증 실패 - 응답이 null");
             }

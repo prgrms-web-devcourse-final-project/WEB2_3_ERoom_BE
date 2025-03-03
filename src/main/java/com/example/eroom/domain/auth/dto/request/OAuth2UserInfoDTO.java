@@ -12,7 +12,7 @@ import lombok.Setter;
 public class OAuth2UserInfoDTO {
     private String email;
     private String provider;
-    private String oauthId;
+    private String idToken;
 }
 
 
