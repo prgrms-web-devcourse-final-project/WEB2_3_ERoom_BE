@@ -2,17 +2,27 @@ package com.example.eroom.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class Report {
+
+    @Builder
+    Report(ChatRoom chatRoom, String content, String title, LocalDateTime startDate, LocalDateTime endDate, DeleteStatus status, String members){
+        this.chatRoom = chatRoom;
+        this.content = content;
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.deleteStatus = status;
+        this.members = members;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,5 +46,7 @@ public class Report {
 
     @Enumerated(EnumType.STRING)
     private DeleteStatus deleteStatus; // ACTIVE, DELETED
+
+    private String members;
 
 }
