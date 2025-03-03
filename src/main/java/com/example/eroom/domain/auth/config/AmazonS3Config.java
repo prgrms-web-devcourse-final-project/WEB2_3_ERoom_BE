@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AmazonS3Config { // 접속에 대한 설정
+public class AmazonS3Config {
 
     @Value("${cloud.aws.region.static}")
     private String region;

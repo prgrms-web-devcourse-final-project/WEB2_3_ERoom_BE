@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class KakaoTokenResponse {
+public class KakaoTokenResponseDTO {
     private KakaoAccount kakaoAccount;
 
     @Getter

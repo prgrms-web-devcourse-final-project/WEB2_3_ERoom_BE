@@ -5,7 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class GoogleTokenResponse {
+public class GoogleTokenResponseDTO {
     private String email;
+    private String sub;
 }
 

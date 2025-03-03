@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SocialLoginRequest {
+public class SocialLoginRequestDTO {
     private String token;    // 소셜 로그인 토큰
     private String provider; // provider (google, kakao, naver 등)
 }

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class NaverTokenResponse {
+public class NaverTokenResponseDTO {
     private NaverAccount response;
 
     @Getter
