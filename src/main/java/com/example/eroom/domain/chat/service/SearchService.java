@@ -29,6 +29,8 @@ public class SearchService {
                         member.getUsername(),
                         member.getEmail(),
                         member.getProfile(),
+                        member.getOrganization(),
+                        member.getCreatedAt(),
                         member.getDeleteStatus()
                 ))
                 .collect(Collectors.toList());
@@ -43,6 +45,8 @@ public class SearchService {
                         member.getUsername(),
                         member.getEmail(),
                         member.getProfile(),
+                        member.getOrganization(),
+                        member.getCreatedAt(),
                         member.getDeleteStatus()
                 ))
                 .collect(Collectors.toList());
@@ -56,6 +60,10 @@ public class SearchService {
                         project.getId(),
                         project.getName(),
                         project.getCreator().getUsername(),
+                        project.getCreator().getEmail(),
+                        project.getStartDate(),
+                        project.getEndDate(),
+                        project.getCreatedAt(),
                         project.getStatus(),
                         project.getDeleteStatus()
                 ))
