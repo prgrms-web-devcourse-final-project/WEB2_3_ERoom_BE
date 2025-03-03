@@ -87,9 +87,9 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponseDTO signup(@RequestBody SignupRequestDTO request,
-                                  @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+    public AuthResponseDTO signup(SignupRequestDTO request) {
         String profileUrl = null;
+        MultipartFile profileImage = request.getProfileImage();
 
         if (profileImage != null && !profileImage.isEmpty()) {
             profileUrl = amazonS3Service.uploadFile(profileImage);

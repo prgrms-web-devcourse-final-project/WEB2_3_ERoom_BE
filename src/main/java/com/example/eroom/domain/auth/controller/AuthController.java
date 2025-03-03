@@ -33,11 +33,10 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponseDTO> signup(@RequestBody SignupRequestDTO request,
-                                                  @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+    public ResponseEntity<AuthResponseDTO> signup(@ModelAttribute SignupRequestDTO request) {
         System.out.println("request :" + request.getIdToken());
-        System.out.println("profileImage :" + profileImage);
-        AuthResponseDTO response = authService.signup(request, profileImage);
+        System.out.println("profileImage :" + request.getProfileImage());
+        AuthResponseDTO response = authService.signup(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
