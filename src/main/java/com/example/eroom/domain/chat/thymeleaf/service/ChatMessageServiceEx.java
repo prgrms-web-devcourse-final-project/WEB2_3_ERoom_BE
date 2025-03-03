@@ -65,11 +65,12 @@ public class ChatMessageServiceEx {
 
         for (Member member : members) {
             if (!member.equals(message.getSender())) { // 자기 자신 제외
-                Notification notification = new Notification();
-                notification.setMessage("새로운 메시지가 도착했습니다: " + message.getMessage());
-                notification.setType(NotificationType.MESSAGE_SEND);
-                notification.setRead(false);
-                notification.setMember(member);
+                Notification notification = Notification.builder()
+                        .message("새로운 메시지가 도착했습니다: " + message.getMessage())
+                        .type(NotificationType.MESSAGE_SEND)
+                        .isRead(false)
+                        .recipient(member)
+                        .build();
                 notificationRepository.save(notification);
 
                 // 웹소켓을 통해 실시간 알림 전송

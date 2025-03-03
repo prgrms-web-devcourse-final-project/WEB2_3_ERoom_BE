@@ -42,11 +42,12 @@ public class ProjectServiceEx {
             member.setProject(project);
             member.setMember(invitedMember);
             projectMemberRepository.save(member);
-            Notification notification = new Notification();
-            notification.setMessage("새로운 프로젝트가 생성됐습니다: " + project.getName());
-            notification.setType(NotificationType.PROJECT_INVITE);
-            notification.setRead(false);
-            notification.setMember(memberRepository.findByUsername(member.getMember().getUsername()));
+            Notification notification = Notification.builder()
+                    .message("새로운 프로젝트가 생성됐습니다: " + project.getName())
+                    .type(NotificationType.PROJECT_INVITE)
+                    .isRead(false)
+                    .recipient(memberRepository.findByUsername(member.getMember().getUsername()))
+                    .build();
             notificationRepository.save(notification);
             messagingTemplate.convertAndSend("/topic/notifications/" + member.getId(), project);
         }

@@ -1,6 +1,7 @@
 package com.example.eroom.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,9 +10,18 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 public class Notification {
+
+    @Builder
+    Notification(Member recipient, String message, boolean isRead, LocalDateTime createdAt, NotificationType type, Long referenceId){
+        this.member = recipient;
+        this.message = message;
+        this.isRead = isRead;
+        this.createdAt = createdAt;
+        this.type = type;
+        this.referenceId = referenceId;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +30,7 @@ public class Notification {
     @Lob
     @Column(columnDefinition = "LONGTEXT")
     private String message;
+    @Setter
     private boolean isRead;
 
     @ManyToOne
@@ -33,4 +44,5 @@ public class Notification {
 
     // 관련 엔티티의 ID만 저장하는 방식도 괜찮을듯
     private Long referenceId;
+
 }
