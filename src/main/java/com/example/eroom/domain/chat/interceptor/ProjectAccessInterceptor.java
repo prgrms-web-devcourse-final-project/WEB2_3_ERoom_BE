@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-@Component
+//@Component
 @RequiredArgsConstructor
 public class ProjectAccessInterceptor implements HandlerInterceptor {
 
