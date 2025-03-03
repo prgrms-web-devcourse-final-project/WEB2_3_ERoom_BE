@@ -22,13 +22,14 @@ public class NotificationService {
     // 알림 생성
     public Notification createNotification(Member recipient, String message, NotificationType type, Long referenceId) {
 
-        Notification notification = new Notification();
-        notification.setMember(recipient);
-        notification.setMessage(message);
-        notification.setRead(false);
-        notification.setCreatedAt(LocalDateTime.now());
-        notification.setType(type);
-        notification.setReferenceId(referenceId);
+        Notification notification = Notification.builder()
+                .recipient(recipient)
+                .message(message)
+                .type(type)
+                .referenceId(referenceId)
+                .isRead(false)
+                .createdAt(LocalDateTime.now())
+                .build();
 
         notificationRepository.save(notification);
 
