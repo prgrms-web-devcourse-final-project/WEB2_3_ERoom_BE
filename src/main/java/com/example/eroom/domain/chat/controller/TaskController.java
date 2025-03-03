@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,9 +23,9 @@ public class TaskController {
     // Task 생성
     @PostMapping("/create")
     public ResponseEntity<Void> createTask(@Valid @RequestBody TaskCreateRequestDTO requestDTO,
-                                           HttpSession session) {
+                                           @AuthenticationPrincipal Member creator) {
 
-        Member creator = (Member) session.getAttribute("member");
+        //Member creator = (Member) session.getAttribute("member");
         if (creator == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -35,8 +36,8 @@ public class TaskController {
 
     // Task 상세 조회 (수정 화면에 사용)
     @GetMapping("/{taskId}")
-    public ResponseEntity<TaskUpdateResponseDTO> getTask(@PathVariable Long taskId, HttpSession session) {
-        Member member = (Member) session.getAttribute("member");
+    public ResponseEntity<TaskUpdateResponseDTO> getTask(@PathVariable Long taskId, @AuthenticationPrincipal Member member) {
+        //Member member = (Member) session.getAttribute("member");
         if (member == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -49,8 +50,8 @@ public class TaskController {
     @PutMapping("/{taskId}")
     public ResponseEntity<Void> updateTask(@PathVariable Long taskId,
                                            @RequestBody TaskUpdateRequestDTO requestDTO,
-                                           HttpSession session) {
-        Member editor = (Member) session.getAttribute("member");
+                                           @AuthenticationPrincipal Member editor) {
+        //Member editor = (Member) session.getAttribute("member");
         if (editor == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -61,8 +62,8 @@ public class TaskController {
 
     // Task 삭제 (soft delete)
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId, HttpSession session) {
-        Member editor = (Member) session.getAttribute("member");
+    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId, @AuthenticationPrincipal Member editor) {
+        //Member editor = (Member) session.getAttribute("member");
         if (editor == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

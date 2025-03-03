@@ -50,6 +50,13 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'  // WebClient 포함
     implementation 'io.netty:netty-resolver-dns-native-macos:4.1.109.Final'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+    testImplementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation 'io.jsonwebtoken:jjwt:0.12.6'
 }
 
 tasks.named('test') {

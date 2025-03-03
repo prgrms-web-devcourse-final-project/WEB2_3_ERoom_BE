@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,9 +30,9 @@ public class ProjectController {
 
     // 프로젝트 목록 보기
     @GetMapping("/list")
-    public ResponseEntity<List<ProjectListResponseDTO>> listProjects(HttpSession session) {
+    public ResponseEntity<List<ProjectListResponseDTO>> listProjects(@AuthenticationPrincipal Member currentMember) {
 
-        Member currentMember = (Member) session.getAttribute("member");
+        //Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -107,8 +108,8 @@ public class ProjectController {
 
     // 프로젝트의 채팅방을 불러오는 api
     @GetMapping("/{projectId}/chatroom")
-    public ResponseEntity<ProjectDetailChatDTO> getProjectDetail(@PathVariable Long projectId, HttpSession session) {
-        Member currentMember = (Member) session.getAttribute("member");
+    public ResponseEntity<ProjectDetailChatDTO> getProjectDetail(@PathVariable Long projectId, @AuthenticationPrincipal Member currentMember) {
+        //Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -119,9 +120,9 @@ public class ProjectController {
 
     @PostMapping("/create")
     public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody ProjectCreateRequestDTO projectCreateRequestDTO,
-                                                            HttpSession session) {
+                                                            @AuthenticationPrincipal Member creator) {
 
-        Member creator = (Member) session.getAttribute("member");
+        //Member creator = (Member) session.getAttribute("member");
         if (creator == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -145,8 +146,8 @@ public class ProjectController {
 
     // 기존 프로젝트 정보 조회 (수정용 폼)
     @GetMapping("/{projectId}/edit")
-    public ResponseEntity<ProjectUpdateResponseDTO> getProjectForEdit(@PathVariable Long projectId, HttpSession session) {
-        Member currentMember = (Member) session.getAttribute("member");
+    public ResponseEntity<ProjectUpdateResponseDTO> getProjectForEdit(@PathVariable Long projectId, @AuthenticationPrincipal Member currentMember) {
+        //Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -164,8 +165,8 @@ public class ProjectController {
     @PatchMapping("/{projectId}/update")
     public ResponseEntity<Void> updateProject(@PathVariable Long projectId,
                                               @Valid @RequestBody ProjectUpdateRequestDTO projectUpdateRequestDTO,
-                                              HttpSession session) {
-        Member currentMember = (Member) session.getAttribute("member");
+                                              @AuthenticationPrincipal Member currentMember) {
+        //Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -176,8 +177,8 @@ public class ProjectController {
 
     // 프로젝트 삭제 (softDelete)
     @DeleteMapping("/{projectId}/delete")
-    public ResponseEntity<Void> softDeleteProject(@PathVariable Long projectId, HttpSession session) {
-        Member currentMember = (Member) session.getAttribute("member");
+    public ResponseEntity<Void> softDeleteProject(@PathVariable Long projectId, @AuthenticationPrincipal Member currentMember) {
+        //Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -193,8 +194,8 @@ public class ProjectController {
 
     // 프로젝트 상세보기 (채팅방 X, Task 정보 포함)
     @GetMapping("/{projectId}/detail")
-    public ResponseEntity<ProjectDetailDTO> getProjectDetailForView(@PathVariable Long projectId, HttpSession session) {
-        Member currentMember = (Member) session.getAttribute("member");
+    public ResponseEntity<ProjectDetailDTO> getProjectDetailForView(@PathVariable Long projectId, @AuthenticationPrincipal Member currentMember) {
+        //Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -205,8 +206,8 @@ public class ProjectController {
 
     // 프로젝트 나가기
     @DeleteMapping("/{projectId}/leave")
-    public ResponseEntity<Void> leaveProject(@PathVariable Long projectId, HttpSession session) {
-        Member currentMember = (Member) session.getAttribute("member");
+    public ResponseEntity<Void> leaveProject(@PathVariable Long projectId, @AuthenticationPrincipal Member currentMember) {
+        //Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
