@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용 X
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/api/auth/**", "/login/oauth2/code/google").permitAll() // 로그인, 회원가입 API 허용
+                        .requestMatchers("/", "/api/auth/**", "/login/oauth2/code/google", "/ws/**").permitAll() // 로그인, 회원가입 API 허용
                         .requestMatchers("/admin/**", "/api/projects/**", "/api/tasks/**", "/api/search/**", "/api/mypage").authenticated()
                         .anyRequest().authenticated()
                 )
