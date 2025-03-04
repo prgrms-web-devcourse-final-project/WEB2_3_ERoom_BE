@@ -2,6 +2,7 @@ package com.example.eroom.domain.chat.service;
 
 import com.example.eroom.domain.chat.dto.request.TaskCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.request.TaskUpdateRequestDTO;
+import com.example.eroom.domain.chat.dto.response.TaskListResponseDTO;
 import com.example.eroom.domain.chat.dto.response.TaskUpdateResponseDTO;
 import com.example.eroom.domain.chat.error.CustomException;
 import com.example.eroom.domain.chat.error.ErrorCode;
@@ -135,6 +136,18 @@ public class TaskService {
 
         task.setDeleteStatus(DeleteStatus.DELETED); // soft delete
         taskRepository.save(task);
+    }
+
+    public List<TaskListResponseDTO> getTasksByMember(Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        List<Task> tasks = taskRepository.findByAssignedMember(member);
+
+        return tasks.stream()
+                .map(TaskListResponseDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     // Task 수정 권한
