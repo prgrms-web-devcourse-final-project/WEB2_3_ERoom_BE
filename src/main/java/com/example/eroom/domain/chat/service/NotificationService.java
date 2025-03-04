@@ -4,7 +4,6 @@ import com.example.eroom.domain.chat.repository.NotificationRepository;
 import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.Notification;
 import com.example.eroom.domain.entity.NotificationType;
-import com.example.eroom.domain.entity.Project;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -20,7 +19,7 @@ public class NotificationService {
     private final SimpMessagingTemplate messagingTemplate;
 
     // 알림 생성
-    public Notification createNotification(Member recipient, String message, NotificationType type, Long referenceId) {
+    public Notification createNotification(Member recipient, String message, NotificationType type, Long referenceId, String referenceName) {
 
         Notification notification = Notification.builder()
                 .recipient(recipient)
@@ -29,6 +28,7 @@ public class NotificationService {
                 .referenceId(referenceId)
                 .isRead(false)
                 .createdAt(LocalDateTime.now())
+                .referenceName(referenceName)
                 .build();
 
         notificationRepository.save(notification);

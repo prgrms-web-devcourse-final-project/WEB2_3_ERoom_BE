@@ -2,6 +2,7 @@ package com.example.eroom.domain.chat.service;
 
 import com.example.eroom.domain.chat.dto.request.TaskCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.request.TaskUpdateRequestDTO;
+import com.example.eroom.domain.chat.dto.response.TaskListResponseDTO;
 import com.example.eroom.domain.chat.dto.response.TaskUpdateResponseDTO;
 import com.example.eroom.domain.chat.error.CustomException;
 import com.example.eroom.domain.chat.error.ErrorCode;
@@ -13,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +59,7 @@ public class TaskService {
         for(TaskMember taskMember : participants){
             Member member = taskMember.getMember();
             String message = "새로운 업무에 배정되었습니다: " + member.getUsername();
-            notificationService.createNotification(member, message, NotificationType.TASK_ASSIGN, taskMember.getTask().getProject().getId());// 알림생성, 저장, 알림 전송
+            notificationService.createNotification(member, message, NotificationType.TASK_ASSIGN, taskMember.getTask().getId(), taskMember.getTask().getTitle());// 알림생성, 저장, 알림 전송
         }
 
         task.setParticipants(participants);
@@ -135,6 +135,18 @@ public class TaskService {
 
         task.setDeleteStatus(DeleteStatus.DELETED); // soft delete
         taskRepository.save(task);
+    }
+
+    public List<TaskListResponseDTO> getTasksByMember(Long memberId) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        List<Task> tasks = taskRepository.findByAssignedMember(member);
+
+        return tasks.stream()
+                .map(TaskListResponseDTO::fromEntity)
+                .collect(Collectors.toList());
     }
 
     // Task 수정 권한

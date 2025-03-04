@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -182,9 +181,9 @@ public class ProjectService {
 
         // 프로젝트 초대 알림 보내기
         for (Member member : invitedMembers) {
-            if(!project.getCreator().getId().equals(member.getId())) {
+            if (!project.getCreator().getId().equals(member.getId())) {
                 String message = "새로운 프로젝트에 초대되었습니다: " + savedProject.getName();
-                notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId());// 알림생성, 저장, 알림 전송
+                notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId(), savedProject.getName());// 알림생성, 저장, 알림 전송
             }
         }
 
@@ -546,9 +545,9 @@ public class ProjectService {
 
         for (Project project : projects) {
             log.info("알림 전송 대상 프로젝트: " + project.getName());
-            for(ProjectMember projectMember : project.getMembers()){
+            for (ProjectMember projectMember : project.getMembers()) {
                 String message = "프로젝트가 마감 24시간 전입니다: " + project.getName();
-                notificationService.createNotification(projectMember.getMember(), message, NotificationType.PROJECT_EXIT, project.getId());// 알림생성, 저장, 알림 전송
+                notificationService.createNotification(projectMember.getMember(), message, NotificationType.PROJECT_EXIT, project.getId(), project.getName());// 알림생성, 저장, 알림 전송
             }
         }
     }

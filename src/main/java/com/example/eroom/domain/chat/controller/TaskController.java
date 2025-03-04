@@ -2,16 +2,18 @@ package com.example.eroom.domain.chat.controller;
 
 import com.example.eroom.domain.chat.dto.request.TaskCreateRequestDTO;
 import com.example.eroom.domain.chat.dto.request.TaskUpdateRequestDTO;
+import com.example.eroom.domain.chat.dto.response.TaskListResponseDTO;
 import com.example.eroom.domain.chat.dto.response.TaskUpdateResponseDTO;
 import com.example.eroom.domain.chat.service.TaskService;
 import com.example.eroom.domain.entity.Member;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -70,5 +72,12 @@ public class TaskController {
 
         taskService.deleteTask(taskId, editor);
         return ResponseEntity.ok().build();
+    }
+
+    // 특정 멤버가 담당하고 있는 Task 목록 조회
+    @GetMapping("/member/{memberId}")
+    public ResponseEntity<List<TaskListResponseDTO>> getTasksByMember(@PathVariable Long memberId) {
+        List<TaskListResponseDTO> tasks = taskService.getTasksByMember(memberId);
+        return ResponseEntity.ok(tasks);
     }
 }
