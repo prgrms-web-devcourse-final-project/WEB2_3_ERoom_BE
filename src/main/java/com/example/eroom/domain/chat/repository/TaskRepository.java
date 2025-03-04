@@ -1,6 +1,7 @@
 package com.example.eroom.domain.chat.repository;
 
 import com.example.eroom.domain.entity.DeleteStatus;
+import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.Project;
 import com.example.eroom.domain.entity.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 //    List<Task> findActiveTasksByProjectId(@Param("projectId") Long projectId);
 
     List<Task> findByProjectIdAndDeleteStatus(Long projectId, DeleteStatus deleteStatus);
+
+    List<Task> findByAssignedMember(Member assignedMember);
 }
 
