@@ -1,7 +1,6 @@
 package com.example.eroom.domain.chat.controller;
 
 import com.example.eroom.domain.chat.dto.response.MemberSearchResponseDTO;
-import com.example.eroom.domain.chat.dto.response.ProjectResponseDTO;
 import com.example.eroom.domain.chat.dto.response.ProjectSearchResponseDTO;
 import com.example.eroom.domain.chat.service.SearchService;
 import lombok.RequiredArgsConstructor;
