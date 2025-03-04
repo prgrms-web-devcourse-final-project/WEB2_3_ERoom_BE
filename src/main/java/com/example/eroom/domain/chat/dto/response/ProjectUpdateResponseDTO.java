@@ -11,12 +11,10 @@ public class ProjectUpdateResponseDTO {
 
     private Long id;
     private String name;
-    private String tag1;
-    private String tag2;
-    private String tag3;
+    private String categoryName;
+    private List<SubCategoryDetail> subCategories;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private ProjectStatus status;
-    private List<Long> memberIds;
-    private List<String> memberNames; // 화면에 표시할 멤버 이름
+    private List<MemberDTO> members;
 }

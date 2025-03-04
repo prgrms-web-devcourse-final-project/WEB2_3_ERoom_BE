@@ -1,5 +1,6 @@
 package com.example.eroom.domain.entity;
 
+import com.example.eroom.domain.chat.converter.ColorInfoConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +27,12 @@ public class Task {
     private LocalDateTime endDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private TaskStatus status = TaskStatus.BEFORE_START; // 테스크 상태 기본값 BEFORE_START
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "delete_status", nullable = false)
+    private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
@@ -40,4 +45,8 @@ public class Task {
     // 참여자 (여러 명 가능)
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<TaskMember> participants = new ArrayList<>();
+
+    @Convert(converter = ColorInfoConverter.class)
+    @Column(columnDefinition = "TEXT")
+    private ColorInfo colors;
 }

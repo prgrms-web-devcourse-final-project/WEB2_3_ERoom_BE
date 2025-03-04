@@ -11,9 +11,6 @@ public class ProjectDetailChatDTO {
     private Long projectId;
     private String projectName;
     private String description;
-    private String tag1;
-    private String tag2;
-    private String tag3;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private ProjectStatus status;

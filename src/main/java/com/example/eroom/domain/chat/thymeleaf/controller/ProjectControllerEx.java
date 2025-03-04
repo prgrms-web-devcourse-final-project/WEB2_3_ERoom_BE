@@ -2,7 +2,7 @@ package com.example.eroom.domain.chat.thymeleaf.controller;
 
 import com.example.eroom.domain.chat.thymeleaf.service.ProjectServiceEx;
 import com.example.eroom.domain.chat.thymeleaf.service.TaskServiceEx;
-import com.example.eroom.domain.chat.thymeleaf.service.MemberService;
+import com.example.eroom.domain.chat.service.MemberService;
 import com.example.eroom.domain.entity.Project;
 import com.example.eroom.domain.entity.Task;
 import com.example.eroom.domain.entity.Member;
@@ -47,6 +47,7 @@ public class ProjectControllerEx {
 
         model.addAttribute("project", new Project());
         model.addAttribute("members", memberService.getAllUsersExcept(currentMember));
+
         return "project/create";
     }
 

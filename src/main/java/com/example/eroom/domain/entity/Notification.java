@@ -1,25 +1,36 @@
 package com.example.eroom.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Builder
 @Entity
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Notification {
+
+    @Builder
+    Notification(Member recipient, String message, boolean isRead, LocalDateTime createdAt, NotificationType type, Long referenceId){
+        this.member = recipient;
+        this.message = message;
+        this.isRead = isRead;
+        this.createdAt = createdAt;
+        this.type = type;
+        this.referenceId = referenceId;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String message;
-    private String type; // 프로젝트 초대, 마감, 업무 배정, 새로운 메시지
+    @Setter
     private boolean isRead;
 
     @ManyToOne
@@ -28,8 +39,10 @@ public class Notification {
 
     private LocalDateTime createdAt;
 
-    public void setRead(boolean read) {
-        isRead = read;
-    }
-}
+    @Enumerated(EnumType.STRING)
+    private NotificationType type; // PROJECT_INVITE, PROJECT_EXIT, MESSAGE_SEND...
 
+    // 관련 엔티티의 ID만 저장하는 방식도 괜찮을듯
+    private Long referenceId;
+
+}
