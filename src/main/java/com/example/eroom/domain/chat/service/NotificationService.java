@@ -19,7 +19,7 @@ public class NotificationService {
     private final SimpMessagingTemplate messagingTemplate;
 
     // 알림 생성
-    public Notification createNotification(Member recipient, String message, NotificationType type, Long referenceId) {
+    public Notification createNotification(Member recipient, String message, NotificationType type, Long referenceId, String referenceName) {
 
         Notification notification = Notification.builder()
                 .recipient(recipient)
@@ -28,6 +28,7 @@ public class NotificationService {
                 .referenceId(referenceId)
                 .isRead(false)
                 .createdAt(LocalDateTime.now())
+                .referenceName(referenceName)
                 .build();
 
         notificationRepository.save(notification);
