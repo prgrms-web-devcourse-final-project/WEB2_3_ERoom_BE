@@ -4,7 +4,6 @@ import com.example.eroom.domain.chat.repository.NotificationRepository;
 import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.Notification;
 import com.example.eroom.domain.entity.NotificationType;
-import com.example.eroom.domain.entity.Project;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

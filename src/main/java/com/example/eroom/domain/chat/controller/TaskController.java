@@ -6,7 +6,6 @@ import com.example.eroom.domain.chat.dto.response.TaskListResponseDTO;
 import com.example.eroom.domain.chat.dto.response.TaskUpdateResponseDTO;
 import com.example.eroom.domain.chat.service.TaskService;
 import com.example.eroom.domain.entity.Member;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
