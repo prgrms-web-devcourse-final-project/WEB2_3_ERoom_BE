@@ -34,7 +34,7 @@ public class NotificationService {
         notificationRepository.save(notification);
 
         // 웹소켓으로 실시간 알림 전송
-        messagingTemplate.convertAndSend("/notifications/" + recipient.getId(), message);
+        messagingTemplate.convertAndSend("/notifications/" + recipient.getId(), notification);
         return notification;
     }
 

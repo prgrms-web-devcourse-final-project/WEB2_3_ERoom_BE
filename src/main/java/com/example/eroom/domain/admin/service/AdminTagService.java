@@ -36,9 +36,12 @@ public class AdminTagService {
         SubCategory subCategory = adminSubCategoryJPARepository.findById(subCategoryId)
                 .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. : " + subCategoryId));
 
-        Tag tag = new Tag();
-        tag.setName(dto.getName());
-        tag.setSubCategory(subCategory);
+        // 빌더 패턴을 사용하여 Tag 객체 생성
+        Tag tag = Tag.builder()
+                .name(dto.getName())
+                .subCategory(subCategory)
+                .count(0) // 초기 카운트 값 설정
+                .build();
 
         Tag savedTag = adminTagJPARepository.save(tag);
         return savedTag;
@@ -49,14 +52,21 @@ public class AdminTagService {
     public AdminTagDTO updateTag(Long tagId, AdminTagDTO dto) {
         // 1. 태그 존재 여부 확인
         Tag existingTag = adminTagJPARepository.findById(tagId)
-                .orElseThrow( () -> new EntityNotFoundException("해당 ID의 태그가 없습니다.: " + tagId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID의 태그가 없습니다.: " + tagId));
 
-        // 2. 값 업데이트 : 이름
-        if (dto.getName() != null) {
-            existingTag.setName(dto.getName());
-        }
+        // 2. 빌더 패턴을 사용하여 새로운 Tag 객체 생성
+        // 업데이트할 값만 변경하고 나머지는 기존 값 유지
+        Tag updatedTag = Tag.builder()
+                .id(existingTag.getId())
+                .name(dto.getName() != null ? dto.getName() : existingTag.getName())
+                .subCategory(existingTag.getSubCategory())
+                .count(existingTag.getCount())
+                .build();
 
-        return new AdminTagDTO(existingTag);
+        // 변경된 태그 저장
+        adminTagJPARepository.save(updatedTag);
+
+        return new AdminTagDTO(updatedTag);
     }
 
     // [ 태그 삭제 ]
