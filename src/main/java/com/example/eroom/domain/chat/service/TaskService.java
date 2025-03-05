@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,40 +32,57 @@ public class TaskService {
         Project project = projectRepository.findById(requestDTO.getProjectId())
                 .orElseThrow(() -> new CustomException(ErrorCode.PROJECT_NOT_FOUND));
 
-        Task task = new Task();
-        task.setTitle(requestDTO.getTitle());
-        task.setStartDate(requestDTO.getStartDate());
-        task.setEndDate(requestDTO.getEndDate());
-        task.setStatus(requestDTO.getStatus());
-        task.setProject(project);
+        // Task 객체 생성
+        Task task = Task.builder()
+                .title(requestDTO.getTitle())
+                .startDate(requestDTO.getStartDate())
+                .endDate(requestDTO.getEndDate())
+                .status(requestDTO.getStatus())
+                .project(project)
+                .colors(requestDTO.getColors() != null ? requestDTO.getColors() : new ColorInfo("#FF5733", "#FFFFFF"))
+                .createdAt(LocalDateTime.now())
+                .deleteStatus(DeleteStatus.ACTIVE)
+                .build();
 
         // 담당자 설정
         if (requestDTO.getAssignedMemberId() != null) {
             Member assignedMember = memberRepository.findById(requestDTO.getAssignedMemberId())
                     .orElseThrow(() -> new CustomException(ErrorCode.TASK_ASSIGNEE_NOT_FOUND));
-            task.setAssignedMember(assignedMember);
+
+            // 프로젝트에 속한 멤버인지 검증
+            boolean isProjectMember = project.getMembers().stream()
+                    .map(ProjectMember::getMember) // ProjectMember -> Member 변환
+                    .anyMatch(member -> member.equals(assignedMember));
+
+            if (!isProjectMember) {
+                throw new CustomException(ErrorCode.TASK_ASSIGNEE_NOT_IN_PROJECT);
+            }
+
+            task.updateAssignedMember(assignedMember);
+
+            // 담당자에게만 알림
+            String message = "새로운 업무에 배정되었습니다: " + assignedMember.getUsername();
+            notificationService.createNotification(assignedMember, message, NotificationType.TASK_ASSIGN, task.getId(), task.getTitle());
         }
 
-        // 참여자 설정
-        List<TaskMember> participants = requestDTO.getParticipantIds().stream()
-                .map(memberId -> {
-                    Member member = memberRepository.findById(memberId)
-                            .orElseThrow(() -> new CustomException(ErrorCode.TASK_PARTICIPANT_NOT_FOUND));
-                    TaskMember taskMember = new TaskMember();
-                    taskMember.setTask(task);
-                    taskMember.setMember(member);
-                    return taskMember;
-                }).collect(Collectors.toList());
+//        // 참여자 설정 -> 추후 도입
+//        List<TaskMember> participants = requestDTO.getParticipantIds().stream()
+//                .map(memberId -> {
+//                    Member member = memberRepository.findById(memberId)
+//                            .orElseThrow(() -> new CustomException(ErrorCode.TASK_PARTICIPANT_NOT_FOUND));
+//                    return TaskMember.create(task, member);
+//                })
+//                .collect(Collectors.toList());
+//
+//        task.updateParticipants(participants);
 
-        for(TaskMember taskMember : participants){
-            Member member = taskMember.getMember();
-            String message = "새로운 업무에 배정되었습니다: " + member.getUsername();
-            notificationService.createNotification(member, message, NotificationType.TASK_ASSIGN, taskMember.getTask().getId(), taskMember.getTask().getTitle());// 알림생성, 저장, 알림 전송
-        }
+//        // 알림 생성
+//        for (TaskMember taskMember : participants) {
+//            Member member = taskMember.getMember();
+//            String message = "새로운 업무에 배정되었습니다: " + member.getUsername();
+//            notificationService.createNotification(member, message, NotificationType.TASK_ASSIGN, task.getId(), task.getTitle());
+//        }
 
-        task.setParticipants(participants);
-        // color 추가
-        task.setColors(requestDTO.getColors() != null ? requestDTO.getColors() : new ColorInfo("#FF5733", "#FFFFFF"));
         taskRepository.save(task);
     }
 
@@ -80,45 +98,56 @@ public class TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
 
-        // 수정 권한 체크: Task 담당자 or 프로젝트 생성자만 가능
+        // 수정 권한 체크
         if (!canEditTask(task, editor)) {
             throw new CustomException(ErrorCode.TASK_ACCESS_DENIED);
         }
 
-        // 제목, 날짜, 상태 변경
-        task.setTitle(requestDTO.getTitle());
-        task.setStartDate(requestDTO.getStartDate());
-        task.setEndDate(requestDTO.getEndDate());
-        task.setStatus(requestDTO.getStatus());
+        // Task 내용 변경
+        //task.updateTask(requestDTO.getTitle(), requestDTO.getStartDate(), requestDTO.getEndDate(), requestDTO.getStatus());
+        task = task.toBuilder()
+                .title(requestDTO.getTitle() != null ? requestDTO.getTitle() : task.getTitle())
+                .startDate(requestDTO.getStartDate() != null ? requestDTO.getStartDate() : task.getStartDate())
+                .endDate(requestDTO.getEndDate() != null ? requestDTO.getEndDate() : task.getEndDate())
+                .status(requestDTO.getStatus() != null ? requestDTO.getStatus() : task.getStatus())
+                .build();
 
-        // 참여자 변경
-        List<TaskMember> newParticipants = requestDTO.getParticipantIds().stream()
-                .map(memberId -> {
-                    Member member = memberRepository.findById(memberId)
-                            .orElseThrow(() -> new CustomException(ErrorCode.TASK_PARTICIPANT_NOT_FOUND));
-                    TaskMember taskMember = new TaskMember();
-                    taskMember.setTask(task);
-                    taskMember.setMember(member);
-                    return taskMember;
-                }).collect(Collectors.toList());
+//        // 참여자 변경
+//        List<TaskMember> newParticipants = requestDTO.getParticipantIds().stream()
+//                .map(memberId -> {
+//                    Member member = memberRepository.findById(memberId)
+//                            .orElseThrow(() -> new CustomException(ErrorCode.TASK_PARTICIPANT_NOT_FOUND));
+//                    return TaskMember.create(task, member);
+//                })
+//                .collect(Collectors.toList());
+//
+//        task.updateParticipants(newParticipants);
 
-        task.getParticipants().clear();
-        task.getParticipants().addAll(newParticipants);
-
-        // 담당자 변경 (참여자 목록에 있어야만 설정 가능)
+        // 담당자 변경 (참여자 목록에 있어야만 설정 가능) -> 참여자를 고려 x 프로젝트의 멤버인지만 검증
         if (requestDTO.getAssignedMemberId() != null) {
-            boolean isAssignedInParticipants = newParticipants.stream()
-                    .anyMatch(participant -> participant.getMember().getId().equals(requestDTO.getAssignedMemberId()));
-
-            if (!isAssignedInParticipants) {
-                throw new CustomException(ErrorCode.TASK_ASSIGNEE_MUST_BE_PARTICIPANT);
-            }
+//            // 참여자 목록에 속한 멤버인지 검증하는 로직
+//            boolean isAssignedInParticipants = newParticipants.stream()
+//                    .anyMatch(participant -> participant.getMember().getId().equals(requestDTO.getAssignedMemberId()));
+//
+//            if (!isAssignedInParticipants) {
+//                throw new CustomException(ErrorCode.TASK_ASSIGNEE_MUST_BE_PARTICIPANT);
+//            }
 
             Member assignedMember = memberRepository.findById(requestDTO.getAssignedMemberId())
                     .orElseThrow(() -> new CustomException(ErrorCode.TASK_ASSIGNEE_NOT_FOUND));
-            task.setAssignedMember(assignedMember);
+
+            // 프로젝트에 속한 멤버인지 검증
+            boolean isProjectMember = task.getProject().getMembers().stream()
+                    .map(ProjectMember::getMember) // ProjectMember -> Member 변환
+                    .anyMatch(member -> member.equals(assignedMember));
+
+            if (!isProjectMember) {
+                throw new CustomException(ErrorCode.TASK_ASSIGNEE_NOT_IN_PROJECT);
+            }
+
+            task.updateAssignedMember(assignedMember);
         } else {
-            task.setAssignedMember(null);
+            task.updateAssignedMember(null);
         }
 
         taskRepository.save(task);
@@ -128,12 +157,13 @@ public class TaskService {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new CustomException(ErrorCode.TASK_NOT_FOUND));
 
-        // 삭제 권한 : Task 담당자 or 프로젝트 생성자만 가능
+        // 삭제 권한 체크
         if (!canEditTask(task, editor)) {
             throw new CustomException(ErrorCode.TASK_ACCESS_DENIED);
         }
 
-        task.setDeleteStatus(DeleteStatus.DELETED); // soft delete
+        // soft delete
+        task.deleteTask();
         taskRepository.save(task);
     }
 

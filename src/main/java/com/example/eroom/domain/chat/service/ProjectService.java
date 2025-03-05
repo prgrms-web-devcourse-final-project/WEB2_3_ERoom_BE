@@ -506,10 +506,10 @@ public class ProjectService {
 
             taskDTO.setAssignedMemberName(task.getAssignedMember() != null ? task.getAssignedMember().getUsername() : null);
 
-            List<String> participantNames = task.getParticipants().stream()
-                    .map(taskMember -> taskMember.getMember().getUsername())
-                    .collect(Collectors.toList());
-            taskDTO.setParticipants(participantNames);
+//            List<String> participantNames = task.getParticipants().stream()
+//                    .map(taskMember -> taskMember.getMember().getUsername())
+//                    .collect(Collectors.toList());
+//            taskDTO.setParticipants(participantNames);
             // task 생성할 때 랜덤한 color
             taskDTO.setColors(task.getColors() != null ? task.getColors() : new ColorInfo("#FFFFFF", "#000000"));
             //taskDTO.setColors(task.getColors()); // color 정보 추가
@@ -578,7 +578,7 @@ public class ProjectService {
 
         // 담당자 변경 (담당자를 프로젝트 생성자로 변경)
         for (Task task : assignedTasks) {
-            task.setAssignedMember(projectCreator);
+            task.updateAssignedMember(projectCreator);
         }
 
         // 멤버 제거

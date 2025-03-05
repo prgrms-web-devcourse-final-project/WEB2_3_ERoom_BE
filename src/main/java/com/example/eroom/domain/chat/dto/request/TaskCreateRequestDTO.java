@@ -30,6 +30,6 @@ public class TaskCreateRequestDTO {
     @NotNull(message = "담당자는 반드시 지정해야 합니다.")
     private Long assignedMemberId;
 
-    private List<Long> participantIds;
+//    private List<Long> participantIds; // 참여자는 추후 도입
     private ColorInfo colors;
 }
