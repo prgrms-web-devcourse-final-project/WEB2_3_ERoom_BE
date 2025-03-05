@@ -31,15 +31,16 @@ public class AdminSubCategoryService {
     }
 
     // [ 서브 카테고리 생성 ]
-    public AdminSubCategoryDTO createSubCategory(Long categoryId, AdminSubCategoryDTO dto){
+    public AdminSubCategoryDTO createSubCategory(Long categoryId, AdminSubCategoryDTO dto) {
         // 1. 카테고리 id로 기존 카테고리 조회
         Category category = adminCategoryJPARepository.findById(categoryId)
-                .orElseThrow( () -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. : " + categoryId));
+                .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. : " + categoryId));
 
-        // 2. 서브 카테고리 생성
-        SubCategory subCategory = new SubCategory();
-        subCategory.setName(dto.getName());
-        subCategory.setCategory(category);
+        // 2. 서브 카테고리 생성 (빌더 패턴 사용)
+        SubCategory subCategory = SubCategory.builder()
+                .name(dto.getName())
+                .category(category)
+                .build();
 
         // 3. 서브 카테고리 저장
         SubCategory savedSubCategory = adminSubCategoryJPARepository.save(subCategory);
@@ -50,18 +51,19 @@ public class AdminSubCategoryService {
 
     // [ 서브 카테고리 수정 ]
     @Transactional
-    public AdminSubCategoryDTO updateSubCategory(Long subcategoryId, AdminSubCategoryDTO dto){
+    public AdminSubCategoryDTO updateSubCategory(Long subcategoryId, AdminSubCategoryDTO dto) {
         // 1. 서브 카테고리 존재 여부 확인
         SubCategory existingSubCategory = adminSubCategoryJPARepository.findById(subcategoryId)
-                .orElseThrow( () -> new EntityNotFoundException( "해당 ID의 서브 카테고리가 없습니다.: " + subcategoryId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID의 서브 카테고리가 없습니다.: " + subcategoryId));
 
-        // 2. 값 업데이트 : 이름
-        if (dto.getName() != null) {
-            existingSubCategory.setName(dto.getName());
-        }
+        // 2. 새 객체를 생성하지 않고 빌더를 이용한 값 업데이트
+        existingSubCategory = existingSubCategory.toBuilder()
+                .name(dto.getName() != null ? dto.getName() : existingSubCategory.getName()) // 값이 있으면 변경, 없으면 기존값 유지
+                .build();
 
         return new AdminSubCategoryDTO(existingSubCategory);
     }
+
 
     // [ 서브 카테고리 삭제 ]
     public void deleteSubCategory(Long subcategoryId){

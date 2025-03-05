@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Setter
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class Project {
@@ -62,4 +62,25 @@ public class Project {
     @Convert(converter = ColorInfoConverter.class)
     @Column(columnDefinition = "TEXT")
     private ColorInfo colors;
+
+    public void addProjectSubCategory(ProjectSubCategory projectSubCategory) {
+        if (this.projectSubCategories == null) {
+            this.projectSubCategories = new ArrayList<>();
+        }
+        this.projectSubCategories.add(projectSubCategory);
+    }
+
+    public void addProjectTag(ProjectTag tag) {
+        if (this.tags == null) {
+            this.tags = new ArrayList<>();
+        }
+        this.tags.add(tag);
+    }
+
+    public void addProjectMember(ProjectMember projectMember) {
+        if (this.members == null) {
+            this.members = new ArrayList<>();
+        }
+        this.members.add(projectMember);
+    }
 }

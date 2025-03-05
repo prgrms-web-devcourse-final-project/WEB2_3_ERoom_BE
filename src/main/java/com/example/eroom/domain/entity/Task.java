@@ -43,7 +43,7 @@ public class Task {
     private Member assignedMember; // 담당자
 
     // 참여자 (여러 명 가능)
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TaskMember> participants = new ArrayList<>();
 
     @Convert(converter = ColorInfoConverter.class)

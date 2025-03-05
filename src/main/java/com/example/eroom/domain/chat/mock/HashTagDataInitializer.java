@@ -61,7 +61,11 @@ public class HashTagDataInitializer implements CommandLineRunner {
 
         SubCategory finalSubCategory = subCategory;
         List<Tag> tags = tagNames.stream()
-                .map(tagName -> new Tag(null, tagName, 0, finalSubCategory))
+                .map(tagName -> Tag.builder()
+                        .name(tagName)
+                        .count(0)
+                        .subCategory(finalSubCategory)
+                        .build())
                 .collect(Collectors.toList());
 
         tagRepository.saveAll(tags); // 태그 저장
