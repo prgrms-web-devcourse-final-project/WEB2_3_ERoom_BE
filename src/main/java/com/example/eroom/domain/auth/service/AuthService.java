@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,10 +53,11 @@ public class AuthService {
             Member member = existingMember.get();
 
             String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), getRolesForMember(member));
-            String refreshToken = jwtTokenProvider.createRefreshToken(member.getEmail());
+            String refreshToken = jwtTokenProvider.createAndStoreRefreshToken(member.getEmail());
 
             // 리프레시 토큰을 DB에 저장 (기존 토큰 덮어쓰기)
-            refreshTokenRepository.save(new RefreshToken(member.getEmail(), refreshToken));
+            LocalDateTime expirationTime = LocalDateTime.now().plusDays(15);
+            refreshTokenRepository.save(new RefreshToken(member.getEmail(), refreshToken, expirationTime));
 
             return AuthResponseDTO.ofExistingUser(member, accessToken, refreshToken);
         }
@@ -116,7 +118,8 @@ public class AuthService {
         String refreshToken = jwtTokenProvider.createRefreshToken(newMember.getEmail());
 
         // 리프레시 토큰을 DB에 저장 (기존 토큰 덮어쓰기)
-        refreshTokenRepository.save(new RefreshToken(newMember.getEmail(), refreshToken));
+        LocalDateTime expirationTime = LocalDateTime.now().plusDays(15);
+        refreshTokenRepository.save(new RefreshToken(newMember.getEmail(), refreshToken, expirationTime));
 
         return new AuthResponseDTO(true, accessToken, refreshToken, newMember, null);
     }
@@ -133,6 +136,21 @@ public class AuthService {
         }
 
         return userInfo.getEmail(); // 이메일을 바로 반환
+    }
+    public String refreshAccessToken(String refreshToken) {
+        // DB에서 리프레시 토큰 조회
+        RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new IllegalArgumentException("RefreshToken not found"));
+
+        // 만료된 리프레시 토큰인지 확인
+        if (storedToken.getExpiredAt().isBefore(LocalDateTime.now())) {
+            refreshTokenRepository.delete(storedToken); // 만료된 토큰 삭제
+            throw new IllegalArgumentException("RefreshToken이 만료되었습니다. 로그인을 다시 해주세요.");
+        }
+
+        // 유효한 경우 새로운 AccessToken 발급
+        String email = jwtTokenProvider.parseClaims(refreshToken).getSubject();
+        return jwtTokenProvider.createAccessToken(email, null); // 역할이 있다면 roles 추가
     }
 
 
