@@ -1,16 +1,15 @@
 package com.example.eroom.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class TaskMember {
 
     @Id
@@ -25,5 +24,14 @@ public class TaskMember {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    private LocalDateTime joinedAt = LocalDateTime.now();
+    private LocalDateTime joinedAt;
+
+    @Builder
+    public static TaskMember create(Task task, Member member) {
+        return TaskMember.builder()
+                .task(task)
+                .member(member)
+                .joinedAt(LocalDateTime.now())
+                .build();
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.eroom.domain.chat.dto.request;
 
+import com.example.eroom.domain.chat.customannotation.RelaxedFutureOrPresent;
 import com.example.eroom.domain.entity.TaskStatus;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -14,7 +15,8 @@ public class TaskUpdateRequestDTO {
     @Size(max = 50, message = "테스크 이름은 최대 50자까지 가능합니다.")
     private String title;
 
-    @FutureOrPresent(message = "시작 날짜는 현재 또는 미래여야 합니다.")
+    //@FutureOrPresent(message = "시작 날짜는 현재 또는 미래여야 합니다.")
+    @RelaxedFutureOrPresent(message = "시작 날짜는 어제 이후여야 합니다.")
     private LocalDateTime startDate;
 
     @Future(message = "종료 날짜는 미래여야 합니다.")
@@ -25,5 +27,5 @@ public class TaskUpdateRequestDTO {
 
     @NotNull(message = "담당자는 반드시 지정해야 합니다.")
     private Long assignedMemberId; // 담당자 (participants 중에서 선택 가능)
-    private List<Long> participantIds; // 참여자 목록 -> 참여자는 일단 없애는 것으로 변경
+//    private List<Long> participantIds; // 참여자 목록 -> 참여자는 일단 없애는 것으로 변경
 }
