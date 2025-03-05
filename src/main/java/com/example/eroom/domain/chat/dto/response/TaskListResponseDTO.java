@@ -23,8 +23,8 @@ public class TaskListResponseDTO {
     private Long assignedMemberId;
     private String assignedMemberName;
     private String assignedMemberProfile;
-    private List<Long> participantIds;
-    private List<String> participantProfiles;
+//    private List<Long> participantIds;
+//    private List<String> participantProfiles;
     private Long projectId;
 
     // DTO 내에서 생성
@@ -38,12 +38,12 @@ public class TaskListResponseDTO {
                 task.getAssignedMember() != null ? task.getAssignedMember().getId() : null,
                 task.getAssignedMember() != null ? task.getAssignedMember().getUsername() : null,
                 task.getAssignedMember() != null ? task.getAssignedMember().getProfile() : null,
-                task.getParticipants().stream()
-                        .map(participant -> participant.getMember().getId())
-                        .collect(Collectors.toList()),
-                task.getParticipants().stream()
-                        .map(participant -> participant.getMember().getProfile())
-                        .collect(Collectors.toList()),
+//                task.getParticipants().stream()
+//                        .map(participant -> participant.getMember().getId())
+//                        .collect(Collectors.toList()),
+//                task.getParticipants().stream()
+//                        .map(participant -> participant.getMember().getProfile())
+//                        .collect(Collectors.toList()),
                 task.getProject() != null ? task.getProject().getId() : null
         );
     }
