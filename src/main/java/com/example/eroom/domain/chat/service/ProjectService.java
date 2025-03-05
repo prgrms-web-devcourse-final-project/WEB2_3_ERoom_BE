@@ -189,7 +189,7 @@ public class ProjectService {
         for (Member member : invitedMembers) {
             if(!project.getCreator().getId().equals(member.getId())) {
                 String message = "새로운 프로젝트에 초대되었습니다: " + savedProject.getName();
-                notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId(), savedProject.getName());
+                notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId().toString(), savedProject.getName());
             }
         }
 
@@ -600,7 +600,7 @@ public class ProjectService {
             log.info("알림 전송 대상 프로젝트: " + project.getName());
             for (ProjectMember projectMember : project.getMembers()) {
                 String message = "프로젝트가 마감 24시간 전입니다: " + project.getName();
-                notificationService.createNotification(projectMember.getMember(), message, NotificationType.PROJECT_EXIT, project.getId(), project.getName());// 알림생성, 저장, 알림 전송
+                notificationService.createNotification(projectMember.getMember(), message, NotificationType.PROJECT_EXIT, project.getId().toString(), project.getName());// 알림생성, 저장, 알림 전송
             }
         }
     }

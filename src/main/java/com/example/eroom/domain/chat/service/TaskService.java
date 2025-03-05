@@ -56,10 +56,10 @@ public class TaskService {
                     return taskMember;
                 }).collect(Collectors.toList());
 
-        for(TaskMember taskMember : participants){
+        for (TaskMember taskMember : participants) {
             Member member = taskMember.getMember();
             String message = "새로운 업무에 배정되었습니다: " + member.getUsername();
-            notificationService.createNotification(member, message, NotificationType.TASK_ASSIGN, taskMember.getTask().getId(), taskMember.getTask().getTitle());// 알림생성, 저장, 알림 전송
+            notificationService.createNotification(member, message, NotificationType.TASK_ASSIGN, task.getId().toString() + " , " + task.getProject().getId().toString(), task.getTitle() + " , " + task.getProject().getName());// 알림생성, 저장, 알림 전송
         }
 
         task.setParticipants(participants);
