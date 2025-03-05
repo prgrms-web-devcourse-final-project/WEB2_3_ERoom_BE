@@ -2,7 +2,6 @@ package com.example.eroom.domain.auth.config;
 
 import com.example.eroom.domain.auth.security.JwtAuthenticationFilter;
 import com.example.eroom.domain.auth.security.JwtTokenProvider;
-import com.example.eroom.domain.auth.service.TokenBlacklistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +26,6 @@ import java.util.List;
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final TokenBlacklistService tokenBlacklistService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**", "/api/projects/**", "/api/tasks/**", "/api/search/**", "/api/mypage").authenticated()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(tokenBlacklistService, jwtTokenProvider), UsernamePasswordAuthenticationFilter.class) // JWT 필터 적용
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class) // JWT 필터 적용
                 .build();
     }
 

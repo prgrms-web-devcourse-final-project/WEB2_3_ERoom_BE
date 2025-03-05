@@ -39,13 +39,3 @@
 
 ### 9. git-flow를 사용한다, Merge는 dev branch에 하고 branch는 기능별로 생성한다
 [git-flow 참고](https://techblog.woowahan.com/2553/)
-
-### 9. 추가한 dependencies
-- Spring Boot DevTools
-- Lombok
-- Spring Web
-- Thymeleaf
-- Spring Data JPA
-- MariaDB Driver
-- Spring Data Redis(Access+Driver)
-- spring-boot-starter-websocket
