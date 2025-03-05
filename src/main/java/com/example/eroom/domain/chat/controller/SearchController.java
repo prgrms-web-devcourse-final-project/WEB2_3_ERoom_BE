@@ -2,6 +2,7 @@ package com.example.eroom.domain.chat.controller;
 
 import com.example.eroom.domain.chat.dto.response.MemberSearchResponseDTO;
 import com.example.eroom.domain.chat.dto.response.ProjectSearchResponseDTO;
+import com.example.eroom.domain.chat.dto.response.TaskSearchResponseDTO;
 import com.example.eroom.domain.chat.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +38,12 @@ public class SearchController {
     public ResponseEntity<List<ProjectSearchResponseDTO>> searchProjects(@RequestParam String name) {
         List<ProjectSearchResponseDTO> projects = searchService.searchProjectsByName(name);
         return ResponseEntity.ok(projects);
+    }
+
+    // Task 검색
+    @GetMapping("/tasks")
+    public ResponseEntity<List<TaskSearchResponseDTO>> searchTasks(@RequestParam String title) {
+        List<TaskSearchResponseDTO> tasks = searchService.searchTasksByName(title);
+        return ResponseEntity.ok(tasks);
     }
 }

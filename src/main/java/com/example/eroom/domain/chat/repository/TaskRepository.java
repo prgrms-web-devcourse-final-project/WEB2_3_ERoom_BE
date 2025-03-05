@@ -20,5 +20,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByProjectIdAndDeleteStatus(Long projectId, DeleteStatus deleteStatus);
 
     List<Task> findByAssignedMember(Member assignedMember);
+
+    // task 검색
+    List<Task> findByTitleContainingIgnoreCase(String title);
 }
 
