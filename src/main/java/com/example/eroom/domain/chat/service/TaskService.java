@@ -44,6 +44,8 @@ public class TaskService {
                 .deleteStatus(DeleteStatus.ACTIVE)
                 .build();
 
+        task = taskRepository.save(task);
+
         // 담당자 설정
         if (requestDTO.getAssignedMemberId() != null) {
             Member assignedMember = memberRepository.findById(requestDTO.getAssignedMemberId())
@@ -62,7 +64,7 @@ public class TaskService {
 
             // 담당자에게만 알림
             String message = "새로운 업무에 배정되었습니다: " + assignedMember.getUsername();
-            notificationService.createNotification(assignedMember, message, NotificationType.TASK_ASSIGN, task.getId(), task.getTitle());
+            notificationService.createNotification(assignedMember, message, NotificationType.TASK_ASSIGN, task.getId().toString(), task.getTitle());
         }
 
 //        // 참여자 설정 -> 추후 도입
