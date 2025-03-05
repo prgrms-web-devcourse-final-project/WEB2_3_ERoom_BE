@@ -64,7 +64,7 @@ public class TaskService {
 
             // 담당자에게만 알림
             String message = "새로운 업무에 배정되었습니다: " + assignedMember.getUsername();
-            notificationService.createNotification(assignedMember, message, NotificationType.TASK_ASSIGN, task.getId().toString(), task.getTitle());
+            notificationService.createNotification(assignedMember, message, NotificationType.TASK_ASSIGN, task.getId().toString() + " , " + task.getProject().getId().toString(), task.getTitle() + " , " + task.getProject().getName());// 알림생성, 저장, 알림 전송
         }
 
 //        // 참여자 설정 -> 추후 도입
