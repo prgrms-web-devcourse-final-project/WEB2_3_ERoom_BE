@@ -45,7 +45,7 @@ public class NotificationController {
                 request.getRecipient(),
                 request.getMessage(),
                 request.getType(),
-                request.getReferenceId(),
+                request.getReferenceId().toString(),
                 request.getReferenceName()
         );
         return ResponseEntity.ok(notification);

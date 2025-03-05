@@ -7,7 +7,10 @@ import com.example.eroom.domain.chat.repository.ChatMessageRepository;
 import com.example.eroom.domain.chat.repository.ChatRoomRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.chat.repository.NotificationRepository;
-import com.example.eroom.domain.entity.*;
+import com.example.eroom.domain.entity.ChatMessage;
+import com.example.eroom.domain.entity.ChatRoom;
+import com.example.eroom.domain.entity.Member;
+import com.example.eroom.domain.entity.NotificationType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -32,7 +35,7 @@ public class ChatMessageService {
         List<Member> members = memberRepository.findMembersByChatRoomId(message.getChatRoom().getId());
         for (Member member : members) {
             if (!member.equals(message.getSender())) { // 자기 자신 제외
-                notificationService.createNotification(member, "새로운 메시지가 도착했습니다: " + message.getMessage(), NotificationType.MESSAGE_SEND, message.getChatRoom().getId(), message.getChatRoom().getName());
+                notificationService.createNotification(member, "새로운 메시지가 도착했습니다: " + message.getMessage(), NotificationType.MESSAGE_SEND, message.getChatRoom().getId().toString() + " , " + message.getChatRoom().getProject().getId().toString(), message.getChatRoom().getName() + " , " + message.getChatRoom().getProject().getName());
             }
         }
 
