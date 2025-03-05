@@ -56,16 +56,16 @@ public class TaskService {
                     return taskMember;
                 }).collect(Collectors.toList());
 
+        task.setParticipants(participants);
+        // color 추가
+        task.setColors(requestDTO.getColors() != null ? requestDTO.getColors() : new ColorInfo("#FF5733", "#FFFFFF"));
+        taskRepository.save(task);
+
         for (TaskMember taskMember : participants) {
             Member member = taskMember.getMember();
             String message = "새로운 업무에 배정되었습니다: " + member.getUsername();
             notificationService.createNotification(member, message, NotificationType.TASK_ASSIGN, task.getId().toString() + " , " + task.getProject().getId().toString(), task.getTitle() + " , " + task.getProject().getName());// 알림생성, 저장, 알림 전송
         }
-
-        task.setParticipants(participants);
-        // color 추가
-        task.setColors(requestDTO.getColors() != null ? requestDTO.getColors() : new ColorInfo("#FF5733", "#FFFFFF"));
-        taskRepository.save(task);
     }
 
     public TaskUpdateResponseDTO getTask(Long taskId) {
