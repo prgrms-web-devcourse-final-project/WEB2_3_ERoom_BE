@@ -7,7 +7,9 @@ import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.error.CustomException;
 import com.example.eroom.domain.chat.error.ErrorCode;
 import com.example.eroom.domain.chat.repository.*;
-import com.example.eroom.domain.elasticsearch.ElasticsearchService;
+import com.example.eroom.domain.elasticsearch.entity.ProjectDocument;
+import com.example.eroom.domain.elasticsearch.mapper.ProjectMapper;
+import com.example.eroom.domain.elasticsearch.repository.ProjectDocumentRepository;
 import com.example.eroom.domain.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +42,7 @@ public class ProjectService {
     private final TagRepository tagRepository;
     private final ProjectSubCategoryRepository projectSubCategoryRepository;
     private final ProjectTagRepository projectTagRepository;
-    private final ElasticsearchService elasticsearchService;
+    private final ProjectDocumentRepository projectDocumentRepository;
 
     // 현재 사용자가 참여 중인 프로젝트 목록 가져오기
     public List<Project> getProjectsByUser(Member member) {
@@ -183,7 +185,8 @@ public class ProjectService {
         Project savedProject = projectRepository.save(project);
 
         // Elasticsearch에도 프로젝트 저장
-        elasticsearchService.savedProject(savedProject);
+        ProjectDocument projectDocument = ProjectMapper.toDocument(savedProject);
+        projectDocumentRepository.save(projectDocument);
 
         // 프로젝트 초대 알림 보내기
         for (Member member : invitedMembers) {
