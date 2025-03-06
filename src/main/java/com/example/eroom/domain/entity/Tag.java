@@ -22,4 +22,8 @@ public class Tag {
     @ManyToOne
     @JoinColumn(name = "sub_category_id", nullable = false)
     private SubCategory subCategory;
+
+    public void incrementCount() {
+        this.count += 1;
+    }
 }
