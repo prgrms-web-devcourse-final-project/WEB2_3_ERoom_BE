@@ -28,4 +28,9 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Column(name = "delete_status", nullable = false)
     private DeleteStatus deleteStatus = DeleteStatus.ACTIVE; // ACTIVE, DELETED
+
+    // 이름 수정 메서드
+    public void updateUserName(String userName) {
+        this.username = userName;
+    }
 }
