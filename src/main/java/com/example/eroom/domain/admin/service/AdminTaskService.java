@@ -43,15 +43,15 @@ public class AdminTaskService {
 
         // 2. 값 업데이트 : 업무명, 진행 상태
         // 필드 값이 Null이 아닐 때만 업데이트 실행
-        if ( updatedTaskDTO.getTaskName() != null ) {
-            existingTask.setTitle(updatedTaskDTO.getTaskName());
-        }
-        if ( updatedTaskDTO.getTaskStatus() != null ) {
-            existingTask.setStatus(updatedTaskDTO.getTaskStatus());
-        }
+        Task updatedTask = existingTask.toBuilder()
+                .title(updatedTaskDTO.getTaskName() != null ?
+                        updatedTaskDTO.getTaskName() : existingTask.getTitle())
+                .status(updatedTaskDTO.getTaskStatus() != null ?
+                        updatedTaskDTO.getTaskStatus() : existingTask.getStatus())
+                .build();
 
         // 3. 변경된 데이터 저장
-        Task savedTask = adminTaskJPARepository.save(existingTask);
+        Task savedTask = adminTaskJPARepository.save(updatedTask);
 
         return new AdminTaskDTO(savedTask);
     }

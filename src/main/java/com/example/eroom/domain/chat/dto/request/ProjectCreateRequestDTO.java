@@ -1,5 +1,6 @@
 package com.example.eroom.domain.chat.dto.request;
 
+import com.example.eroom.domain.chat.customannotation.RelaxedFutureOrPresent;
 import com.example.eroom.domain.entity.ColorInfo;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -25,7 +26,8 @@ public class ProjectCreateRequestDTO {
     @NotEmpty(message = "최소 하나 이상의 서브 카테고리를 선택해야 합니다.")
     private List<SubCategoryRequest> subCategories;
 
-    @FutureOrPresent(message = "시작 날짜는 현재 또는 미래여야 합니다.")
+//    @FutureOrPresent(message = "시작 날짜는 현재 또는 미래여야 합니다.")
+    @RelaxedFutureOrPresent(message = "시작 날짜는 어제 이후여야 합니다.")
     private LocalDateTime startDate;
 
     @Future(message = "종료 날짜는 미래여야 합니다.")

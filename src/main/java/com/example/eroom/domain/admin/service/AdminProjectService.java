@@ -39,22 +39,20 @@ public class AdminProjectService {
     public AdminProjectDTO updateProject(Long projectId, AdminUpdateProjectDTO updatedProjectDTO) {
         // 1. 프로젝트 존재 여부 확인
         Project existingProject = adminProjectJPARepository.findById(projectId)
-                .orElseThrow( () -> new EntityNotFoundException("해당 ID의 프로젝트가 없습니다.: " + projectId));
+                .orElseThrow(() -> new EntityNotFoundException("해당 ID의 프로젝트가 없습니다.: " + projectId));
 
-        // 2. 값 업데이트 : 프로젝트 명, 진행 상태
-        // 필드 값이 Null이 아닐 때만 업데이트 실행
-        if (updatedProjectDTO.getProjectName() != null) {
-            existingProject.setName(updatedProjectDTO.getProjectName());
-        }
-        if (updatedProjectDTO.getProjectStatus() != null) {
-            existingProject.setStatus(updatedProjectDTO.getProjectStatus());
-        }
+        // 2. 빌더 패턴을 활용한 값 업데이트
+        existingProject = existingProject.toBuilder()
+                .name(updatedProjectDTO.getProjectName() != null ? updatedProjectDTO.getProjectName() : existingProject.getName())
+                .status(updatedProjectDTO.getProjectStatus() != null ? updatedProjectDTO.getProjectStatus() : existingProject.getStatus())
+                .build();
 
         // 3. 변경된 데이터 저장
         Project savedProject = adminProjectJPARepository.save(existingProject);
 
         return new AdminProjectDTO(savedProject);
     }
+
 
     // [ 특정 프로젝트 삭제 ]
     public void deleteProject(Long projectId) {

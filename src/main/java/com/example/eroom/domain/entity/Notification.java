@@ -14,13 +14,14 @@ import java.time.LocalDateTime;
 public class Notification {
 
     @Builder
-    Notification(Member recipient, String message, boolean isRead, LocalDateTime createdAt, NotificationType type, Long referenceId){
+    Notification(Member recipient, String message, boolean isRead, LocalDateTime createdAt, NotificationType type, String referenceId, String referenceName){
         this.member = recipient;
         this.message = message;
         this.isRead = isRead;
         this.createdAt = createdAt;
         this.type = type;
         this.referenceId = referenceId;
+        this.referenceName = referenceName;
     }
 
     @Id
@@ -43,6 +44,6 @@ public class Notification {
     private NotificationType type; // PROJECT_INVITE, PROJECT_EXIT, MESSAGE_SEND...
 
     // 관련 엔티티의 ID만 저장하는 방식도 괜찮을듯
-    private Long referenceId;
-
+    private String referenceId;
+    private String referenceName;
 }

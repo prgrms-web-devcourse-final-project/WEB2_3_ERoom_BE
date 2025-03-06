@@ -1,5 +1,6 @@
 package com.example.eroom.domain.chat.dto.request;
 
+import com.example.eroom.domain.chat.customannotation.RelaxedFutureOrPresent;
 import com.example.eroom.domain.entity.ColorInfo;
 import com.example.eroom.domain.entity.TaskStatus;
 import jakarta.validation.constraints.*;
@@ -17,7 +18,8 @@ public class TaskCreateRequestDTO {
     @Size(max = 50, message = "테스크 이름은 최대 50자까지 가능합니다.")
     private String title;
 
-    @FutureOrPresent(message = "시작 날짜는 현재 또는 미래여야 합니다.")
+//    @FutureOrPresent(message = "시작 날짜는 현재 또는 미래여야 합니다.")
+    @RelaxedFutureOrPresent(message = "시작 날짜는 어제 이후여야 합니다.")
     private LocalDateTime startDate;
 
     @Future(message = "종료 날짜는 미래여야 합니다.")
@@ -28,6 +30,6 @@ public class TaskCreateRequestDTO {
     @NotNull(message = "담당자는 반드시 지정해야 합니다.")
     private Long assignedMemberId;
 
-    private List<Long> participantIds;
+//    private List<Long> participantIds; // 참여자는 추후 도입
     private ColorInfo colors;
 }

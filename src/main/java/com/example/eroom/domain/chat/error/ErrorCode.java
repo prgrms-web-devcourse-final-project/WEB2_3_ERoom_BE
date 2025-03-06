@@ -27,6 +27,7 @@ public enum ErrorCode {
     TASK_ASSIGNEE_NOT_FOUND(HttpStatus.NOT_FOUND, "담당자가 존재하지 않습니다."),
     TASK_PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "참여자가 존재하지 않습니다."),
     TASK_ASSIGNEE_MUST_BE_PARTICIPANT(HttpStatus.BAD_REQUEST, "담당자는 참여자 목록에 있어야 합니다."),
+    TASK_ASSIGNEE_NOT_IN_PROJECT(HttpStatus.BAD_REQUEST, "담당자는 프로젝트에 속해 있어야 합니다."),
 
     // Category & Tag
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "카테고리를 찾을 수 없습니다."),
