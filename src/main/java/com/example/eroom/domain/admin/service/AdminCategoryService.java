@@ -33,11 +33,11 @@ public class AdminCategoryService {
 
     // [ 카테고리 생성 ]
     public Category createCategory(AdminCategoryDTO dto) {
-        Category category = new Category();
-        category.setName(dto.getName());
+        Category category = Category.builder()
+                .name(dto.getName())
+                .build();
 
-        Category savedCategory = adminCategoryJPARepository.save(category);
-        return savedCategory;
+        return adminCategoryJPARepository.save(category);
     }
 
     // [ 카테고리 수정 ]
@@ -48,10 +48,13 @@ public class AdminCategoryService {
                 .orElseThrow( () -> new EntityNotFoundException("해당 ID의 카테고리가 없습니다.: " + categoryId));
 
         // 2. 값 업데이트 : 이름
-        if ( dto.getName() != null ) {
-            existingCategory.setName(dto.getName());
-        }
-        return new AdminCategoryDTO(existingCategory);
+        Category updatedCategory = existingCategory.toBuilder()
+                .name(dto.getName() != null ? dto.getName() : existingCategory.getName())
+                .build();
+
+        // 저장 및 반환
+        Category savedCategory = adminCategoryJPARepository.save(updatedCategory);
+        return new AdminCategoryDTO(savedCategory);
     }
 
     // [ 카테고리 삭제 ]

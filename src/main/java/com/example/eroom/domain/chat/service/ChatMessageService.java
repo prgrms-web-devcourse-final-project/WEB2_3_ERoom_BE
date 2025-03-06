@@ -24,8 +24,6 @@ public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
-    private final NotificationRepository notificationRepository;
-    private final SimpMessagingTemplate messagingTemplate;
     private final NotificationService notificationService;
 
     public ChatMessage saveMessage(ChatMessage message) {
@@ -48,7 +46,6 @@ public class ChatMessageService {
 
     // DTO → Entity 변환 메서드
     public ChatMessage convertToEntity(ChatMessageDTO dto) {
-        ChatMessage chatMessage = new ChatMessage();
 
         // ChatRoom 조회
         ChatRoom chatRoom = chatRoomRepository.findById(dto.getChatRoomId())
@@ -60,13 +57,15 @@ public class ChatMessageService {
             throw new CustomException(ErrorCode.SENDER_NOT_FOUND);
         }
 
-        chatMessage.setChatRoom(chatRoom);
-        chatMessage.setSender(sender);
         System.out.println("sender : " + sender);
-        chatMessage.setMessage(dto.getMessage());
-        chatMessage.setUnreadCount(0);
-        chatMessage.setSentAt(dto.getSentAt());
 
-        return chatMessage;
+        // ChatMessage 생성
+        return ChatMessage.builder()
+                .chatRoom(chatRoom)
+                .sender(sender)
+                .message(dto.getMessage())
+                .unreadCount(0)
+                .sentAt(dto.getSentAt())
+                .build();
     }
 }

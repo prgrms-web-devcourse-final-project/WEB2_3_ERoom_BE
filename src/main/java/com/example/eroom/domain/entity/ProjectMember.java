@@ -25,4 +25,12 @@ public class ProjectMember {
     private Member member;
 
     private LocalDateTime joinedAt = LocalDateTime.now();
+
+    public static ProjectMember createProjectMember(Project project, Member member) {
+        return ProjectMember.builder()
+                .project(project)
+                .member(member)
+                .joinedAt(LocalDateTime.now())
+                .build();
+    }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder(toBuilder = true)
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class SubCategory {
 

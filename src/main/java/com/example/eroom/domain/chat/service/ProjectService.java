@@ -101,103 +101,50 @@ public class ProjectService {
                 .orElseThrow(() -> new CustomException(ErrorCode.CATEGORY_NOT_FOUND));
 
         // 프로젝트 생성
-        Project project = Project.builder()
-                .name(dto.getName())
-                .description(dto.getDescription())
-                .deleteStatus(DeleteStatus.ACTIVE)
-                .createdAt(LocalDateTime.now())
-                .startDate(dto.getStartDate())
-                .endDate(dto.getEndDate())
-                .status(ProjectStatus.BEFORE_START)
-                .creator(creator)
-                .category(category)
-                .colors(dto.getColors() != null ? dto.getColors() : new ColorInfo("#FFFFFF", "#000000"))
-                .build();
+        Project project = Project.createProject(
+                dto.getName(),
+                dto.getDescription(),
+                dto.getStartDate(),
+                dto.getEndDate(),
+                creator,
+                category,
+                dto.getColors()
+        );
 
-        // 프로젝트 생성자를 프로젝트 멤버로 추가
-        ProjectMember creatorMember = ProjectMember.builder()
-                .project(project)
-                .member(creator)
-                .joinedAt(LocalDateTime.now())
-                .build();
-        project.addProjectMember(creatorMember);
-
-        // 서브 카테고리와 태그 설정
+        // 서브 카테고리와 태그 추가
         if (dto.getSubCategories() != null && !dto.getSubCategories().isEmpty()) {
             for (SubCategoryRequest subCategoryRequest : dto.getSubCategories()) {
-                // 서브 카테고리 조회
                 SubCategory subCategory = subCategoryRepository.findById(subCategoryRequest.getSubCategoryId())
                         .orElseThrow(() -> new CustomException(ErrorCode.SUBCATEGORY_NOT_FOUND));
 
-                // 프로젝트, 서브카테고리 연결 엔티티 생성
-                ProjectSubCategory projectSubCategory = ProjectSubCategory.builder()
-                        .project(project)
-                        .subCategory(subCategory)
-                        .build();
-
-                // 프로젝트에 ProjectSubCategory 추가
-                project.addProjectSubCategory(projectSubCategory);
-
-                // 태그 처리
-                if (subCategoryRequest.getTagIds() != null && !subCategoryRequest.getTagIds().isEmpty()) {
-                    List<Tag> tags = tagRepository.findAllById(subCategoryRequest.getTagIds());
-                    List<Tag> updatedTags = new ArrayList<>();
-
-                    for (Tag tag : tags) {
-                        // 태그가 해당 서브카테고리에 속하는지 확인
-                        if (tag.getSubCategory().getId().equals(subCategory.getId())) {
-                            // 태그 사용 횟수 증가
-                            Tag updatedTag = Tag.builder()
-                                    .id(tag.getId())
-                                    .name(tag.getName())
-                                    .subCategory(tag.getSubCategory())
-                                    .count(tag.getCount() + 1)
-                                    .build();
-
-                            updatedTags.add(updatedTag);
-
-                            // 프로젝트, 태그 연결 엔티티 생성
-                            ProjectTag projectTag = ProjectTag.builder()
-                                    .project(project)
-                                    .tag(tag)
-                                    .build();
-
-                            // 프로젝트에 ProjectTag 추가
-                            project.addProjectTag(projectTag);
-                        } else {
-                            throw new CustomException(ErrorCode.TAG_NOT_BELONG_TO_SUBCATEGORY);
-                        }
-                    }
-                    // 태그들 한번에 저장
-                    tagRepository.saveAll(updatedTags);
-                }
+                List<Tag> tags = tagRepository.findAllById(subCategoryRequest.getTagIds());
+                project.addSubCategoryWithTags(subCategory, tags);
             }
         }
 
-        // 초대된 멤버 처리
+        // 초대된 멤버 추가
         List<Member> invitedMembers = memberRepository.findAllById(dto.getInvitedMemberIds());
-
         for (Member member : invitedMembers) {
-            ProjectMember projectMember = ProjectMember.builder()
-                    .project(project)
-                    .member(member)
-                    .joinedAt(LocalDateTime.now())
-                    .build();
-            project.addProjectMember(projectMember);
+            project.addProjectMember(ProjectMember.createProjectMember(project, member));
         }
 
         // 프로젝트 저장
         Project savedProject = projectRepository.save(project);
 
-        // Elasticsearch에도 프로젝트 저장
+        // 프로젝트 Elasticsearch에도 저장
         ProjectDocument projectDocument = ProjectMapper.toDocument(savedProject);
         projectDocumentRepository.save(projectDocument);
 
-        // 프로젝트 초대 알림 보내기
+        // 알림 전송
         for (Member member : invitedMembers) {
-            if(!project.getCreator().getId().equals(member.getId())) {
-                String message = "새로운 프로젝트에 초대되었습니다: " + savedProject.getName();
-                notificationService.createNotification(member, message, NotificationType.PROJECT_INVITE, savedProject.getId().toString(), savedProject.getName());
+            if (!project.getCreator().getId().equals(member.getId())) {
+                notificationService.createNotification(
+                        member,
+                        "새로운 프로젝트에 초대되었습니다: " + savedProject.getName(),
+                        NotificationType.PROJECT_INVITE,
+                        savedProject.getId().toString(),
+                        savedProject.getName()
+                );
             }
         }
 
@@ -260,7 +207,7 @@ public class ProjectService {
             throw new CustomException(ErrorCode.PROJECT_UPDATE_DENIED);
         }
 
-        // 프로젝트 업데이트를 위한 빌더 생성 - 기존 값들을 일단 가져옴
+        // 프로젝트 업데이트 - 기존 값들을 일단 가져옴
         Project.ProjectBuilder updatedProjectBuilder = Project.builder()
                 .id(project.getId())
                 .creator(project.getCreator())
@@ -369,6 +316,14 @@ public class ProjectService {
                         .build();
                 updatedProject.addProjectMember(projectMember);
             }
+
+            // 프로젝트 생성자(수정자)를 프로젝트 멤버로 추가
+            ProjectMember creatorMember = ProjectMember.builder()
+                    .project(project)
+                    .member(editor)
+                    .joinedAt(LocalDateTime.now())
+                    .build();
+            updatedProject.addProjectMember(creatorMember);
         } else {
             // 기존 멤버 유지하면서 추가/삭제
 

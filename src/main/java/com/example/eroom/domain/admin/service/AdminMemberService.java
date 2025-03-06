@@ -44,24 +44,17 @@ public class AdminMemberService {
 
         // 2. 값 업데이트 : 이름, 등록일, 구독 여부, 소속, 프로필 이미지
         // 필드 값이 Null이 아닐 때만 업데이트 실행
-        if (updatedMemberDTO.getUsername() != null) {
-            existingMember.setUsername(updatedMemberDTO.getUsername());
-        }
-        if (updatedMemberDTO.getCreatedAt() != null) {
-            existingMember.setCreatedAt(updatedMemberDTO.getCreatedAt());
-        }
-        if (updatedMemberDTO.getMemberGrade() != null) {
-            existingMember.setMemberGrade(updatedMemberDTO.getMemberGrade());
-        }
-        if (updatedMemberDTO.getOrganization() != null) {
-            existingMember.setOrganization(updatedMemberDTO.getOrganization());
-        }
-        if (updatedMemberDTO.getProfile() != null) {
-            existingMember.setProfile(updatedMemberDTO.getProfile());
-        }
+        Member updatedMember = Member.builder()
+                .id(existingMember.getId()) // 기존 ID 유지
+                .username(updatedMemberDTO.getUsername() != null ? updatedMemberDTO.getUsername() : existingMember.getUsername())
+                .createdAt(updatedMemberDTO.getCreatedAt() != null ? updatedMemberDTO.getCreatedAt() : existingMember.getCreatedAt())
+                .memberGrade(updatedMemberDTO.getMemberGrade() != null ? updatedMemberDTO.getMemberGrade() : existingMember.getMemberGrade())
+                .organization(updatedMemberDTO.getOrganization() != null ? updatedMemberDTO.getOrganization() : existingMember.getOrganization())
+                .profile(updatedMemberDTO.getProfile() != null ? updatedMemberDTO.getProfile() : existingMember.getProfile())
+                .build();
 
         // 3. 변경된 데이터 저장
-        Member savedMember = adminMemberJPARepository.save(existingMember);
+        Member savedMember = adminMemberJPARepository.save(updatedMember);
 
         // 4. DTO로 변환하여 저장
         return new AdminMemberDTO(savedMember);

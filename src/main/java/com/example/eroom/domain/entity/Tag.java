@@ -24,4 +24,8 @@ public class Tag {
     @JoinColumn(name = "sub_category_id", nullable = false)
     @JsonBackReference // 순환 참조 방지
     private SubCategory subCategory;
+
+    public void incrementCount() {
+        this.count += 1;
+    }
 }

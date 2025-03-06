@@ -1,6 +1,8 @@
 package com.example.eroom.domain.entity;
 
 import com.example.eroom.domain.chat.converter.ColorInfoConverter;
+import com.example.eroom.domain.chat.error.CustomException;
+import com.example.eroom.domain.chat.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 @Builder(toBuilder = true)
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Project {
     @Id
@@ -31,9 +33,11 @@ public class Project {
     private Category category; // 하나의 카테고리(ex : 개발)
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<ProjectSubCategory> projectSubCategories = new ArrayList<>();
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<ProjectTag> tags = new ArrayList<>(); // 서브 카테고리에서 선택한 태그들
 
     @Enumerated(EnumType.STRING)
@@ -54,6 +58,7 @@ public class Project {
     private List<ChatRoom> chatRooms = new ArrayList<>();
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Builder.Default
     private List<ProjectMember> members = new ArrayList<>();
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
@@ -82,5 +87,56 @@ public class Project {
             this.members = new ArrayList<>();
         }
         this.members.add(projectMember);
+    }
+
+    public static Project createProject(
+            String name,
+            String description,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            Member creator,
+            Category category,
+            ColorInfo colors
+    ) {
+        Project project = Project.builder()
+                .name(name)
+                .description(description)
+                .deleteStatus(DeleteStatus.ACTIVE)
+                .createdAt(LocalDateTime.now())
+                .startDate(startDate)
+                .endDate(endDate)
+                .status(ProjectStatus.BEFORE_START)
+                .creator(creator)
+                .category(category)
+                .colors(colors != null ? colors : new ColorInfo("#FFFFFF", "#000000"))
+                .build();
+
+        // 프로젝트 생성자를 멤버로 추가
+        project.addProjectMember(ProjectMember.createProjectMember(project, creator));
+
+        return project;
+    }
+
+    public void addSubCategoryWithTags(SubCategory subCategory, List<Tag> tags) {
+        ProjectSubCategory projectSubCategory = ProjectSubCategory.builder()
+                .project(this)
+                .subCategory(subCategory)
+                .build();
+        this.projectSubCategories.add(projectSubCategory);
+
+        for (Tag tag : tags) {
+            if (!tag.getSubCategory().getId().equals(subCategory.getId())) {
+                throw new CustomException(ErrorCode.TAG_NOT_BELONG_TO_SUBCATEGORY);
+            }
+
+            ProjectTag projectTag = ProjectTag.builder()
+                    .project(this)
+                    .tag(tag)
+                    .build();
+            this.tags.add(projectTag);
+
+            // 태그 사용 횟수 증가
+            tag.incrementCount();
+        }
     }
 }
