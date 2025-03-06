@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,8 +20,8 @@ public class AdminSubCategoryDTO {
     public AdminSubCategoryDTO(SubCategory subCategory) {
         this.id = subCategory.getId();
         this.name = subCategory.getName();
-        this.tags = subCategory.getTags().stream()
+        this.tags = subCategory.getTags() != null ? subCategory.getTags().stream()
                 .map(AdminTagDTO::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()) : new ArrayList<>();
     }
 }
