@@ -1,5 +1,6 @@
 package com.example.eroom.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,7 @@ public class Tag {
 
     @ManyToOne
     @JoinColumn(name = "sub_category_id", nullable = false)
+    @JsonBackReference // 순환 참조 방지
     private SubCategory subCategory;
 
     public void incrementCount() {

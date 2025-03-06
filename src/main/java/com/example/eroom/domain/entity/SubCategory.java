@@ -1,5 +1,6 @@
 package com.example.eroom.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,5 +26,6 @@ public class SubCategory {
     private Category category;
 
     @OneToMany(mappedBy = "subCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // 순환 참조 방지
     private List<Tag> tags = new ArrayList<>();
 }
