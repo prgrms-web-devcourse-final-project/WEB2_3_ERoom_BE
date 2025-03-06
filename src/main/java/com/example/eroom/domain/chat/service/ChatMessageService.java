@@ -24,8 +24,6 @@ public class ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
-    private final NotificationRepository notificationRepository;
-    private final SimpMessagingTemplate messagingTemplate;
     private final NotificationService notificationService;
 
     public ChatMessage saveMessage(ChatMessage message) {
