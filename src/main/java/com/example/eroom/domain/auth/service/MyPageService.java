@@ -24,23 +24,27 @@ public class MyPageService {
         Member existingMember = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
 
-        if (requestDTO.getUsername() != null) {
-            existingMember.setUsername(requestDTO.getUsername());
-        }
-
-        if (requestDTO.getOrganization() != null) {
-            existingMember.setOrganization(requestDTO.getOrganization());
-        }
+        Member updatedMember = existingMember.toBuilder()
+                .username(requestDTO.getUsername() != null ? requestDTO.getUsername() : existingMember.getUsername())
+                .organization(requestDTO.getOrganization() != null ? requestDTO.getOrganization() : existingMember.getOrganization())
+                .build();
 
         if (profileImage != null && !profileImage.isEmpty()) {
+            // 기존 프로필 이미지 삭제
             if (existingMember.getProfile() != null) {
                 amazonS3Service.deleteFile(existingMember.getProfile());
             }
+            // 새 이미지 업로드
             String newProfileUrl = amazonS3Service.uploadFile(profileImage);
-            existingMember.setProfile(newProfileUrl);
+
+            updatedMember = updatedMember.toBuilder()
+                    .profile(newProfileUrl)
+                    .build();
         }
 
-        return existingMember;
+        memberRepository.save(updatedMember);
+
+        return updatedMember;
     }
 
 }
