@@ -53,7 +53,12 @@ public class NotificationService {
 
     // 맴버 아이디에 해당되는 알림들 읽음 처리
     public String markNotificationsAsRead(Long memberId) {
-        int updatedCount = notificationRepository.markAllAsReadByMember(memberId);
-        return updatedCount + "개의 알림이 읽음 처리되었습니다.";
+        try {
+            int updatedCount = notificationRepository.markAllAsReadByMember(memberId);
+            return updatedCount + "개의 알림이 읽음 처리되었습니다.";
+        } catch (Exception e) {
+            e.printStackTrace();  // 콘솔에 오류 출력
+            return "알림 읽음 처리 중 오류가 발생했습니다.";
+        }
     }
 }
