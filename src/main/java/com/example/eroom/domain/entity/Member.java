@@ -1,17 +1,16 @@
 package com.example.eroom.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDate;
 
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
+@Builder(toBuilder = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @SQLDelete(sql = "UPDATE member SET delete_status = 'DELETED' WHERE id = ?")
 public class Member {
     @Id

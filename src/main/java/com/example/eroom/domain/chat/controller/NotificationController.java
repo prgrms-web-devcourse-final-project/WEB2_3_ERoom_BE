@@ -38,6 +38,12 @@ public class NotificationController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/read/all/{memberId}")
+    public ResponseEntity<String> markNotificationsAsRead(@PathVariable Long memberId) {
+        String message = notificationService.markNotificationsAsRead(memberId);
+        return ResponseEntity.ok(message);
+    }
+
     // 테스트 코드
     @PostMapping("/test")
     public ResponseEntity<Notification> testNotification(@RequestBody NotificationRequestDTO request) {

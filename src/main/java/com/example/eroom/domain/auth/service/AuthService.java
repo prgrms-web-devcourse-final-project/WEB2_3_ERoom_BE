@@ -69,12 +69,12 @@ public class AuthService {
 
     // 신규 회원 생성
     private Member createNewMember(OAuth2UserInfoDTO userInfo) {
-        Member member = new Member();
-        member.setEmail(userInfo.getEmail());
-        member.setUsername(userInfo.getEmail()); // 또는 기본값 설정
-        member.setMemberGrade(MemberGrade.DISABLE);  // 기본값: DISABLE
-        member.setDeleteStatus(DeleteStatus.ACTIVE); // 기본값: ACTIVE
-        return member;
+        return Member.builder()
+                .email(userInfo.getEmail())
+                .username(userInfo.getEmail()) // 또는 기본값 설정
+                .memberGrade(MemberGrade.DISABLE)  // 기본값: DISABLE
+                .deleteStatus(DeleteStatus.ACTIVE) // 기본값: ACTIVE
+                .build();
     }
 
     // 회원의 역할을 가져오는 메서드
@@ -105,16 +105,16 @@ public class AuthService {
             throw new IllegalStateException("이미 가입된 이메일입니다.");
         }
 
-        Member newMember = new Member();
-        newMember.setUsername(request.getUsername());
-        newMember.setEmail(email);
-        newMember.setPassword(null);
-        newMember.setOrganization(request.getOrganization());
-        newMember.setMemberGrade(MemberGrade.DISABLE);
-        newMember.setProfile(profileUrl);
-        newMember.setCreatedAt(LocalDate.now());
-        newMember.setDeleteStatus(DeleteStatus.ACTIVE);
-
+        Member newMember = Member.builder()
+                .username(request.getUsername())
+                .email(email)
+                .password(null)
+                .organization(request.getOrganization())
+                .memberGrade(MemberGrade.DISABLE)
+                .profile(profileUrl)
+                .createdAt(LocalDate.now())
+                .deleteStatus(DeleteStatus.ACTIVE)
+                .build();
 
         memberRepository.save(newMember);
 

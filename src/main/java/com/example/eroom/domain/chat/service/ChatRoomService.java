@@ -1,5 +1,7 @@
 package com.example.eroom.domain.chat.service;
 
+import com.example.eroom.domain.chat.error.CustomException;
+import com.example.eroom.domain.chat.error.ErrorCode;
 import com.example.eroom.domain.chat.repository.ChatRoomMemberRepository;
 import com.example.eroom.domain.chat.repository.ChatRoomRepository;
 import com.example.eroom.domain.chat.repository.MemberRepository;
@@ -22,11 +24,13 @@ public class ChatRoomService {
 
     // 단체 채팅방 생성 (프로젝트 생성 시 호출)
     public ChatRoom createGroupChatRoomForProject(Project project) {
-        ChatRoom chatRoom = new ChatRoom();
-        chatRoom.setProject(project);
-        chatRoom.setType(ChatRoomType.GROUP);
-        chatRoom.setName(project.getName() + " [GROUP]");
-        chatRoom.setCreatedAt(LocalDateTime.now());
+
+        ChatRoom chatRoom = ChatRoom.builder()
+                .project(project)
+                .type(ChatRoomType.GROUP)
+                .name(project.getName() + " [GROUP]")
+                .createdAt(LocalDateTime.now())
+                .build();
 
         // 채팅방 저장
         chatRoomRepository.save(chatRoom);
@@ -34,9 +38,12 @@ public class ChatRoomService {
         // 프로젝트 참여자 전원을 채팅방에 참여시킴
         List<ProjectMember> projectMembers = project.getMembers();
         for (ProjectMember projectMember : projectMembers) {
-            ChatRoomMember chatRoomMember = new ChatRoomMember();
-            chatRoomMember.setChatRoom(chatRoom);
-            chatRoomMember.setMember(projectMember.getMember());
+
+            ChatRoomMember chatRoomMember = ChatRoomMember.builder()
+                    .chatRoom(chatRoom)
+                    .member(projectMember.getMember())
+                    .build();
+
             chatRoomMemberRepository.save(chatRoomMember);
         }
 
@@ -51,23 +58,30 @@ public class ChatRoomService {
         Member targetMember = memberRepository.findById(targetUserId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + targetUserId));
 
-        ChatRoom chatRoom = new ChatRoom();
-        chatRoom.setProject(project);
-        chatRoom.setType(ChatRoomType.PRIVATE);
-        chatRoom.setName(currentMember.getUsername() + " & " + targetMember.getUsername());
-        chatRoom.setCreatedAt(LocalDateTime.now());
+        // ChatRoom 생성
+        ChatRoom chatRoom = ChatRoom.builder()
+                .project(project)
+                .type(ChatRoomType.PRIVATE)
+                .name(currentMember.getUsername() + " & " + targetMember.getUsername())
+                .createdAt(LocalDateTime.now())
+                .build();
+
         chatRoomRepository.save(chatRoom);
 
         // 현재 사용자 추가
-        ChatRoomMember currentUserMember = new ChatRoomMember();
-        currentUserMember.setChatRoom(chatRoom);
-        currentUserMember.setMember(currentMember);
+        ChatRoomMember currentUserMember = ChatRoomMember.builder()
+                .chatRoom(chatRoom)
+                .member(currentMember)
+                .build();
+
         chatRoomMemberRepository.save(currentUserMember);
 
         // 상대방 추가
-        ChatRoomMember targetUserMember = new ChatRoomMember();
-        targetUserMember.setChatRoom(chatRoom);
-        targetUserMember.setMember(targetMember);
+        ChatRoomMember targetUserMember = ChatRoomMember.builder()
+                .chatRoom(chatRoom)
+                .member(targetMember)
+                .build();
+
         chatRoomMemberRepository.save(targetUserMember);
 
         return chatRoom;
@@ -76,6 +90,6 @@ public class ChatRoomService {
     // 채팅방 조회
     public ChatRoom getChatRoomById(Long roomId) {
         return chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid room Id:" + roomId));
+                .orElseThrow(() -> new CustomException(ErrorCode.CHATROOM_NOT_FOUND));
     }
 }

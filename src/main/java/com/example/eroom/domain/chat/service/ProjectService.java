@@ -252,7 +252,7 @@ public class ProjectService {
             throw new CustomException(ErrorCode.PROJECT_UPDATE_DENIED);
         }
 
-        // 프로젝트 업데이트를 위한 빌더 생성 - 기존 값들을 일단 가져옴
+        // 프로젝트 업데이트 - 기존 값들을 일단 가져옴
         Project.ProjectBuilder updatedProjectBuilder = Project.builder()
                 .id(project.getId())
                 .creator(project.getCreator())
@@ -361,6 +361,14 @@ public class ProjectService {
                         .build();
                 updatedProject.addProjectMember(projectMember);
             }
+
+            // 프로젝트 생성자(수정자)를 프로젝트 멤버로 추가
+            ProjectMember creatorMember = ProjectMember.builder()
+                    .project(project)
+                    .member(editor)
+                    .joinedAt(LocalDateTime.now())
+                    .build();
+            updatedProject.addProjectMember(creatorMember);
         } else {
             // 기존 멤버 유지하면서 추가/삭제
 
