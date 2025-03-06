@@ -96,9 +96,14 @@ public class AuthService {
         if (profileImage != null && !profileImage.isEmpty()) {
             profileUrl = amazonS3Service.uploadFile(profileImage);
         }
-        System.out.println("idToken : " + request.getIdToken());
+
         String email = fetchEmailFromIdToken(request.getIdToken());
-        System.out.println(email);
+        System.out.println("idToken : " + request.getIdToken());
+        System.out.println("email : " + email);
+
+        if (memberRepository.findByEmail(email).isPresent()) {
+            throw new IllegalStateException("이미 가입된 이메일입니다.");
+        }
 
         Member newMember = new Member();
         newMember.setUsername(request.getUsername());
