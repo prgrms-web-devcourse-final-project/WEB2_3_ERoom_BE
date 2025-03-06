@@ -62,14 +62,12 @@ public class ChatMessageService {
         System.out.println("sender : " + sender);
 
         // ChatMessage 생성
-        ChatMessage chatMessage = ChatMessage.builder()
+        return ChatMessage.builder()
                 .chatRoom(chatRoom)
                 .sender(sender)
                 .message(dto.getMessage())
                 .unreadCount(0)
                 .sentAt(dto.getSentAt())
                 .build();
-
-        return chatMessage;
     }
 }
