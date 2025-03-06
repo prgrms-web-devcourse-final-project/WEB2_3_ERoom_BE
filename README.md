@@ -49,3 +49,4 @@
 - spring-boot-starter-websocket
 - SpringDoc OpenAPI Starter
 - WebClient
+- spring-boot-starter-data-elasticsearch:3.4.2
