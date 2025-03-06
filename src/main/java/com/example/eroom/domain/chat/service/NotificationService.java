@@ -50,4 +50,10 @@ public class NotificationService {
         notification.setRead(true);
         notificationRepository.save(notification);
     }
+
+    // 맴버 아이디에 해당되는 알림들 읽음 처리
+    public String markNotificationsAsRead(Long memberId) {
+        int updatedCount = notificationRepository.markAllAsReadByMember(memberId);
+        return updatedCount + "개의 알림이 읽음 처리되었습니다.";
+    }
 }
