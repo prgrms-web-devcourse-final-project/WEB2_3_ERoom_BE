@@ -26,15 +26,13 @@ public class ProjectElasticService {
                 .aggregations("tag_counts", agg -> agg
                         .terms( t -> t
                                 .field("tags.keyword")
-                                .size(10)
+                                .size(25) // 태그 상위 25개
                         )
                 ),
                 Void.class
         );
 
         // 2. 결과 파싱
-        Map<String, Map<String, Long>> result = new HashMap<>();
-
         Map<String, Long> tagCountsMap = new HashMap<>();
         response.aggregations()
                 .get("tag_counts")

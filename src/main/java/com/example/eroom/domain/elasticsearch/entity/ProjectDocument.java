@@ -22,6 +22,5 @@ public class ProjectDocument {
     private String description;
     private String status;
     private String category;
-    // private String subCategory;
     private List<String> tags;
 }
