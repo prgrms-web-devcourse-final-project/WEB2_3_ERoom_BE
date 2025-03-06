@@ -33,11 +33,14 @@ public class AdminCategoryService {
 
     // [ 카테고리 생성 ]
     public Category createCategory(AdminCategoryDTO dto) {
-        Category category = Category.builder()
-                .name(dto.getName())
-                .build();
-
-        return adminCategoryJPARepository.save(category);
+        try {
+            // 1. DTO -> 엔티티 변환
+            Category category = new Category(dto.getName());
+            // 2. 카테고리 저장
+            return adminCategoryJPARepository.save(category);
+        } catch (Exception e) {
+            throw new RuntimeException("카테고리 생성 중 오류 발생", e);
+        }
     }
 
     // [ 카테고리 수정 ]
@@ -52,7 +55,7 @@ public class AdminCategoryService {
                 .name(dto.getName() != null ? dto.getName() : existingCategory.getName())
                 .build();
 
-        // 저장 및 반환
+        // 3. 저장 및 반환
         Category savedCategory = adminCategoryJPARepository.save(updatedCategory);
         return new AdminCategoryDTO(savedCategory);
     }
