@@ -33,4 +33,9 @@ public class Member {
     public void updateUserName(String userName) {
         this.username = userName;
     }
+
+    // 상태 수정 메서드
+    public void activateUser() {
+        this.deleteStatus = DeleteStatus.ACTIVE;
+    }
 }

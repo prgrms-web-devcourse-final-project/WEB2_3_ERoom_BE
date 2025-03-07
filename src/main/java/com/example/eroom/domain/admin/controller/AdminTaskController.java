@@ -37,6 +37,12 @@ public class AdminTaskController {
         return ResponseEntity.ok(updatedTask);
     }
 
+    @PatchMapping("/{taskId}/activate")
+    public ResponseEntity<AdminTaskDTO> taskActivate(@PathVariable Long taskId) {
+        AdminTaskDTO updatedTask = adminTaskService.activateTask(taskId);
+        return ResponseEntity.ok(updatedTask);
+    }
+
     @DeleteMapping("/{taskId}/delete")
     public ResponseEntity<Void> taskDelete(@PathVariable Long taskId) {
         try {

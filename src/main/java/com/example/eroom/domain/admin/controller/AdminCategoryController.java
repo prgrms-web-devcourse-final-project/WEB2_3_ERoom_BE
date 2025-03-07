@@ -1,10 +1,8 @@
 package com.example.eroom.domain.admin.controller;
 
 import com.example.eroom.domain.admin.dto.response.AdminCategoryDTO;
-import com.example.eroom.domain.admin.dto.response.AdminSubCategoryDTO;
 import com.example.eroom.domain.admin.service.AdminCategoryService;
 import com.example.eroom.domain.entity.Category;
-import com.example.eroom.domain.entity.SubCategory;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

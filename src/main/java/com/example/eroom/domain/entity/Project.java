@@ -139,4 +139,9 @@ public class Project {
             tag.incrementCount();
         }
     }
+
+    // 상태 수정 메서드
+    public void activateProject() {
+        this.deleteStatus = DeleteStatus.ACTIVE;
+    }
 }
