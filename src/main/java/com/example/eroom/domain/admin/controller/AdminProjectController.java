@@ -37,6 +37,12 @@ public class AdminProjectController {
         return ResponseEntity.ok(updatedProject);
     }
 
+    @PatchMapping("/{projectId}/activate")
+    public ResponseEntity<AdminProjectDTO> projectActivate(@PathVariable Long projectId) {
+        AdminProjectDTO updatedProject = adminProjectService.activateProject(projectId);
+        return ResponseEntity.ok(updatedProject);
+    }
+
     @DeleteMapping("/{projectId}/delete")
     public ResponseEntity<Void> projectDelete(@PathVariable Long projectId) {
         try {
