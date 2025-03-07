@@ -31,10 +31,16 @@ jobs:
         HOST: ${{ secrets.EC2_HOST }}
         USER: ubuntu
       run: |
-        echo "$PRIVATE_KEY" > private_key.pem
+        echo "USER: $USER"
+        echo "HOST: $HOST"
+        echo "$PRIVATE_KEY" | base64 --decode > private_key.pem
         chmod 600 private_key.pem
-        scp -i private_key.pem eRoom.jar $USER@$HOST:/home/ubuntu/
+        ls -l private_key.pem
+        scp -o StrictHostKeyChecking=no -i private_key.pem eRoom.jar $USER@$HOST:/home/ubuntu/
 
     - name: Restart Application on EC2
+      env:
+        HOST: ${{ secrets.EC2_HOST }}
+        USER: ubuntu
       run: |
         ssh -i private_key.pem $USER@$HOST "bash /home/ubuntu/deploy.sh"
