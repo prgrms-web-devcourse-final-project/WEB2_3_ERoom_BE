@@ -31,6 +31,7 @@ jobs:
         HOST: ${{ secrets.EC2_HOST }}
         USER: ubuntu
       run: |
+        echo "$PRIVATE_KEY" | awk '{print}'
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
         scp -i private_key.pem eRoom.jar $USER@$HOST:/home/ubuntu/
