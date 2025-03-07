@@ -1,7 +1,6 @@
 package com.example.eroom.domain.admin.dto.response;
 
 import com.example.eroom.domain.entity.Member;
-import com.example.eroom.domain.entity.MemberGrade;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
