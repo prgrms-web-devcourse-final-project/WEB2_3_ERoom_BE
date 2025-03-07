@@ -31,7 +31,7 @@ public class AdminSubCategoryService {
     }
 
     // [ 서브 카테고리 생성 ]
-    public AdminSubCategoryDTO createSubCategory(Long categoryId, AdminSubCategoryDTO dto) {
+    public SubCategory createSubCategory(Long categoryId, AdminSubCategoryDTO dto) {
         // 1. 카테고리 id로 기존 카테고리 조회
         Category category = adminCategoryJPARepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException("카테고리를 찾을 수 없습니다. : " + categoryId));
@@ -43,10 +43,7 @@ public class AdminSubCategoryService {
                 .build();
 
         // 3. 서브 카테고리 저장
-        SubCategory savedSubCategory = adminSubCategoryJPARepository.save(subCategory);
-
-        // 4. 저장된 서브 카테고리 DTO로 변환하여 반환
-        return new AdminSubCategoryDTO(savedSubCategory);
+        return adminSubCategoryJPARepository.save(subCategory);
     }
 
     // [ 서브 카테고리 수정 ]
@@ -57,11 +54,13 @@ public class AdminSubCategoryService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 ID의 서브 카테고리가 없습니다.: " + subcategoryId));
 
         // 2. 새 객체를 생성하지 않고 빌더를 이용한 값 업데이트
-        existingSubCategory = existingSubCategory.toBuilder()
-                .name(dto.getName() != null ? dto.getName() : existingSubCategory.getName()) // 값이 있으면 변경, 없으면 기존값 유지
+        SubCategory updatedSubCategory = existingSubCategory.toBuilder()
+                .name(dto.getName() != null ? dto.getName() : existingSubCategory.getName())
                 .build();
 
-        return new AdminSubCategoryDTO(existingSubCategory);
+        // 3. 저장 및 반환
+        SubCategory savedSubCategory = adminSubCategoryJPARepository.save(updatedSubCategory);
+        return new AdminSubCategoryDTO(savedSubCategory);
     }
 
 

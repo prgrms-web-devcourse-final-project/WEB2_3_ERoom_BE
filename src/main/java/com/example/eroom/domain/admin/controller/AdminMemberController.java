@@ -31,9 +31,9 @@ public class AdminMemberController {
     @PutMapping("/{memberId}/modify")
     public ResponseEntity<AdminMemberDTO> membertModify(
             @PathVariable Long memberId,
-            @RequestBody AdminUpdateMemberDTO updateDTO) {
+            @RequestBody String name) {
 
-        AdminMemberDTO updatedMember = adminMemberService.updateMember(memberId, updateDTO);
+        AdminMemberDTO updatedMember = adminMemberService.updateMember(memberId, name);
 
         return ResponseEntity.ok(updatedMember);
     }

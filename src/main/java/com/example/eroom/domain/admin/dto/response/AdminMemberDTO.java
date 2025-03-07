@@ -20,16 +20,14 @@ public class AdminMemberDTO {
     private String organization;
     private String profile;
     private LocalDate createdAt;
-    private MemberGrade memberGrade;
 
     // Member 엔티티를 매개변수로 받는 생성자
     public AdminMemberDTO(Member member) {
         this.memberId = member.getId();
-        this.username = member.getUsername();
         this.email = member.getEmail();
+        this.username = member.getUsername();
         this.organization = member.getOrganization();
         this.profile = member.getProfile();
         this.createdAt = member.getCreatedAt();
-        this.memberGrade = member.getMemberGrade();
     }
 }

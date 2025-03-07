@@ -4,6 +4,7 @@ package com.example.eroom.domain.admin.service;
 import com.example.eroom.domain.admin.dto.request.AdminUpdateMemberDTO;
 import com.example.eroom.domain.admin.dto.response.AdminMemberDTO;
 import com.example.eroom.domain.admin.repository.AdminMemberJPARepository;
+import com.example.eroom.domain.chat.repository.MemberRepository;
 import com.example.eroom.domain.entity.DeleteStatus;
 import com.example.eroom.domain.entity.Member;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,9 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class AdminMemberService {
     private final AdminMemberJPARepository adminMemberJPARepository;
+    private final MemberRepository memberRepository;
 
-    public AdminMemberService(AdminMemberJPARepository adminMemberJPARepository) {
+    public AdminMemberService(AdminMemberJPARepository adminMemberJPARepository, MemberRepository memberRepository) {
         this.adminMemberJPARepository = adminMemberJPARepository;
+        this.memberRepository = memberRepository;
     }
 
     // [ 전체 활성화 회원 목록 ]
@@ -37,27 +40,29 @@ public class AdminMemberService {
     }
 
     // [ 특정 회원 수정 ]
-    public AdminMemberDTO updateMember(Long memberId, AdminUpdateMemberDTO updatedMemberDTO) {
+    public AdminMemberDTO updateMember(Long memberId, String name) {
         // 1. 회원 존재 여부 확인
         Member existingMember = adminMemberJPARepository.findById(memberId)
                 .orElseThrow( () -> new EntityNotFoundException("해당 ID의 회원이 없습니다.: " + memberId));
 
-        // 2. 값 업데이트 : 이름, 등록일, 구독 여부, 소속, 프로필 이미지
-        // 필드 값이 Null이 아닐 때만 업데이트 실행
-        Member updatedMember = Member.builder()
-                .id(existingMember.getId()) // 기존 ID 유지
-                .username(updatedMemberDTO.getUsername() != null ? updatedMemberDTO.getUsername() : existingMember.getUsername())
-                .createdAt(updatedMemberDTO.getCreatedAt() != null ? updatedMemberDTO.getCreatedAt() : existingMember.getCreatedAt())
-                .memberGrade(updatedMemberDTO.getMemberGrade() != null ? updatedMemberDTO.getMemberGrade() : existingMember.getMemberGrade())
-                .organization(updatedMemberDTO.getOrganization() != null ? updatedMemberDTO.getOrganization() : existingMember.getOrganization())
-                .profile(updatedMemberDTO.getProfile() != null ? updatedMemberDTO.getProfile() : existingMember.getProfile())
-                .build();
+        // 2. 값 변경 : 이름
+        existingMember.updateUserName(name);
 
-        // 3. 변경된 데이터 저장
-        Member savedMember = adminMemberJPARepository.save(updatedMember);
+        // 3. 수정된 객체 DB 저장
+        memberRepository.save(existingMember);
 
-        // 4. DTO로 변환하여 저장
-        return new AdminMemberDTO(savedMember);
+        // 3. 엔티티를 DTO로 변환
+        AdminMemberDTO updatedMemberDTO = new AdminMemberDTO(
+                existingMember.getId(),
+                existingMember.getEmail(),
+                existingMember.getUsername(),
+                existingMember.getOrganization(),
+                existingMember.getProfile(),
+                existingMember.getCreatedAt()
+        );
+
+        // 4. 수정된 회원 DTO 반환
+        return updatedMemberDTO;
     }
 
     // [ 특정 회원 삭제 ]

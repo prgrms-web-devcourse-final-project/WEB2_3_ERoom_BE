@@ -2,6 +2,7 @@ package com.example.eroom.domain.admin.controller;
 
 import com.example.eroom.domain.admin.dto.response.AdminSubCategoryDTO;
 import com.example.eroom.domain.admin.service.AdminSubCategoryService;
+import com.example.eroom.domain.entity.SubCategory;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,9 +27,8 @@ public class AdminSubCategoryController {
     public ResponseEntity<AdminSubCategoryDTO> createSubCategory(
             @PathVariable Long categoryId,
             @RequestBody AdminSubCategoryDTO adminSubCategoryDTO) {
-
-        AdminSubCategoryDTO createdSubCategory = adminSubCategoryService.createSubCategory(categoryId, adminSubCategoryDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdSubCategory);
+        SubCategory subCategory = adminSubCategoryService.createSubCategory(categoryId, adminSubCategoryDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AdminSubCategoryDTO(subCategory));
     }
 
     @PutMapping("/{subcategoryId}/modify")
