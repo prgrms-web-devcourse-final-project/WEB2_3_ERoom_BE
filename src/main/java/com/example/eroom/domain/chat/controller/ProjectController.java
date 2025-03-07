@@ -34,7 +34,7 @@ public class ProjectController {
         }
 
         // 현재 사용자의 프로젝트 목록 가져오기
-        List<Project> projects = projectService.getProjectsByUser(currentMember);
+        List<Project> projects = projectService.getProjectsByMember(currentMember);
         System.out.println("조회된 프로젝트 수: " + projects.size()); // 확인용 로그
 
         // DTO로 변환
