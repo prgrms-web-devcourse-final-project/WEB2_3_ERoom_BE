@@ -1,6 +1,5 @@
 package com.example.eroom.domain.admin.controller;
 
-import com.example.eroom.domain.admin.dto.request.AdminUpdateMemberDTO;
 import com.example.eroom.domain.admin.dto.response.AdminMemberDTO;
 import com.example.eroom.domain.admin.service.AdminMemberService;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +34,12 @@ public class AdminMemberController {
 
         AdminMemberDTO updatedMember = adminMemberService.updateMember(memberId, name);
 
+        return ResponseEntity.ok(updatedMember);
+    }
+
+    @PatchMapping("/{memberId}/activate")
+    public ResponseEntity<AdminMemberDTO> membertActivate(@PathVariable Long memberId) {
+        AdminMemberDTO updatedMember = adminMemberService.activateMember(memberId);
         return ResponseEntity.ok(updatedMember);
     }
 
