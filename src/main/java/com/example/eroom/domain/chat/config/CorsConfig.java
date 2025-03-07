@@ -13,7 +13,12 @@ public class CorsConfig implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
-        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        String origin = ((HttpServletRequest) request).getHeader("Origin");
+
+        if ("http://localhost:5173".equals(origin) || "https://errom.netlify.app".equals(origin)) {
+            res.setHeader("Access-Control-Allow-Origin", origin);
+        }
+//        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH");
         res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept");
         res.setHeader("Access-Control-Allow-Credentials", "true");
