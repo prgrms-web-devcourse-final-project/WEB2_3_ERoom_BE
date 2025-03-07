@@ -16,8 +16,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -78,14 +76,8 @@ public class AuthService {
     }
 
     // 회원의 역할을 가져오는 메서드
-    private List<String> getRolesForMember(Member member) {
-        List<String> roles = new ArrayList<>();
-        if (member.getMemberGrade() == MemberGrade.ADMIN) {
-            roles.add("ROLE_ADMIN");
-        } else {
-            roles.add("ROLE_USER");
-        }
-        return roles;
+    private MemberGrade getRolesForMember(Member member) {
+        return member.getMemberGrade();
     }
 
     @Transactional
@@ -117,7 +109,6 @@ public class AuthService {
                 .build();
 
         memberRepository.save(newMember);
-
         // 회원가입 후 JWT 발급
         String accessToken = jwtTokenProvider.createAccessToken(newMember.getEmail(), getRolesForMember(newMember));
         String refreshToken = jwtTokenProvider.createRefreshToken(newMember.getEmail());
