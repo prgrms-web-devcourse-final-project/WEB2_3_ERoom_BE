@@ -25,6 +25,11 @@ jobs:
         ./gradlew build -x test
         cp build/libs/eRoom-0.0.1-SNAPSHOT.jar eRoom.jar
 
+    - name: Debug environment variables
+      run: |
+        echo "USER: $USER"
+        echo "HOST: $HOST"
+
     - name: Upload JAR to EC2
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
