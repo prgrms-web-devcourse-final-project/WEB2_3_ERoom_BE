@@ -14,10 +14,10 @@ public class SimpleController {
 
     @GetMapping("/hello")
     public ResponseEntity<String> sayHello() {
-        return ResponseEntity.ok("Hello World!");
+        return ResponseEntity.ok("Hello Java!");
     }
 
-    @GetMapping("/time")
+    @GetMapping("/times")
     public ResponseEntity<String> getCurrentTime() {
         return ResponseEntity.ok(LocalDateTime.now().toString());
     }
