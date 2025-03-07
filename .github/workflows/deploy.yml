@@ -35,7 +35,7 @@ jobs:
         printf "%s" "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
         ls -l private_key.pem
-        scp -i private_key.pem eRoom.jar $USER@$HOST:/home/ubuntu/
+        scp -o StrictHostKeyChecking=no -i private_key.pem eRoom.jar $USER@$HOST:/home/ubuntu/
 
     - name: Restart Application on EC2
       run: |
