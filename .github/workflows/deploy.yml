@@ -1,1 +1,40 @@
+name: Deploy to EC2
 
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Build with Gradle (or Maven)
+      run: |
+        chmod +x gradlew
+        ./gradlew build -x test
+        cp build/libs/eRoom-0.0.1-SNAPSHOT.jar eRoom.jar
+
+    - name: Upload JAR to EC2
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+        HOST: ${{ secrets.EC2_HOST }}
+        USER: ubuntu
+      run: |
+        echo "$PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+        scp -i private_key.pem eRoom.jar $USER@$HOST:/home/ubuntu/
+
+    - name: Restart Application on EC2
+      run: |
+        ssh -i private_key.pem $USER@$HOST "bash /home/ubuntu/deploy.sh"
