@@ -42,7 +42,7 @@ public class MyPageService {
             updatedMember = updatedMember.toBuilder()
                     .profile(newProfileUrl)
                     .build();
-        } else { // 이미지가 null이라면
+        } else if (profileImage != null && profileImage.isEmpty()) { // 이미지가 비어있다면
             if (existingMember.getProfile() != null) {
                 amazonS3Service.deleteFile(existingMember.getProfile());
             }
