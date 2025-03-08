@@ -1,5 +1,6 @@
 package com.example.eroom.domain.admin.controller;
 
+import com.example.eroom.domain.admin.dto.request.AdminUpdateMemberDTO;
 import com.example.eroom.domain.admin.dto.response.AdminMemberDTO;
 import com.example.eroom.domain.admin.service.AdminMemberService;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +31,9 @@ public class AdminMemberController {
     @PutMapping("/{memberId}/modify")
     public ResponseEntity<AdminMemberDTO> membertModify(
             @PathVariable Long memberId,
-            @RequestBody String name) {
+            @RequestBody AdminUpdateMemberDTO adminUpdateMemberDTO) {
 
-        AdminMemberDTO updatedMember = adminMemberService.updateMember(memberId, name);
+        AdminMemberDTO updatedMember = adminMemberService.updateMember(memberId, adminUpdateMemberDTO);
 
         return ResponseEntity.ok(updatedMember);
     }
