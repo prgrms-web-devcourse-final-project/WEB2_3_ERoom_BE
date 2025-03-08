@@ -3,10 +3,12 @@ package com.example.eroom.domain.auth.controller;
 import com.example.eroom.domain.auth.dto.request.SignupRequestDTO;
 import com.example.eroom.domain.auth.dto.request.SocialLoginRequestDTO;
 import com.example.eroom.domain.auth.dto.response.AuthResponseDTO;
+import com.example.eroom.domain.auth.repository.AuthMemberRepository;
 import com.example.eroom.domain.auth.repository.RefreshTokenRepository;
 import com.example.eroom.domain.auth.security.JwtTokenProvider;
 import com.example.eroom.domain.auth.service.AuthService;
 import com.example.eroom.domain.auth.service.TokenBlacklistService;
+import com.example.eroom.domain.entity.DeleteStatus;
 import com.example.eroom.domain.entity.Member;
 import com.example.eroom.domain.entity.RefreshToken;
 import io.jsonwebtoken.Claims;
@@ -31,15 +33,26 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final TokenBlacklistService tokenBlacklistService;
+    private final AuthMemberRepository memberRepository;
 
     // 소셜 로그인 처리
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> login(@RequestBody SocialLoginRequestDTO request) {
+    public ResponseEntity<?> login(@RequestBody SocialLoginRequestDTO request) {
         AuthResponseDTO response = authService.login(request);
 
         // 비회원일 경우, non-member 정보만 반환
         if (!response.isRegistered()) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
+        }
+
+        // 기존 회원일 경우 탈퇴 여부를 체크
+        Member member = memberRepository.findByEmail(response.getMember().getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("회원이 존재하지 않습니다."));
+
+        // 탈퇴된 회원이라면
+        if (member.getDeleteStatus() == DeleteStatus.DELETED) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("탈퇴된 회원입니다.");
         }
 
         // 기존 회원일 경우 JWT와 회원정보를 반환
