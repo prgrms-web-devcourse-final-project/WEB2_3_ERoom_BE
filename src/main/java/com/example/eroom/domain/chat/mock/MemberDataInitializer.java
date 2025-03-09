@@ -18,6 +18,11 @@ public class MemberDataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
+        if (memberRepository.count() > 0) {
+            System.out.println("초기 데이터가 이미 존재.");
+            return;
+        }
+
         Member member1 = Member.builder()
                 .username("member1")
                 .email("qwerty1@gmail.com")
