@@ -174,7 +174,8 @@ public class TaskService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
-        List<Task> tasks = taskRepository.findByAssignedMember(member);
+        // deleteStatus=ACTIVE인 task만 조회
+        List<Task> tasks = taskRepository.findByAssignedMemberAndDeleteStatus(member, DeleteStatus.ACTIVE);
 
         return tasks.stream()
                 .map(TaskListResponseDTO::fromEntity)
