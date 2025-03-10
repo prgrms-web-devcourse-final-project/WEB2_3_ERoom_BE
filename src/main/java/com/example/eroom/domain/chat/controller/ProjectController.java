@@ -110,6 +110,11 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+        // 현재 사용자가 프로젝트에 속해 있는지 확인
+        if (!projectService.isProjectMember(projectId, currentMember.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+
         ProjectDetailChatDTO projectDetail = projectService.getProjectDetail(projectId);
         return ResponseEntity.ok(projectDetail);
     }
@@ -194,6 +199,11 @@ public class ProjectController {
         //Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // 현재 사용자가 프로젝트에 속해 있는지 확인
+        if (!projectService.isProjectMember(projectId, currentMember.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
 
         ProjectDetailDTO projectDetail = projectService.getProjectDetailForView(projectId);

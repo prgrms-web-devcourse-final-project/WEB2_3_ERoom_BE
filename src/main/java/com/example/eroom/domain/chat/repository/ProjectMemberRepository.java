@@ -14,4 +14,7 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Lo
     // 현재 유저를 제외한 해당 프로젝트 참가자 가져오기
     @Query("SELECT pm.member FROM ProjectMember pm WHERE pm.project = :project AND pm.member != :currentMember")
     List<Member> findMembersByProjectAndMemberNot(@Param("project") Project project, @Param("currentMember") Member currentMember);
+
+    // 특정 프로젝트에 특정 멤버가 존재하는지 확인하는 메서드
+    boolean existsByProjectIdAndMemberId(Long projectId, Long memberId);
 }

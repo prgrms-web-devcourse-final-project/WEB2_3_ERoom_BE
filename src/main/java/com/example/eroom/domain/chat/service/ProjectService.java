@@ -39,6 +39,7 @@ public class ProjectService {
     private final ProjectSubCategoryRepository projectSubCategoryRepository;
     private final ProjectTagRepository projectTagRepository;
     private final ProjectDocumentRepository projectDocumentRepository;
+    private final ProjectMemberRepository projectMemberRepository;
 
     // 현재 사용자가 참여 중인 프로젝트 목록 가져오기
     public List<Project> getProjectsByMember(Member member) {
@@ -547,6 +548,11 @@ public class ProjectService {
         // 멤버 제거
         project.getMembers().removeIf(pm -> pm.getMember().getId().equals(member.getId()));
         projectRepository.save(project);
+    }
+
+    // 현재 사용자가 해당 프로젝트에 속해 있는지 확인
+    public boolean isProjectMember(Long projectId, Long memberId) {
+        return projectMemberRepository.existsByProjectIdAndMemberId(projectId, memberId);
     }
 
     @Scheduled(cron = "0 */10 * * * ?") // 매 시간 정각(00:00, 01:00, 02:00...) 실행
