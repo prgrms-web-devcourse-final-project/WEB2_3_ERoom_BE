@@ -3,6 +3,7 @@ package com.example.eroom.domain.admin.service;
 import com.example.eroom.domain.admin.dto.request.AdminUpdateProjectDTO;
 import com.example.eroom.domain.admin.dto.response.AdminProjectDTO;
 import com.example.eroom.domain.admin.repository.AdminProjectJPARepository;
+import com.example.eroom.domain.chat.repository.ProjectRepository;
 import com.example.eroom.domain.entity.DeleteStatus;
 import com.example.eroom.domain.entity.Project;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,9 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class AdminProjectService {
     private final AdminProjectJPARepository adminProjectJPARepository;
+    private final ProjectRepository projectRepository;
 
-    public AdminProjectService(AdminProjectJPARepository adminProjectJPARepository) {
+    public AdminProjectService(AdminProjectJPARepository adminProjectJPARepository, ProjectRepository projectRepository) {
         this.adminProjectJPARepository = adminProjectJPARepository;
+        this.projectRepository = projectRepository;
     }
     // [ 전체 활성화 프로젝트 목록 ]
     public List<AdminProjectDTO> getActiveProjects() {
@@ -53,6 +56,19 @@ public class AdminProjectService {
         return new AdminProjectDTO(savedProject);
     }
 
+    // [ 특정 프로젝트 활성화 ]
+    @Transactional
+    public AdminProjectDTO activateProject(Long projectId) {
+        // 1. 프로젝트 존재 여부 확인
+        Project project = adminProjectJPARepository.findById(projectId)
+                .orElseThrow( () -> new EntityNotFoundException("해당 ID의 프로젝트가 없습니다.: " + projectId));
+
+        // 2. 비활성 -> 활성 전환
+        project.activateProject();
+
+        projectRepository.save(project);
+        return new AdminProjectDTO(project);
+    }
 
     // [ 특정 프로젝트 삭제 ]
     public void deleteProject(Long projectId) {

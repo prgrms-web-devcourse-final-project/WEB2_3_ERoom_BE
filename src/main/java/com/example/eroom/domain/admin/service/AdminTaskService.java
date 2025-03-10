@@ -3,6 +3,7 @@ package com.example.eroom.domain.admin.service;
 import com.example.eroom.domain.admin.dto.request.AdminUpdateTaskDTO;
 import com.example.eroom.domain.admin.dto.response.AdminTaskDTO;
 import com.example.eroom.domain.admin.repository.AdminTaskJPARepository;
+import com.example.eroom.domain.chat.repository.TaskRepository;
 import com.example.eroom.domain.entity.DeleteStatus;
 import com.example.eroom.domain.entity.Task;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,8 +16,11 @@ import java.util.stream.Collectors;
 @Service
 public class AdminTaskService {
     private final AdminTaskJPARepository adminTaskJPARepository;
+    private final TaskRepository taskRepository;
 
-    public AdminTaskService(AdminTaskJPARepository adminTaskJPARepository) { this.adminTaskJPARepository = adminTaskJPARepository; }
+    public AdminTaskService(AdminTaskJPARepository adminTaskJPARepository, TaskRepository taskRepository) { this.adminTaskJPARepository = adminTaskJPARepository;
+        this.taskRepository = taskRepository;
+    }
 
     // [ 전체 활성화 업무 목록 ]
     public List<AdminTaskDTO> getActiveTasks() {
@@ -54,6 +58,20 @@ public class AdminTaskService {
         Task savedTask = adminTaskJPARepository.save(updatedTask);
 
         return new AdminTaskDTO(savedTask);
+    }
+
+    // [ 특정 업무 수정 ]
+    @Transactional
+    public AdminTaskDTO activateTask(Long taskId) {
+        // 1. 업무 존재 여부 확인
+        Task task = adminTaskJPARepository.findById(taskId)
+                .orElseThrow( () -> new EntityNotFoundException("해당 ID의 업무가 없습니다.: " + taskId));
+
+        // 2. 비활성 -> 활성 전환
+        task.activateTask();
+
+        taskRepository.save(task);
+        return new AdminTaskDTO(task);
     }
 
     // [ 특정 업무 삭제 ]

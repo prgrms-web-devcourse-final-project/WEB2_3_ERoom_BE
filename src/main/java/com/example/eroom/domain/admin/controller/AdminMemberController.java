@@ -31,10 +31,16 @@ public class AdminMemberController {
     @PutMapping("/{memberId}/modify")
     public ResponseEntity<AdminMemberDTO> membertModify(
             @PathVariable Long memberId,
-            @RequestBody String name) {
+            @RequestBody AdminUpdateMemberDTO adminUpdateMemberDTO) {
 
-        AdminMemberDTO updatedMember = adminMemberService.updateMember(memberId, name);
+        AdminMemberDTO updatedMember = adminMemberService.updateMember(memberId, adminUpdateMemberDTO);
 
+        return ResponseEntity.ok(updatedMember);
+    }
+
+    @PatchMapping("/{memberId}/activate")
+    public ResponseEntity<AdminMemberDTO> membertActivate(@PathVariable Long memberId) {
+        AdminMemberDTO updatedMember = adminMemberService.activateMember(memberId);
         return ResponseEntity.ok(updatedMember);
     }
 

@@ -2,7 +2,9 @@ package com.example.eroom.domain.auth.service;
 
 import com.example.eroom.domain.auth.dto.request.MyPageUpdateRequestDTO;
 import com.example.eroom.domain.auth.repository.AuthMemberRepository;
+import com.example.eroom.domain.entity.DeleteStatus;
 import com.example.eroom.domain.entity.Member;
+import com.example.eroom.domain.entity.MemberGrade;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
@@ -19,7 +22,6 @@ public class MyPageService {
     private final AmazonS3Service amazonS3Service;
     private final EntityManager entityManager;
 
-    @Transactional
     public Member updateMyPage(Member member, MyPageUpdateRequestDTO requestDTO, MultipartFile profileImage) {
         Member existingMember = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
@@ -40,11 +42,26 @@ public class MyPageService {
             updatedMember = updatedMember.toBuilder()
                     .profile(newProfileUrl)
                     .build();
+        } else if (profileImage != null && profileImage.isEmpty()) { // 이미지가 비어있다면
+            if (existingMember.getProfile() != null) {
+                amazonS3Service.deleteFile(existingMember.getProfile());
+            }
+            updatedMember = updatedMember.toBuilder()
+                    .profile(null) // 프로필을 null로 설정
+                    .build();
         }
 
         memberRepository.save(updatedMember);
 
         return updatedMember;
+    }
+
+    // 회원 탈퇴
+    public void deleteMember(Member member) {
+        Member updatedMember = member.toBuilder()
+                .deleteStatus(DeleteStatus.DELETED)
+                .build();
+        memberRepository.save(updatedMember); // 변경된 상태로 저장
     }
 
 }

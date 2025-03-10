@@ -77,4 +77,9 @@ public class Task {
 //        this.participants.clear();
 //        this.participants.addAll(newParticipants);
 //    }
+
+    // 상태 수정 메서드
+    public void activateTask() {
+        this.deleteStatus = DeleteStatus.ACTIVE;
+    }
 }

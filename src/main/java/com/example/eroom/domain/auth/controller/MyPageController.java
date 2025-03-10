@@ -3,8 +3,11 @@ package com.example.eroom.domain.auth.controller;
 import com.example.eroom.domain.auth.dto.request.MyPageUpdateRequestDTO;
 import com.example.eroom.domain.auth.dto.response.MemberResponseDTO;
 import com.example.eroom.domain.auth.repository.AuthMemberRepository;
+import com.example.eroom.domain.auth.repository.RefreshTokenRepository;
+import com.example.eroom.domain.auth.security.JwtTokenProvider;
 import com.example.eroom.domain.auth.service.AmazonS3Service;
 import com.example.eroom.domain.auth.service.MyPageService;
+import com.example.eroom.domain.auth.service.TokenBlacklistService;
 import com.example.eroom.domain.entity.Member;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -25,9 +28,9 @@ import org.springframework.web.server.ResponseStatusException;
 @RequestMapping("/api/mypage")
 public class MyPageController {
 
-    private final AuthMemberRepository memberRepository;
-    private final AmazonS3Service amazonS3Service;
-    private final HttpSession httpSession;
+    private final TokenBlacklistService tokenBlacklistService;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JwtTokenProvider jwtTokenProvider;
     private final MyPageService myPageService;
 
     @GetMapping
@@ -42,6 +45,23 @@ public class MyPageController {
 
         Member updatedMember = myPageService.updateMyPage(member, request, request.getProfileImage());
         return ResponseEntity.ok(new MemberResponseDTO(updatedMember));
+    }
+
+    @PutMapping("/delete")
+    @Transactional
+    public ResponseEntity<Void> deleteAccount(@AuthenticationPrincipal Member member,
+                                              @RequestHeader("Authorization") String authorizationHeader) {
+        myPageService.deleteMember(member);
+
+        String accessToken = authorizationHeader.replace("Bearer ", "");
+
+        // AccessToken을 블랙리스트에 추가 (남은 유효기간 동안)
+        long expirationTimeMillis = jwtTokenProvider.getExpirationTime(accessToken);
+        tokenBlacklistService.blacklistAccessToken(accessToken, expirationTimeMillis);
+        // refreshToken 삭제
+        refreshTokenRepository.deleteByEmail(member.getEmail());
+
+        return ResponseEntity.noContent().build(); // 상태 코드 204 반환
     }
 
 }
