@@ -21,6 +21,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByAssignedMember(Member assignedMember);
 
+    // 특정 멤버가 담당하고 있는, 삭제되지 않은 Task 조회
+    List<Task> findByAssignedMemberAndDeleteStatus(Member assignedMember, DeleteStatus deleteStatus);
+
     // task 검색
     List<Task> findByTitleContainingIgnoreCase(String title);
 }
