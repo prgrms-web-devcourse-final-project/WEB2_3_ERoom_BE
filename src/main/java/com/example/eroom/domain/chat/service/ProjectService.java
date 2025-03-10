@@ -555,6 +555,12 @@ public class ProjectService {
         return projectMemberRepository.existsByProjectIdAndMemberId(projectId, memberId);
     }
 
+    // 프로젝트 ID로 프로젝트 조회
+    public Project findProjectById(Long projectId) {
+        return projectRepository.findById(projectId).orElse(null);
+    }
+
+
     @Scheduled(cron = "0 */10 * * * ?") // 매 시간 정각(00:00, 01:00, 02:00...) 실행
     public void sendEndDateReminder() {
         LocalDateTime now = LocalDateTime.now().withNano(0);

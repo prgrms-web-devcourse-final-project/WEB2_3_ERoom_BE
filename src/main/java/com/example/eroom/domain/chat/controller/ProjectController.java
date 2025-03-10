@@ -110,6 +110,12 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
+        // 프로젝트가 존재하는지 & 삭제된 프로젝트인지 확인
+        Project project = projectService.findProjectById(projectId);
+        if (project == null || project.getDeleteStatus() == DeleteStatus.DELETED) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
         // 현재 사용자가 프로젝트에 속해 있는지 확인
         if (!projectService.isProjectMember(projectId, currentMember.getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
@@ -199,6 +205,12 @@ public class ProjectController {
         //Member currentMember = (Member) session.getAttribute("member");
         if (currentMember == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // 프로젝트가 존재하는지 & 삭제된 프로젝트인지 확인
+        Project project = projectService.findProjectById(projectId);
+        if (project == null || project.getDeleteStatus() == DeleteStatus.DELETED) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
         // 현재 사용자가 프로젝트에 속해 있는지 확인
