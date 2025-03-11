@@ -430,6 +430,9 @@ public class ProjectService {
         dto.setProjectId(project.getId());
         dto.setProjectName(project.getName());
 
+        // 프로젝트 상태 추가
+        dto.setStatus(project.getStatus());
+
         // 카테고리 정보 설정
         dto.setCategoryName(project.getCategory().getName());
 
