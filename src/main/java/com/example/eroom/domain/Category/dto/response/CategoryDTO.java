@@ -1,6 +1,5 @@
 package com.example.eroom.domain.Category.dto.response;
 
-import com.example.eroom.domain.admin.dto.response.AdminSubCategoryDTO;
 import com.example.eroom.domain.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Data;
