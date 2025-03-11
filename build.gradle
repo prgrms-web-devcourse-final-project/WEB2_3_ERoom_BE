@@ -58,6 +58,11 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
     implementation 'io.jsonwebtoken:jjwt:0.12.6'
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch:3.4.2'
+
+    // ShedLock추가
+    implementation 'net.javacrumbs.shedlock:shedlock-spring:5.0.0'
+    implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.0.0'
+
 }
 
 tasks.named('test') {
