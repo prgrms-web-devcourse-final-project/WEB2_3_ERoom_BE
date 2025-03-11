@@ -40,6 +40,7 @@ public class ProjectService {
     private final ProjectTagRepository projectTagRepository;
     private final ProjectDocumentRepository projectDocumentRepository;
     private final ProjectMemberRepository projectMemberRepository;
+    private final TaskService taskService;
 
     // 현재 사용자가 참여 중인 프로젝트 목록 가져오기
     public List<Project> getProjectsByMember(Member member) {
@@ -386,24 +387,15 @@ public class ProjectService {
             throw new CustomException(ErrorCode.PROJECT_MEMBER_EXISTS);
         }
 
-        // 새 객체 생성하여 상태 변경
-        Project updatedProject = Project.builder()
-                .id(project.getId())
-                .creator(project.getCreator())
-                .name(project.getName())
-                .description(project.getDescription())
-                .createdAt(project.getCreatedAt())
-                .category(project.getCategory())
-                .projectSubCategories(project.getProjectSubCategories())
-                .tags(project.getTags())
-                .deleteStatus(DeleteStatus.DELETED) // 여기서 상태 변경
-                .startDate(project.getStartDate())
-                .endDate(project.getEndDate())
-                .status(project.getStatus())
-                .chatRooms(project.getChatRooms())
-                .members(project.getMembers())
-                .tasks(project.getTasks())
-                .colors(project.getColors())
+        // 프로젝트에 속한 모든 테스크를 soft delete
+        List<Task> updatedTasks = project.getTasks().stream()
+                .map(task -> task.toBuilder().deleteStatus(DeleteStatus.DELETED).build())
+                .collect(Collectors.toList());
+
+        // 삭제된 상태로 변경된 프로젝트 객체 생성
+        Project updatedProject = project.toBuilder()
+                .deleteStatus(DeleteStatus.DELETED)
+                .tasks(updatedTasks)
                 .build();
 
         projectRepository.save(updatedProject);
