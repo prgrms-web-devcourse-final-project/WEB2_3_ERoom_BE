@@ -1,5 +1,6 @@
 package com.example.eroom.domain.chat.dto.response;
 
+import com.example.eroom.domain.entity.ProjectStatus;
 import lombok.Data;
 
 import java.util.List;
@@ -15,4 +16,5 @@ public class ProjectDetailDTO {
     private List<TaskDTO> tasks;
     // 참여 멤버 목록
     private List<MemberDTO> members;
+    private ProjectStatus status;
 }
