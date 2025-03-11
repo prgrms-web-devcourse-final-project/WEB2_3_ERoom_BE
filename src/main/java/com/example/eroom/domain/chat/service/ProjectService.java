@@ -387,12 +387,10 @@ public class ProjectService {
             throw new CustomException(ErrorCode.PROJECT_MEMBER_EXISTS);
         }
 
-        // 프로젝트에 속한 모든 테스크를 soft delete
         List<Task> updatedTasks = project.getTasks().stream()
-                .map(task -> task.toBuilder().deleteStatus(DeleteStatus.DELETED).build())
+                .map(task -> task.withDeleteStatus(DeleteStatus.DELETED)) // 새 Task 객체 생성
                 .collect(Collectors.toList());
 
-        // 삭제된 상태로 변경된 프로젝트 객체 생성
         Project updatedProject = project.toBuilder()
                 .deleteStatus(DeleteStatus.DELETED)
                 .tasks(updatedTasks)
