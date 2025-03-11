@@ -82,4 +82,10 @@ public class Task {
     public void activateTask() {
         this.deleteStatus = DeleteStatus.ACTIVE;
     }
+
+    public Task withDeleteStatus(DeleteStatus status) {
+        return this.toBuilder()
+                .deleteStatus(status)
+                .build();
+    }
 }
