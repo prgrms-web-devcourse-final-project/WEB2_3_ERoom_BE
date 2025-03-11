@@ -13,6 +13,7 @@ import com.example.eroom.domain.elasticsearch.repository.ProjectDocumentReposito
 import com.example.eroom.domain.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -555,6 +556,8 @@ public class ProjectService {
 
 
     @Scheduled(cron = "0 */10 * * * ?") // 매 시간 정각(00:00, 01:00, 02:00...) 실행
+    @SchedulerLock(name = "sendEndDateReminder", lockAtMostFor = "10m")
+    @Transactional
     public void sendEndDateReminder() {
         LocalDateTime now = LocalDateTime.now().withNano(0);
         LocalDateTime startOfNextDay = now.plusHours(24).withNano(0); // 정확히 24시간 후
