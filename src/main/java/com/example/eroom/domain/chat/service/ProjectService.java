@@ -463,6 +463,7 @@ public class ProjectService {
             taskDTO.setStatus(task.getStatus());
 
             taskDTO.setAssignedMemberName(task.getAssignedMember() != null ? task.getAssignedMember().getUsername() : null);
+            taskDTO.setAssignedMemberProfile(task.getAssignedMember().getProfile() != null ? task.getAssignedMember().getProfile() : null);
 
 //            List<String> participantNames = task.getParticipants().stream()
 //                    .map(taskMember -> taskMember.getMember().getUsername())
