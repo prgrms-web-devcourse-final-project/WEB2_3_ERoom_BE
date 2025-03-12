@@ -18,6 +18,7 @@ public class TaskUpdateResponseDTO {
     private LocalDateTime endDate;
     private TaskStatus status;
     private Long assignedMemberId;
+    private String assignedMemberProfile;
 //    private List<Long> participantIds;
 //    private List<String> participantProfiles;
 
@@ -29,7 +30,8 @@ public class TaskUpdateResponseDTO {
                 task.getStartDate(),
                 task.getEndDate(),
                 task.getStatus(),
-                task.getAssignedMember() != null ? task.getAssignedMember().getId() : null
+                task.getAssignedMember() != null ? task.getAssignedMember().getId() : null,
+                task.getAssignedMember() != null ? task.getAssignedMember().getProfile() : null
 //                task.getParticipants().stream()
 //                        .map(participant -> participant.getMember().getId())
 //                        .collect(Collectors.toList()),
