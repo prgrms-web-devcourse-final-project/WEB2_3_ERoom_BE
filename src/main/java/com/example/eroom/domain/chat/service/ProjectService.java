@@ -7,9 +7,6 @@ import com.example.eroom.domain.chat.dto.response.*;
 import com.example.eroom.domain.chat.error.CustomException;
 import com.example.eroom.domain.chat.error.ErrorCode;
 import com.example.eroom.domain.chat.repository.*;
-import com.example.eroom.domain.elasticsearch.entity.ProjectDocument;
-import com.example.eroom.domain.elasticsearch.mapper.ProjectMapper;
-import com.example.eroom.domain.elasticsearch.repository.ProjectDocumentRepository;
 import com.example.eroom.domain.entity.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +36,6 @@ public class ProjectService {
     private final TagRepository tagRepository;
     private final ProjectSubCategoryRepository projectSubCategoryRepository;
     private final ProjectTagRepository projectTagRepository;
-    private final ProjectDocumentRepository projectDocumentRepository;
     private final ProjectMemberRepository projectMemberRepository;
     private final TaskService taskService;
 
@@ -135,8 +131,10 @@ public class ProjectService {
         Project savedProject = projectRepository.save(project);
 
         // 프로젝트 Elasticsearch에도 저장
+        /*
         ProjectDocument projectDocument = ProjectMapper.toDocument(savedProject);
         projectDocumentRepository.save(projectDocument);
+        */
 
         // 알림 전송
         for (Member member : invitedMembers) {

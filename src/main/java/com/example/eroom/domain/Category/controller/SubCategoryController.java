@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/subcategory")
@@ -24,5 +25,10 @@ public class SubCategoryController {
     public ResponseEntity<List<SubCategoryDTO>> subCategoryList(@RequestParam Long categoryId) {
         List<SubCategoryDTO> subCategoryLists = subCategoryService.getSubCategories(categoryId);
         return ResponseEntity.ok(subCategoryLists);
+    }
+
+    @GetMapping("/tagList")
+    public ResponseEntity<Map<String, Integer>> getTagList() {
+        return ResponseEntity.ok(subCategoryService.getAllTags());
     }
 }
