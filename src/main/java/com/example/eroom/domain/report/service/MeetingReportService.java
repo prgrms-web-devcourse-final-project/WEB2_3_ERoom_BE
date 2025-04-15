@@ -60,7 +60,7 @@ public class MeetingReportService {
         OpenAiRequest request = new OpenAiRequest(
                 "gpt-4",
                 List.of(
-                        new Message("system", "다음 채팅 기록을 기반으로 회의록을 작성해줘. 회의목 제목, 회의기간은 빼고 참여인원, 회의내용이 있어야하고 참여인원은 쉼표로 구분해. 또한 json형태로 보내는데, \"content\"와 \"members\"로 파싱하게 두개로 보내."),
+                        new Message("system", "다음 채팅 기록을 기반으로 회의록을 json 형태로 작성해줘. 회의목 제목, 회의기간은 빼고 참여인원, 회의내용이 있어야하고 참여인원은 쉼표로 구분해. 또한 json형태로 보내는데, \"content\"와 \"members\"로 파싱하게 두개로 보내. 다음과 같은 구조로 응답해야 해 : {\"content\": \"회의 내용 요약\", \"members\": \"참여자1, 참여자2\"}. 반드시 content와 members 키 이름을 사용하고 다른 키 이름은 쓰지마."),
                         new Message("user", conversation)
                 ),
                 0.7
